@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 6,
+  "summary": "Build a Bengali-language “স্মার্ট হিসাব প্রো” web app for worker accounting with login/registration + admin approval, admin panel for production/work/cost/payment entry, worker & rate settings, grouped history tables with delete, per-worker final balances, and a user dashboard with personal reports and profile photo; add improved UI/UX redesign, admin action confirmation messages, and enhanced user production history to show worker names; data persisted in browser localStorage.",
+  "existing_features": [
+    {
+      "id": "feature-redesign-the-overall-ui-ux-to-look-like-a-clean-modern-app-while-keeping-existing-features-and-localstorage-based-persistence-intact-admin-panel-user-panel-apply-consistent-spacing-typography-colors-and-component-styling-across-all-screens",
+      "title": "Redesign the overall UI/UX to look like a clean, modern app while keeping existing features and localStorage-based persistence intact (admin panel + user panel). Apply consistent spacing, typography, colors, and component styling across all screens.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-user-panel-update-the-production-history-view-so-each-production-entry-displays-the-associated-worker-name-s-clearly-e-g-grouped-worker-names-for-that-entry-based-on-the-stored-production-record-data",
+      "title": "In the user panel, update the Production History view so each production entry displays the associated worker name(s) clearly (e.g., grouped worker names for that entry), based on the stored production record data.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-admin-panel-show-a-confirmation-message-toast-snackbar-alert-after-successful-input-save-actions-across-all-relevant-sections-e-g-production-work-nasta-payment-loan-settings-and-approval-actions-use-english-user-facing-text",
+      "title": "In the admin panel, show a confirmation message (toast/snackbar/alert) after successful input/save actions across all relevant sections (e.g., Production, Work, Nasta, Payment/Loan, Settings, and Approval actions). Use English user-facing text.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-logout-behavior-so-that-clicking-logout-reliably-logs-the-user-out-in-packaged-app-runtime-not-dependent-on-location-reload-ensure-session-auth-state-and-any-in-memory-ui-state-is-reset-correctly-and-the-user-is-returned-to-the-login-screen",
+      "title": "Fix the logout behavior so that clicking Logout reliably logs the user out in packaged/app runtime (not dependent on location.reload). Ensure session/auth state and any in-memory UI state is reset correctly and the user is returned to the login screen.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-adopt-a-single-coherent-visual-theme-colors-typography-layout-style-suitable-for-a-worker-accounting-app-and-enforce-it-consistently-do-not-use-a-blue-purple-palette-use-english-for-any-user-facing-text-newly-introduced-during-redesign",
+      "title": "Adopt a single coherent visual theme (colors, typography, layout style) suitable for a worker accounting app, and enforce it consistently. Do not use a blue+purple palette. Use English for any user-facing text newly introduced during redesign.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-generated-static-images-to-the-frontend-and-use-them-in-the-ui-where-appropriate-e-g-login-header-brand-area-by-placing-them-under-frontend-public-assets-generated-and-referencing-them-directly-from-the-frontend-no-backend-routing",
+      "title": "Add the generated static images to the frontend and use them in the UI where appropriate (e.g., login header/brand area) by placing them under frontend/public/assets/generated and referencing them directly from the frontend (no backend routing).",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Authentication UI: login + registration with pending requests and admin approval flow (admin/user modes)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Admin panel with tab navigation: Production (board rate), Work (user rate), Nasta cost, Payment/Loan, and Results/Settings sections",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Worker management and per-worker rate settings (single/double rates), including add/delete worker",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Data entry + grouped history tables for production board work, user-rate work, nasta, and loan/payment with totals and delete actions that update balances",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Final balance calculation per worker (bill - cost) and display in results section",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "User dashboard showing current balance, personal history reports (production/work/payment+nasta), and profile photo upload saved to localStorage",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Client-side persistence using browser localStorage for workers, rates, accounts, histories, approved users, and pending requests",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "User panel: Production history রিপোর্টে সংশ্লিষ্ট এন্ট্রির কর্মীদের নাম (group names) দেখানো",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Admin panel: যেকোনো ইনপুট/সেভ অ্যাকশন (production/work/nasta/payment/settings/approval) সম্পন্ন হলে confirmation toast/alert দেখানো",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Overall UI/UX redesign: কোডের ডিজাইন আরও সুন্দর/অ্যাপ-লুক করে রিফাইন করা (layout, components, styling consistency)",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "architectural_notes": [
+    "Single-page web app (HTML/CSS/JS) with two primary views: auth page and app areas (admin/user dashboards).",
+    "Use browser localStorage as the data store for: workers, rates, accounts, histories (boardWork/userWork/nasta/loan), approved_users, pending_reqs, and per-user profile photos.",
+    "Admin credentials are hardcoded in client logic (e.g., mob/pass) in current design; user accounts rely on approved_users in localStorage.",
+    "Logout should perform an explicit app state reset (clear current session variables and return to auth view) rather than relying solely on location.reload(), to support embedded/app runtimes where reload may not work."
+  ],
+  "known_issues": [
+    "In packaged/app runtime, clicking Logout does not log out (current location.reload()-based behavior may fail)."
+  ],
+  "isFixRequest": true,
+  "imageRequirements": "## Required Images\n- Minimal accounting app logo mark, flat vector style (smart-hisab-logo.dim_512x512.png)\n- Abstract ledger/workflow header illustration, warm neutral palette (auth-header-illustration.dim_1200x600.png)",
+  "generatedImages": [
+    {
+      "filename": "smart-hisab-logo.dim_512x512.png",
+      "description": "Minimal accounting app logo mark, flat vector style",
+      "targetWidth": 512,
+      "targetHeight": 512
+    },
+    {
+      "filename": "auth-header-illustration.dim_1200x600.png",
+      "description": "Abstract ledger/workflow header illustration, warm neutral palette",
+      "targetWidth": 1200,
+      "targetHeight": 600
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "স্মার্ট হিসাব প্রো",
+  "clarification_mode": "pro",
+  "clarification_rounds": 0
+}

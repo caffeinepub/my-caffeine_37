@@ -1,0 +1,102 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-03T23:01:29.553Z",
+  "summary": "Diff adds a new frontend UI layer (App shell, admin/user screens, toast notifications, session-based routing) and introduces some unrelated/auth-related hooks and a backend stub. Several BuildRequest requirements are only partially evidenced, and some user-facing text constraints appear violated.",
+  "missing_requirements": [
+    {
+      "id": "REQ-3",
+      "requirement": "In the admin panel, show a confirmation message after successful input/save actions across all relevant sections (including Settings updates) and show errors instead of success on error cases.",
+      "reason": "The diff shows success/error toasts for many save/delete actions, but Settings rate updates appear to be persisted without any success confirmation message.",
+      "evidence": [
+        "frontend/src/features/admin/sections/SettingsSection.tsx"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "Use English for any user-facing text newly introduced/changed by this build request.",
+      "reason": "Multiple prominent UI strings are non-English (Bangla) in newly added components, and the footer includes a heart symbol as user-facing content.",
+      "evidence": [
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/features/auth/LoginView.tsx",
+        "frontend/src/features/auth/RegisterView.tsx"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "Add the generated static images under frontend/public/assets/generated and render them from the frontend (no backend routing).",
+      "reason": "Components reference the generated image paths, but the diff summary does not provide evidence that the actual image files were added under frontend/public/assets/generated (omitted/truncated added files list).",
+      "evidence": [
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/features/auth/LoginView.tsx",
+        "frontend/src/features/auth/RegisterView.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Added an empty backend canister actor (backend/main.mo) despite requirements being frontend-focused and no backend behavior requested.",
+      "reason": "BuildRequest did not ask for backend changes; adding a backend stub is extra.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Introduced Internet Identity/actor plumbing (useInternetIdentity/useActor) not required by this request.",
+      "reason": "BuildRequest explicitly notes third-party auth providers are non-goals and II is not required for this request; these hooks appear unrelated to the requested UI/UX, toasts, production worker names, and logout fix.",
+      "evidence": [
+        "frontend/src/hooks/useActor.ts",
+        "frontend/src/hooks/useInternetIdentity.ts"
+      ]
+    },
+    {
+      "description": "Added user profile picture upload and persisted per-user avatar data in localStorage.",
+      "reason": "Not requested in any REQ; this is new functionality beyond redesign/toasts/worker names/logout.",
+      "evidence": [
+        "frontend/src/features/user/UserDashboard.tsx"
+      ]
+    },
+    {
+      "description": "Added a promotional footer link/text (“Built with … caffeine.ai”).",
+      "reason": "Not requested; also introduces additional user-facing text.",
+      "evidence": [
+        "frontend/src/components/layout/AppShell.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.66,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/feedback/notify.ts",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/features/admin/AdminPanel.tsx",
+    "frontend/src/features/admin/sections/ApprovalsSection.tsx",
+    "frontend/src/features/admin/sections/NastaSection.tsx",
+    "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
+    "frontend/src/features/admin/sections/ProductionSection.tsx",
+    "frontend/src/features/admin/sections/SettingsSection.tsx",
+    "frontend/src/features/admin/sections/WorkSection.tsx",
+    "frontend/src/features/auth/LoginView.tsx",
+    "frontend/src/features/auth/RegisterView.tsx",
+    "frontend/src/features/user/UserDashboard.tsx",
+    "frontend/src/features/user/payment/PaymentHistoryView.tsx",
+    "frontend/src/features/user/production/ProductionHistoryView.tsx",
+    "frontend/src/features/user/production/workerNameFormat.ts",
+    "frontend/src/features/user/work/WorkHistoryView.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/index.css",
+    "frontend/src/lib/storage/safeStorage.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/state/session/SessionProvider.tsx",
+    "frontend/src/state/session/sessionTypes.ts",
+    "frontend/src/state/session/useSession.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}
