@@ -2,14 +2,9 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
-import { safeGetItem, safeSetItem } from '../../../lib/storage/safeStorage';
+import { safeGetArray, safeSetItem } from '../../../lib/storage/safeStorage';
 import { notify } from '../../../components/feedback/notify';
-
-interface PendingRequest {
-  name: string;
-  mob: string;
-  pass: string;
-}
+import { PendingRequest, ApprovedUser } from '../../../state/session/sessionTypes';
 
 interface ApprovalsSectionProps {
   onApprovalChange: () => void;
@@ -23,33 +18,63 @@ export default function ApprovalsSection({ onApprovalChange }: ApprovalsSectionP
   }, []);
 
   const loadRequests = () => {
-    const requests = safeGetItem<PendingRequest[]>('pending_reqs', []) || [];
+    const requests = safeGetArray<PendingRequest>('pending_reqs');
     setPendingRequests(requests);
   };
 
   const handleApprove = (index: number) => {
-    const request = pendingRequests[index];
-    
-    const approvedUsers = safeGetItem<Record<string, PendingRequest>>('approved_users', {}) || {};
-    approvedUsers[request.name] = request;
-    safeSetItem('approved_users', approvedUsers);
+    try {
+      const request = pendingRequests[index];
+      
+      // Get approved users as array (new format)
+      const approvedUsers = safeGetArray<ApprovedUser>('approved_users');
+      
+      // Check for duplicates by mobile (primary unique identifier)
+      const mobileExists = approvedUsers.some((u) => u.mob === request.mob);
+      if (mobileExists) {
+        notify.error('এই মোবাইল নম্বর দিয়ে ইতিমধ্যে একটি অ্যাকাউন্ট আছে');
+        return;
+      }
 
-    const workers = safeGetItem<string[]>('workers', []) || [];
-    if (!workers.includes(request.name)) {
-      workers.push(request.name);
-      safeSetItem('workers', workers);
+      // Check for duplicates by name (also unique)
+      const nameExists = approvedUsers.some((u) => u.name === request.name);
+      if (nameExists) {
+        notify.error('এই নাম দিয়ে ইতিমধ্যে একটি অ্যাকাউন্ট আছে');
+        return;
+      }
 
-      const rates = safeGetItem<Record<string, { s: number; d: number }>>('rates', {}) || {};
-      rates[request.name] = { s: 0, d: 0 };
-      safeSetItem('rates', rates);
+      // Add to approved users array
+      approvedUsers.push({
+        name: request.name,
+        mob: request.mob,
+        pass: request.pass,
+      });
+      safeSetItem('approved_users', approvedUsers);
+
+      // Add to workers list
+      const workers = safeGetArray<string>('workers');
+      if (!workers.includes(request.name)) {
+        workers.push(request.name);
+        safeSetItem('workers', workers);
+
+        // Initialize rates for the worker
+        const rates = safeGetArray<Record<string, { s: number; d: number }>>('rates');
+        const ratesObj = rates.length > 0 && typeof rates[0] === 'object' ? rates[0] : {};
+        ratesObj[request.name] = { s: 0, d: 0 };
+        safeSetItem('rates', ratesObj);
+      }
+
+      // Remove from pending requests
+      const updatedRequests = pendingRequests.filter((_, i) => i !== index);
+      setPendingRequests(updatedRequests);
+      safeSetItem('pending_reqs', updatedRequests);
+
+      notify.success(`${request.name} সফলভাবে অনুমোদিত হয়েছে`);
+      onApprovalChange();
+    } catch (error) {
+      console.error('Approval error:', error);
+      notify.error('অনুমোদন করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
     }
-
-    const updatedRequests = pendingRequests.filter((_, i) => i !== index);
-    setPendingRequests(updatedRequests);
-    safeSetItem('pending_reqs', updatedRequests);
-
-    notify.success(`${request.name} approved successfully`);
-    onApprovalChange();
   };
 
   if (pendingRequests.length === 0) {
@@ -59,7 +84,7 @@ export default function ApprovalsSection({ onApprovalChange }: ApprovalsSectionP
           <CardTitle>Pending Requests</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-center py-4">No pending requests</p>
+          <p className="text-muted-foreground text-center py-4">কোনো পেন্ডিং রিকোয়েস্ট নেই</p>
         </CardContent>
       </Card>
     );

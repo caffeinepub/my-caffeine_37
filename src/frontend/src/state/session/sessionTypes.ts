@@ -4,9 +4,33 @@ export interface Session {
   mobile?: string;
 }
 
+export interface LoginResult {
+  success: boolean;
+  error?: string;
+}
+
+export interface UpdateProfileParams {
+  mobile?: string;
+  currentPassword?: string;
+  newPassword?: string;
+}
+
 export interface SessionContextValue {
   session: Session | null;
   isInitializing: boolean;
-  login: (mobile: string, password: string) => Promise<boolean>;
+  login: (usernameOrMobile: string, password: string) => Promise<LoginResult>;
   logout: () => void;
+  updateUserProfile: (params: UpdateProfileParams) => Promise<LoginResult>;
+}
+
+export interface ApprovedUser {
+  name: string;
+  mob: string;
+  pass: string;
+}
+
+export interface PendingRequest {
+  name: string;
+  mob: string;
+  pass: string;
 }

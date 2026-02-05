@@ -1,130 +1,77 @@
 {
   "kind": "build_request",
-  "title": "Smart Hisab Pro: UI/UX redesign, admin confirmations, production history worker names, and logout fix",
+  "title": "Admin dashboard UI update: large circular top 3 buttons + full-width bordered group for 3 money buttons",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Redesign the overall UI/UX to look like a clean, modern app while keeping existing features and localStorage-based persistence intact (admin panel + user panel). Apply consistent spacing, typography, colors, and component styling across all screens.",
+      "text": "Update the Admin dashboard top summary area to match the uploaded screenshot: render the 3 summary items (Total Work/Total Taken/Total Due) as large circular buttons in a single row that spans the full available screen width, with consistent spacing and clear icon/label/value layout inside each circle.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "recent-1"
         ],
         "quotes": [
-          "৪/আমি চাই এই কোডটা দিয়ে তুমি সুন্দর আরো ডিজাইন করে একটা অ্যাপ বানিয়ে দাও"
+          "এগুলোকে পুরো স্ক্রিন জুড়ে বড় আকারে দেখাতে চান?",
+          "এখানে সার্কের  তুমি দিবে  রাউন্ড শেপ"
         ]
       },
       "acceptanceCriteria": [
-        "All major screens (login/registration, admin panel tabs, user dashboard/history) share a consistent visual system (typography, spacing scale, colors).",
-        "No existing workflows are removed (data entry, histories, approvals, balances).",
-        "All existing stored data remains readable (no breaking changes to localStorage keys/shape unless a safe migration is implemented in frontend)."
+        "On the Admin dashboard view, the top 3 summary actions are displayed as circles (not rounded rectangles) using fully round shape styling (e.g., fully-rounded).",
+        "The 3 circles appear in one horizontal row and collectively span the available content width (responsive on mobile).",
+        "Each circle shows its label and numeric value clearly; existing summary values remain correct (no logic changes to calculations).",
+        "The rest of the Admin dashboard layout below the top summary area remains functional and scrolls as before."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "In the user panel, update the Production History view so each production entry displays the associated worker name(s) clearly (e.g., grouped worker names for that entry), based on the stored production record data.",
+      "text": "Group the next 3 money-related Admin grid buttons (Payment/Loan, Company Report, Final Balance) inside a single full-width bordered container (one border surrounding all three), while keeping the individual button design consistent with the screenshot (same tile look, rounded corners, shadows).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "recent-1"
         ],
         "quotes": [
-          "১/ইউজার প্যানেলের প্রোডাকশন হিস্ট্রিতে কর্মীদের নামগুলা শো করবে"
+          "বাটন (যেগুলো টাকা‑সম্পর্কিত) একসাথে একটি বড় বর্ডারের ভিতরে ফুল‑স্ক্রিন চওড়ায় রাখতে হবে?",
+          "আরো পরের তিনটা বাটন ওগুলা একটা বর্ডারের ভিতর থাকবে ফুল স্ক্রিন"
         ]
       },
       "acceptanceCriteria": [
-        "Each production history row/card shows worker name(s) for that entry (not just counts/amounts).",
-        "If an entry references multiple workers, all names are displayed in a readable format.",
-        "If worker data is missing/deleted, the UI shows a safe fallback label (e.g., \"Unknown worker\") without crashing."
+        "In the Admin dashboard grid menu, the 3 money-related buttons are visually grouped inside one full-width container with a distinct border and rounded corners.",
+        "Inside the bordered container, the 3 buttons keep their existing per-button styling (gradient, icon, label, rounded tile shape, shadow) and remain clickable.",
+        "Buttons outside this money group (e.g., Production/Work/Nasta and other items) keep the same styling as before and are not unintentionally moved into the border group."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "In the admin panel, show a confirmation message (toast/snackbar/alert) after successful input/save actions across all relevant sections (e.g., Production, Work, Nasta, Payment/Loan, Settings, and Approval actions). Use English user-facing text.",
+      "text": "Ensure any UI element intended to be circular in the Admin dashboard (especially the top 3 circles) is perfectly round across devices (no oval distortion), including correct aspect ratio, centered content alignment, and consistent border thickness.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "recent-1"
         ],
         "quotes": [
-          "২/এডমিন প্যানেলে কোন কিছু ইনপুট দিলে কনফার্মেশন  মেসেজ আসবে"
+          "এখানে সার্কের  তুমি দিবে  রাউন্ড শেপ"
         ]
       },
       "acceptanceCriteria": [
-        "After a successful save/add/update/delete action in each admin section, a confirmation message appears.",
-        "Confirmation messages are in English and clearly state the action outcome (e.g., \"Production entry saved\").",
-        "Error cases do not show a success confirmation; they show an error message instead."
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Fix the logout behavior so that clicking Logout reliably logs the user out in packaged/app runtime (not dependent on location.reload). Ensure session/auth state and any in-memory UI state is reset correctly and the user is returned to the login screen.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "৩/একটা দিয়ে যখন আমি অ্যাপ্লিকেশন এর মাধ্যমে রান করায় তখন লগআউট ক্লিক করলে লগ আউট হয় না"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Clicking Logout always returns the app to the login screen and prevents access to admin/user screens until logging in again.",
-        "Logout works without requiring a hard browser reload.",
-        "After logout, a new login shows the correct role/state (no stale admin/user state remains)."
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Adopt a single coherent visual theme (colors, typography, layout style) suitable for a worker accounting app, and enforce it consistently. Do not use a blue+purple palette. Use English for any user-facing text newly introduced during redesign.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "৪/আমি চাই এই কোডটা দিয়ে তুমি সুন্দর আরো ডিজাইন করে একটা অ্যাপ বানিয়ে দাও"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A defined theme is applied consistently (buttons, inputs, tables, cards, navigation).",
-        "No default-looking mixed styles (e.g., mismatched button variants across pages).",
-        "Newly added/changed UI labels and messages are in English."
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Add the generated static images to the frontend and use them in the UI where appropriate (e.g., login header/brand area) by placing them under frontend/public/assets/generated and referencing them directly from the frontend (no backend routing).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Generated images exist under frontend/public/assets/generated.",
-        "Frontend renders the images correctly in the UI without requesting them from the backend canister."
+        "Top circular buttons remain perfectly circular (equal width/height) on common mobile widths.",
+        "Borders/shadows around circular buttons appear even and not clipped.",
+        "Touch/click targets are preserved and do not overlap the fixed header/footer."
       ]
     }
   ],
   "constraints": [
-    "Use English for any user-facing text introduced/changed by this build request.",
-    "Keep data persisted in browser localStorage (no move to backend persistence).",
-    "Do not edit files under frontend/immutablePaths (compose existing UI components instead of modifying them).",
-    "Backend must remain single-actor if any backend changes are later needed; no additional backend services."
+    "Do not modify any files under frontend/immutablePaths (e.g., frontend/src/main.tsx, frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/components/ui/*).",
+    "Keep the backend as a single Motoko actor; no backend changes are required for this UI-only update."
   ],
   "nonGoals": [
-    "Adding third-party authentication providers (only Internet Identity is supported by the platform, but not required for this request).",
-    "Replacing localStorage with an external database or non-IC backend.",
-    "Adding real-time features (WebSockets/live updates).",
-    "Changing business rules for calculations beyond what is required to show worker names and fix logout."
+    "Do not change Admin dashboard navigation behavior or routes beyond necessary layout restructuring.",
+    "Do not introduce new authentication methods or third-party integrations.",
+    "Do not redesign non-requested pages/sections (Production, Work, Nasta, Payment, etc.) beyond keeping their entry buttons styled as in the screenshot."
   ],
   "imageRequirements": {
-    "required": [
-      "Minimal accounting app logo mark, flat vector style (smart-hisab-logo.dim_512x512.png)",
-      "Abstract ledger/workflow header illustration, warm neutral palette (auth-header-illustration.dim_1200x600.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }

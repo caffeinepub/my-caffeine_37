@@ -1,240 +1,64 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Smart Hisab Pro frontend refresh: cohesive theme, admin confirmations, worker names in history, logout reliability, and static branding images",
+  "title": "Admin dashboard UI update: circular top summaries and bordered money-button group",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Apply a modern, consistent UI system across admin + user panels while preserving existing localStorage persistence and workflows.",
+      "summary": "Redesign the Admin dashboard top summary area into three large circular summary buttons spanning the full width with clear internal icon/label/value layout, without changing any calculation logic.",
       "acceptanceCriteria": [
-        "All major screens (login/registration, admin panel tabs, user dashboard/history) share a consistent visual system (typography, spacing scale, colors).",
-        "No existing workflows are removed (data entry, histories, approvals, balances).",
-        "All existing stored data remains readable (no breaking changes to localStorage keys/shape unless a safe migration is implemented in frontend)."
+        "On the Admin dashboard view, the top 3 summary actions are displayed as circles (not rounded rectangles) using fully round shape styling (e.g., fully-rounded).",
+        "The 3 circles appear in one horizontal row and collectively span the available content width (responsive on mobile).",
+        "Each circle shows its label and numeric value clearly; existing summary values remain correct (no logic changes to calculations).",
+        "The rest of the Admin dashboard layout below the top summary area remains functional and scrolls as before."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/index.css",
-          "operation": "create",
-          "description": "Create a single global style entry that defines the app’s typography, spacing rhythm, and shadcn-compatible CSS variables for a warm neutral theme (explicitly avoid a blue+purple palette). Ensure new/changed labels introduced by the redesign are English."
-        },
-        {
-          "path": "frontend/tailwind.config.js",
+          "path": "frontend/src/features/admin/components/AdminSummaryCards.tsx",
           "operation": "modify",
-          "description": "Adjust Tailwind theme tokens (if needed) to align with the new coherent warm-neutral visual theme and ensure consistent component styling across screens (keep using CSS variable-based colors already configured)."
+          "description": "Update the summary UI to render the three totals as large circular buttons in a single full-width row; keep existing localStorage reading and total calculations unchanged while improving inner layout (label/value + optional icon) for clarity."
         },
         {
-          "path": "frontend/src/App.tsx",
-          "operation": "create",
-          "description": "Create the app composition layer that wires shared layout, navigation, and screen composition together (login/registration, admin panel, user panel) while keeping existing localStorage-based persistence readable (use safe parsing and non-breaking defaults)."
-        },
-        {
-          "path": "frontend/src/components/layout/AppShell.tsx",
-          "operation": "create",
-          "description": "Add a reusable application shell (header/sidebar/content) that standardizes spacing, typography, and surface styling across admin and user areas using shadcn-ui primitives. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/layout/SectionCard.tsx",
-          "operation": "create",
-          "description": "Add a shared card/container component used by admin/user sections to enforce consistent padding, headings, and visual hierarchy across all screens using shadcn-ui patterns. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/lib/storage/safeStorage.ts",
-          "operation": "create",
-          "description": "Add a small localStorage helper that safely reads existing keys/records without breaking current shapes (defensive JSON parse, schema-tolerant accessors, and non-destructive fallbacks) to preserve persistence while the UI is redesigned."
+          "path": "frontend/src/features/admin/AdminPanel.tsx",
+          "operation": "modify",
+          "description": "Adjust the dashboard top summary container spacing/padding/sticky behavior as needed so the circular summary row visually spans the available content width and remains aligned under the fixed header without impacting scrolling behavior below."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Show worker name(s) for each entry in the user Production History based on stored production record data, with safe fallbacks.",
+      "summary": "Visually group the Payment/Loan, Company Report, and Final Balance Admin grid tiles into one full-width bordered container while preserving each tile’s existing styling and click behavior.",
       "acceptanceCriteria": [
-        "Each production history row/card shows worker name(s) for that entry (not just counts/amounts).",
-        "If an entry references multiple workers, all names are displayed in a readable format.",
-        "If worker data is missing/deleted, the UI shows a safe fallback label (e.g., \"Unknown worker\") without crashing."
+        "In the Admin dashboard grid menu, the 3 money-related buttons are visually grouped inside one full-width container with a distinct border and rounded corners.",
+        "Inside the bordered container, the 3 buttons keep their existing per-button styling (gradient, icon, label, rounded tile shape, shadow) and remain clickable.",
+        "Buttons outside this money group (e.g., Production/Work/Nasta and other items) keep the same styling as before and are not unintentionally moved into the border group."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/user/production/workerNameFormat.ts",
-          "operation": "create",
-          "description": "Create a formatter that converts the stored worker reference(s) on a production record into a readable grouped name string/list, including a resilient fallback label \"Unknown worker\" when worker data is missing."
-        },
-        {
-          "path": "frontend/src/features/user/production/useProductionHistory.ts",
-          "operation": "create",
-          "description": "Add a user production-history hook that reads existing production records and worker sources from localStorage via safeStorage, joins records to worker names, and returns view-ready rows without mutating stored data."
-        },
-        {
-          "path": "frontend/src/features/user/production/ProductionHistoryView.tsx",
-          "operation": "create",
-          "description": "Implement/replace the Production History UI to render each entry with its associated worker name(s) clearly (e.g., chips or a grouped text line) using shadcn-ui list/table primitives. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/features/admin/components/AdminGridMenu.tsx",
           "operation": "modify",
-          "description": "Wire the updated Production History view into the existing user panel navigation so it is reachable from the user area without creating orphan UI."
+          "description": "Restructure the grid rendering so the money-related items (Payment/Loan, Company Report, Final Balance) are rendered inside a single full-width bordered/rounded wrapper (one border around all three) while keeping each button’s existing tile classes and navigation intact."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Add English confirmation toasts/alerts for successful admin actions across all relevant sections and show errors on failures.",
+      "summary": "Ensure the Admin dashboard circular UI (especially the top 3 circles) remains perfectly round across devices with consistent borders/shadows and safe touch targets that don’t clash with fixed header/footer.",
       "acceptanceCriteria": [
-        "After a successful save/add/update/delete action in each admin section, a confirmation message appears.",
-        "Confirmation messages are in English and clearly state the action outcome (e.g., \"Production entry saved\").",
-        "Error cases do not show a success confirmation; they show an error message instead."
+        "Top circular buttons remain perfectly circular (equal width/height) on common mobile widths.",
+        "Borders/shadows around circular buttons appear even and not clipped.",
+        "Touch/click targets are preserved and do not overlap the fixed header/footer."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/feedback/notify.ts",
-          "operation": "create",
-          "description": "Create a small notification helper that standardizes success/error messaging (English text) for admin actions (e.g., saved/updated/deleted/approved), so all admin sections use consistent toast/snackbar behavior."
-        },
-        {
-          "path": "frontend/src/components/ui/sonner.tsx",
-          "operation": "create",
-          "description": "Add the shadcn-ui toast provider component used for toasts/snackbars across the app (for admin confirmations). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/features/admin/components/AdminSummaryCards.tsx",
           "operation": "modify",
-          "description": "Mount the global toast/snackbar provider once at the app root so admin confirmations and error messages can be triggered from any admin section. Verify the component's usage instructions before implementing."
+          "description": "Enforce a true circle layout using equal width/height sizing (e.g., aspect-square + rounded-full) with centered content, consistent border thickness, and shadows that aren’t clipped on small screens."
         },
         {
           "path": "frontend/src/features/admin/AdminPanel.tsx",
-          "operation": "create",
-          "description": "Implement/wrap the admin panel UI so that each relevant admin action (Production, Work, Nasta, Payment/Loan, Settings, and Approval actions) triggers notify.success on success and notify.error on failure (English messages only)."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/ProductionSection.tsx",
-          "operation": "create",
-          "description": "Add/compose the Production admin section UI and ensure save/add/update/delete flows call the shared notify helper for success/error confirmations. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/WorkSection.tsx",
-          "operation": "create",
-          "description": "Add/compose the Work admin section UI and ensure successful actions show an English confirmation and failures show an English error message using the shared notify helper. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/NastaSection.tsx",
-          "operation": "create",
-          "description": "Add/compose the Nasta admin section UI and ensure successful actions show an English confirmation and failures show an English error message using the shared notify helper. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
-          "operation": "create",
-          "description": "Add/compose the Payment/Loan admin section UI and ensure successful actions show an English confirmation and failures show an English error message using the shared notify helper. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/SettingsSection.tsx",
-          "operation": "create",
-          "description": "Add/compose the Settings admin section UI and ensure successful actions show an English confirmation and failures show an English error message using the shared notify helper. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/ApprovalsSection.tsx",
-          "operation": "create",
-          "description": "Add/compose the Approvals admin section UI and ensure approval actions show an English confirmation on success and an English error on failure using the shared notify helper. Verify the component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Make Logout reliably reset session/role/UI state and return to login without relying on location.reload.",
-      "acceptanceCriteria": [
-        "Clicking Logout always returns the app to the login screen and prevents access to admin/user screens until logging in again.",
-        "Logout works without requiring a hard browser reload.",
-        "After logout, a new login shows the correct role/state (no stale admin/user state remains)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/state/session/sessionTypes.ts",
-          "operation": "create",
-          "description": "Define a small session model (e.g., role, active user identity for this app’s localStorage-based flow) used to gate admin/user screens and to reset state cleanly on logout."
-        },
-        {
-          "path": "frontend/src/state/session/SessionProvider.tsx",
-          "operation": "create",
-          "description": "Create a session provider that (1) reads/writes only the session/auth-related localStorage keys used for login state, (2) exposes a logout() that clears session keys and resets in-memory state, and (3) allows role-based gating without hard reload."
-        },
-        {
-          "path": "frontend/src/state/session/useSession.ts",
-          "operation": "create",
-          "description": "Add a hook to access session state and logout() so the Logout button consistently resets role/UI state and triggers navigation back to the login screen."
-        },
-        {
-          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Wire SessionProvider at the app root and enforce route/screen guards so admin/user screens are inaccessible after logout until login occurs again; ensure navigation returns to the login screen without location.reload."
-        },
-        {
-          "path": "frontend/src/components/layout/AppShell.tsx",
-          "operation": "modify",
-          "description": "Update the Logout action to call session.logout() (and any related identity clear if currently used) and reset any in-memory UI state (selected tab, filters) so packaged runtime logout is reliable."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Enforce a single coherent, non-blue+purple visual theme across the app and ensure new/changed text is English.",
-      "acceptanceCriteria": [
-        "A defined theme is applied consistently (buttons, inputs, tables, cards, navigation).",
-        "No default-looking mixed styles (e.g., mismatched button variants across pages).",
-        "Newly added/changed UI labels and messages are in English."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Refine the CSS variable theme to a cohesive worker-accounting aesthetic (warm neutrals with clear success/warning/destructive colors) and standardize base typography; ensure the palette avoids blue+purple pairing."
-        },
-        {
-          "path": "frontend/src/components/theme/ThemeNotes.md",
-          "operation": "create",
-          "description": "Add a small internal reference describing the chosen theme tokens (surface, text, borders, success/warning/destructive) to keep future UI changes consistent; ensure any example labels/messages included are English."
-        },
-        {
-          "path": "frontend/src/features/auth/LoginView.tsx",
-          "operation": "create",
-          "description": "Implement a modern, consistent login UI aligned with the theme (spacing, inputs, buttons) and ensure any newly introduced labels are English; use shadcn-ui form/input/button components. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/auth/RegisterView.tsx",
-          "operation": "create",
-          "description": "Implement a registration UI consistent with the login/admin/user styling; ensure any newly introduced labels are English and component styles match the global system. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Wire LoginView/RegisterView into the app flow (navigation/routing or conditional rendering) so redesigned screens replace any older mixed-style entry screens and maintain existing workflows."
-        }
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "summary": "Add the generated static images under frontend/public/assets/generated and render them in appropriate UI locations.",
-      "acceptanceCriteria": [
-        "Generated images exist under frontend/public/assets/generated.",
-        "Frontend renders the images correctly in the UI without requesting them from the backend canister."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/public/assets/generated/smart-hisab-logo.dim_512x512.png",
-          "operation": "create",
-          "description": "Add the generated image asset exactly at frontend/public/assets/generated/smart-hisab-logo.dim_512x512.png so it can be referenced directly by the frontend as a static file."
-        },
-        {
-          "path": "frontend/public/assets/generated/auth-header-illustration.dim_1200x600.png",
-          "operation": "create",
-          "description": "Add the generated image asset exactly at frontend/public/assets/generated/auth-header-illustration.dim_1200x600.png so it can be referenced directly by the frontend as a static file."
-        },
-        {
-          "path": "frontend/src/features/auth/LoginView.tsx",
-          "operation": "modify",
-          "description": "Render frontend/public/assets/generated/smart-hisab-logo.dim_512x512.png and frontend/public/assets/generated/auth-header-illustration.dim_1200x600.png in the login header/brand area (static asset usage only; no backend routing)."
-        },
-        {
-          "path": "frontend/src/components/layout/AppShell.tsx",
-          "operation": "modify",
-          "description": "Use frontend/public/assets/generated/smart-hisab-logo.dim_512x512.png in the app shell brand area (e.g., sidebar/header) to reinforce branding consistently across admin and user panels."
+          "description": "Verify/adjust top offsets and bottom padding in the dashboard layout so the circular buttons remain fully visible and tappable under the fixed header and above the fixed footer across common mobile widths."
         }
       ]
     }

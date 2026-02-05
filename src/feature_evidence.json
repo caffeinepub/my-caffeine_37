@@ -2,21 +2,20 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-redesign-the-overall-ui-ux-to-look-like-a-clean-modern-app-while-keeping-existing-features-and-localstorage-based-persistence-intact-admin-panel-user-panel-apply-consistent-spacing-typography-colors-and-component-styling-across-all-screens",
-      "featureTitle": "Redesign the overall UI/UX to look like a clean, modern app while keeping existing features and localStorage-based persistence intact (admin panel + user panel). Apply consistent spacing, typography, colors, and component styling across all screens.",
+      "featureId": "feature-update-the-admin-dashboard-top-summary-area-to-match-the-uploaded-screenshot-render-the-3-summary-items-total-work-total-taken-total-due-as-large-circular-buttons-in-a-single-row-that-spans-the-full-available-screen-width-with-consistent-spacing-and-clear-icon-label-value-layout-inside-each-circle",
+      "featureTitle": "Update the Admin dashboard top summary area to match the uploaded screenshot: render the 3 summary items (Total Work/Total Taken/Total Due) as large circular buttons in a single row that spans the full available screen width, with consistent spacing and clear icon/label/value layout inside each circle.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/layout/AppShell.tsx",
-        "frontend/src/index.css",
-        "frontend/src/lib/storage/safeStorage.ts",
-        "frontend/tailwind.config.js"
+        "frontend/src/features/admin/AdminPanel.tsx",
+        "frontend/src/features/admin/components/AdminSummaryCards.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "user-approval@3.0.0"
       ],
       "testIds": [
         "REQ-1"
@@ -24,19 +23,19 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-in-the-user-panel-update-the-production-history-view-so-each-production-entry-displays-the-associated-worker-name-s-clearly-e-g-grouped-worker-names-for-that-entry-based-on-the-stored-production-record-data",
-      "featureTitle": "In the user panel, update the Production History view so each production entry displays the associated worker name(s) clearly (e.g., grouped worker names for that entry), based on the stored production record data.",
+      "featureId": "feature-group-the-next-3-money-related-admin-grid-buttons-payment-loan-company-report-final-balance-inside-a-single-full-width-bordered-container-one-border-surrounding-all-three-while-keeping-the-individual-button-design-consistent-with-the-screenshot-same-tile-look-rounded-corners-shadows",
+      "featureTitle": "Group the next 3 money-related Admin grid buttons (Payment/Loan, Company Report, Final Balance) inside a single full-width bordered container (one border surrounding all three), while keeping the individual button design consistent with the screenshot (same tile look, rounded corners, shadows).",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/features/user/production/ProductionHistoryView.tsx",
-        "frontend/src/features/user/production/workerNameFormat.ts"
+        "frontend/src/features/admin/components/AdminGridMenu.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "user-approval@3.0.0"
       ],
       "testIds": [
         "REQ-2"
@@ -44,90 +43,23 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-in-the-admin-panel-show-a-confirmation-message-toast-snackbar-alert-after-successful-input-save-actions-across-all-relevant-sections-e-g-production-work-nasta-payment-loan-settings-and-approval-actions-use-english-user-facing-text",
-      "featureTitle": "In the admin panel, show a confirmation message (toast/snackbar/alert) after successful input/save actions across all relevant sections (e.g., Production, Work, Nasta, Payment/Loan, Settings, and Approval actions). Use English user-facing text.",
+      "featureId": "feature-ensure-any-ui-element-intended-to-be-circular-in-the-admin-dashboard-especially-the-top-3-circles-is-perfectly-round-across-devices-no-oval-distortion-including-correct-aspect-ratio-centered-content-alignment-and-consistent-border-thickness",
+      "featureTitle": "Ensure any UI element intended to be circular in the Admin dashboard (especially the top 3 circles) is perfectly round across devices (no oval distortion), including correct aspect ratio, centered content alignment, and consistent border thickness.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/feedback/notify.ts",
         "frontend/src/features/admin/AdminPanel.tsx",
-        "frontend/src/features/admin/sections/ApprovalsSection.tsx",
-        "frontend/src/features/admin/sections/NastaSection.tsx",
-        "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
-        "frontend/src/features/admin/sections/ProductionSection.tsx",
-        "frontend/src/features/admin/sections/SettingsSection.tsx",
-        "frontend/src/features/admin/sections/WorkSection.tsx"
+        "frontend/src/features/admin/components/AdminSummaryCards.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "user-approval@3.0.0"
       ],
       "testIds": [
         "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-fix-the-logout-behavior-so-that-clicking-logout-reliably-logs-the-user-out-in-packaged-app-runtime-not-dependent-on-location-reload-ensure-session-auth-state-and-any-in-memory-ui-state-is-reset-correctly-and-the-user-is-returned-to-the-login-screen",
-      "featureTitle": "Fix the logout behavior so that clicking Logout reliably logs the user out in packaged/app runtime (not dependent on location.reload). Ensure session/auth state and any in-memory UI state is reset correctly and the user is returned to the login screen.",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/layout/AppShell.tsx",
-        "frontend/src/state/session/SessionProvider.tsx",
-        "frontend/src/state/session/sessionTypes.ts",
-        "frontend/src/state/session/useSession.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-adopt-a-single-coherent-visual-theme-colors-typography-layout-style-suitable-for-a-worker-accounting-app-and-enforce-it-consistently-do-not-use-a-blue-purple-palette-use-english-for-any-user-facing-text-newly-introduced-during-redesign",
-      "featureTitle": "Adopt a single coherent visual theme (colors, typography, layout style) suitable for a worker accounting app, and enforce it consistently. Do not use a blue+purple palette. Use English for any user-facing text newly introduced during redesign.",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/features/auth/LoginView.tsx",
-        "frontend/src/features/auth/RegisterView.tsx",
-        "frontend/src/index.css"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-5"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-the-generated-static-images-to-the-frontend-and-use-them-in-the-ui-where-appropriate-e-g-login-header-brand-area-by-placing-them-under-frontend-public-assets-generated-and-referencing-them-directly-from-the-frontend-no-backend-routing",
-      "featureTitle": "Add the generated static images to the frontend and use them in the UI where appropriate (e.g., login header/brand area) by placing them under frontend/public/assets/generated and referencing them directly from the frontend (no backend routing).",
-      "files": [
-        "frontend/src/components/layout/AppShell.tsx",
-        "frontend/src/features/auth/LoginView.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-6"
       ],
       "confidence": "high"
     }

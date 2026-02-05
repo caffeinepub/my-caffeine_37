@@ -5,6 +5,7 @@ import { Button } from '../../../components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '../../../components/ui/table';
 import { safeGetItem } from '../../../lib/storage/safeStorage';
 import { ArrowLeft } from 'lucide-react';
+import { computeUserAmount } from '../../work/workAmount';
 
 interface WorkEntry {
   id: number;
@@ -46,45 +47,42 @@ export default function WorkHistoryView({ onBack }: WorkHistoryViewProps) {
   };
 
   const calculateMyAmount = (entry: WorkEntry): number => {
-    if (entry.details) {
-      const myDetail = entry.details.find((d) => d.name === session?.userName);
-      return myDetail ? myDetail.bill : 0;
-    }
-    return entry.totalTk;
+    if (!session?.userName) return 0;
+    return computeUserAmount(entry, session.userName);
   };
 
   const totalTk = history.reduce((sum, h) => sum + calculateMyAmount(h), 0);
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="bg-emerald-600 text-white py-6 px-4">
+      <div className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white py-6 px-4">
         <div className="container mx-auto max-w-4xl">
           <Button
             onClick={onBack}
             variant="ghost"
-            className="text-white hover:bg-emerald-700 mb-4"
+            className="text-white hover:bg-teal-700 mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+            ফিরে যান
           </Button>
-          <h1 className="text-2xl font-bold">Work Details</h1>
+          <h1 className="text-2xl font-bold">কাজের বিবরণ</h1>
         </div>
       </div>
 
       <div className="container mx-auto max-w-4xl px-4 py-6">
         <Card>
           <CardHeader>
-            <CardTitle>Your Work Records</CardTitle>
+            <CardTitle>আপনার কাজের রেকর্ড</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-center">Single</TableHead>
-                    <TableHead className="text-center">Double</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>তারিখ</TableHead>
+                    <TableHead className="text-center">সিঙ্গেল</TableHead>
+                    <TableHead className="text-center">ডাবল</TableHead>
+                    <TableHead className="text-right">আপনার টাকা</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -101,7 +99,7 @@ export default function WorkHistoryView({ onBack }: WorkHistoryViewProps) {
                 </TableBody>
                 <TableFooter>
                   <TableRow>
-                    <TableCell colSpan={3} className="font-bold">TOTAL</TableCell>
+                    <TableCell colSpan={3} className="font-bold">সর্বমোট</TableCell>
                     <TableCell className="text-right font-bold">৳{totalTk.toFixed(2)}</TableCell>
                   </TableRow>
                 </TableFooter>

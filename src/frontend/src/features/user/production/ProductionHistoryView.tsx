@@ -3,7 +3,6 @@ import { useSession } from '../../../state/session/useSession';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '../../../components/ui/table';
-import { Badge } from '../../../components/ui/badge';
 import { safeGetItem } from '../../../lib/storage/safeStorage';
 import { formatWorkerNames } from './workerNameFormat';
 import { ArrowLeft } from 'lucide-react';
@@ -88,14 +87,8 @@ export default function ProductionHistoryView({ onBack }: ProductionHistoryViewP
                   {history.map((entry) => (
                     <TableRow key={entry.id}>
                       <TableCell>{entry.date}</TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {formatWorkerNames(entry).map((name, idx) => (
-                            <Badge key={idx} variant="secondary" className="text-xs">
-                              {name}
-                            </Badge>
-                          ))}
-                        </div>
+                      <TableCell className="text-sm">
+                        {formatWorkerNames(entry).join(', ')}
                       </TableCell>
                       <TableCell className="text-center">{entry.s}</TableCell>
                       <TableCell className="text-center">{entry.d}</TableCell>

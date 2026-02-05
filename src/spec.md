@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Refresh Smart Hisab Pro with a clean, modern, consistent UI while keeping all existing admin/user features and localStorage persistence, improve production history readability by showing worker names, add admin save confirmations, and fix logout reliability in packaged runtime.
+**Goal:** Update the Admin dashboard layout to match the provided screenshot by making the top 3 summary items large, perfectly circular buttons and visually grouping the 3 money-related buttons inside one full-width bordered container.
 
 **Planned changes:**
-- Redesign UI/UX across login/registration, admin panel, and user dashboard/history with a single coherent theme (excluding blue+purple), consistent spacing/typography/colors, and unified component styling.
-- Update User Panel → Production History to display associated worker name(s) for each production entry, including readable formatting for multiple workers and safe fallbacks when worker data is missing.
-- Add English confirmation messages (toast/snackbar/alert) for successful admin actions across relevant sections, and show error messages on failures instead of success confirmations.
-- Fix Logout to reliably clear session/auth and in-memory UI state and return to the login screen without relying on `location.reload`.
-- Add provided generated static images under `frontend/public/assets/generated` and reference them directly in the UI (e.g., login header/brand area).
+- Convert the Admin dashboard top summary area (Total Work / Total Taken / Total Due) into 3 large circular buttons in a single horizontal row that spans the available screen width, with clear icon/label/value layout inside each circle.
+- Ensure the top circular buttons stay perfectly round (equal width/height), with centered content, consistent border thickness, and unclipped border/shadow across common mobile widths.
+- Wrap the 3 money-related grid buttons (Payment/Loan, Company Report, Final Balance) in one full-width container with a distinct border and rounded corners, while keeping each button’s existing tile styling and click behavior.
+- Keep all other dashboard buttons/sections unchanged in styling and placement, and preserve existing scrolling/interaction behavior below the top summary area.
 
-**User-visible outcome:** The app looks consistently modern across all screens, admin actions provide clear English feedback, users can see worker names in production history entries, and Logout works reliably in the packaged app by returning to the login screen and preventing access until re-login.
+**User-visible outcome:** On the Admin dashboard, users see three large circular summary buttons across the top and a clearly bordered full-width group containing the three money-related buttons, with all values and navigation working as before.

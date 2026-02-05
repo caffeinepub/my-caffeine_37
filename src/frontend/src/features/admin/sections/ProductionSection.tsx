@@ -3,43 +3,44 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '../../../components/ui/table';
-import { safeGetItem, safeSetItem } from '../../../lib/storage/safeStorage';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
+import { safeGetItem, safeSetItem, safeGetArray } from '../../../lib/storage/safeStorage';
 import { notify } from '../../../components/feedback/notify';
+import { ConfirmDialog } from '../../../components/feedback/ConfirmDialog';
 import { Trash2 } from 'lucide-react';
 
-interface BoardWorkEntry {
-  id: number;
+interface ProductionEntry {
+  id: string;
   date: string;
   names: string[];
-  s: number;
-  d: number;
-  totalBody: number;
-  totalTk: number;
+  quantity: number;
+  amount: number;
+  total: number;
+  timestamp: number;
 }
 
 export default function ProductionSection() {
-  const [workers, setWorkers] = useState<string[]>([]);
-  const [selectedWorkers, setSelectedWorkers] = useState<string[]>([]);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [single, setSingle] = useState(0);
-  const [double, setDouble] = useState(0);
-  const [rateS, setRateS] = useState(0);
-  const [rateD, setRateD] = useState(0);
-  const [history, setHistory] = useState<BoardWorkEntry[]>([]);
+  const [selectedWorkers, setSelectedWorkers] = useState<string[]>([]);
+  const [quantity, setQuantity] = useState('');
+  const [amount, setAmount] = useState('');
+  const [workers, setWorkers] = useState<string[]>([]);
+  const [history, setHistory] = useState<ProductionEntry[]>([]);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
-    loadData();
+    loadWorkers();
+    loadHistory();
   }, []);
 
-  const loadData = () => {
-    const loadedWorkers = safeGetItem<string[]>('workers', []) || [];
-    setWorkers(loadedWorkers);
+  const loadWorkers = () => {
+    const workerList = safeGetArray<string>('workers');
+    setWorkers(workerList);
+  };
 
-    const histories = safeGetItem<{ boardWork: BoardWorkEntry[] }>('histories', { boardWork: [] });
-    if (histories) {
-      setHistory(histories.boardWork || []);
-    }
+  const loadHistory = () => {
+    const entries = safeGetArray<ProductionEntry>('productionHistory');
+    setHistory(entries.sort((a, b) => b.timestamp - a.timestamp));
   };
 
   const toggleWorker = (worker: string) => {
@@ -48,197 +49,209 @@ export default function ProductionSection() {
     );
   };
 
-  const handleSave = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (selectedWorkers.length === 0) {
-      notify.error('Please select at least one worker');
+      notify.error('অন্তত একজন কর্মী নির্বাচন করুন');
       return;
     }
 
-    if (rateS <= 0 && rateD <= 0) {
-      notify.error('Please enter at least one rate');
+    if (!quantity || !amount) {
+      notify.error('সকল তথ্য পূরণ করুন');
       return;
     }
 
-    const totalTk = single * rateS + double * rateD;
-    const newEntry: BoardWorkEntry = {
-      id: Date.now(),
+    const total = Number(quantity) * Number(amount);
+    const entry: ProductionEntry = {
+      id: Date.now().toString(),
       date,
       names: selectedWorkers,
-      s: single,
-      d: double,
-      totalBody: single + double,
-      totalTk,
+      quantity: Number(quantity),
+      amount: Number(amount),
+      total,
+      timestamp: Date.now(),
     };
 
-    const histories = safeGetItem<{ boardWork: BoardWorkEntry[]; userWork: any[]; nasta: any[]; loan: any[] }>(
-      'histories',
-      { boardWork: [], userWork: [], nasta: [], loan: [] }
-    );
-    
-    if (histories) {
-      histories.boardWork.unshift(newEntry);
-      safeSetItem('histories', histories);
-      setHistory(histories.boardWork);
-    }
+    const entries = safeGetArray<ProductionEntry>('productionHistory');
+    entries.push(entry);
+    safeSetItem('productionHistory', entries);
+
+    const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
+    selectedWorkers.forEach((worker) => {
+      if (!accounts[worker]) {
+        accounts[worker] = { bill: 0, cost: 0 };
+      }
+      accounts[worker].bill += total;
+    });
+    safeSetItem('accounts', accounts);
 
     setSelectedWorkers([]);
-    setSingle(0);
-    setDouble(0);
-    setRateS(0);
-    setRateD(0);
-
-    notify.success('Production entry saved successfully');
+    setQuantity('');
+    setAmount('');
+    loadHistory();
+    notify.success('প্রোডাকশন সফলভাবে যোগ করা হয়েছে');
   };
 
-  const handleDelete = (index: number) => {
-    if (!confirm('Are you sure you want to delete this entry?')) return;
+  const handleDelete = () => {
+    if (!deleteId) return;
 
-    const histories = safeGetItem<{ boardWork: BoardWorkEntry[]; userWork: any[]; nasta: any[]; loan: any[] }>(
-      'histories',
-      { boardWork: [], userWork: [], nasta: [], loan: [] }
-    );
-    
-    if (histories) {
-      histories.boardWork.splice(index, 1);
-      safeSetItem('histories', histories);
-      setHistory(histories.boardWork);
-    }
+    const entries = safeGetArray<ProductionEntry>('productionHistory');
+    const entry = entries.find((e) => e.id === deleteId);
+    if (!entry) return;
 
-    notify.success('Entry deleted successfully');
+    const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
+    entry.names.forEach((worker) => {
+      if (accounts[worker]) {
+        accounts[worker].bill -= entry.total;
+      }
+    });
+    safeSetItem('accounts', accounts);
+
+    const updated = entries.filter((e) => e.id !== deleteId);
+    safeSetItem('productionHistory', updated);
+
+    loadHistory();
+    setDeleteId(null);
+    notify.success('এন্ট্রি মুছে ফেলা হয়েছে');
   };
-
-  const totalBody = history.reduce((sum, h) => sum + h.totalBody, 0);
-  const totalTk = history.reduce((sum, h) => sum + h.totalTk, 0);
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Production Entry (Board Rate)</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>Date</Label>
-            <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-          </div>
+    <>
+      <div className="space-y-6">
+        <Card className="border-emerald-200 shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-500">
+            <CardTitle className="text-lg text-white">নতুন প্রোডাকশন যোগ করুন</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="date">তারিখ</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="border-2"
+                />
+              </div>
 
-          <div>
-            <Label>Select Workers</Label>
-            <div className="grid grid-cols-3 gap-2 mt-2">
-              {workers.map((worker) => (
-                <button
-                  key={worker}
-                  onClick={() => toggleWorker(worker)}
-                  className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                    selectedWorkers.includes(worker)
-                      ? 'bg-slate-900 text-white border-slate-900'
-                      : 'bg-white border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  {worker}
-                </button>
-              ))}
-            </div>
-          </div>
+              <div className="space-y-2">
+                <Label>কর্মী নির্বাচন করুন</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {workers.map((worker) => (
+                    <Button
+                      key={worker}
+                      type="button"
+                      onClick={() => toggleWorker(worker)}
+                      className={`font-bold transition-all ${
+                        selectedWorkers.includes(worker)
+                          ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg scale-105'
+                          : 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-700 hover:from-gray-300 hover:to-gray-400'
+                      }`}
+                    >
+                      {worker}
+                    </Button>
+                  ))}
+                </div>
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Single (Qty)</Label>
-              <Input
-                type="number"
-                value={single}
-                onChange={(e) => setSingle(Number(e.target.value))}
-                placeholder="0"
-              />
-            </div>
-            <div>
-              <Label>Double (Qty)</Label>
-              <Input
-                type="number"
-                value={double}
-                onChange={(e) => setDouble(Number(e.target.value))}
-                placeholder="0"
-              />
-            </div>
-          </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="quantity">পরিমাণ</Label>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    placeholder="পরিমাণ"
+                    className="border-2"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="amount">রেট (৳)</Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="রেট"
+                    className="border-2"
+                  />
+                </div>
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Rate (Single)</Label>
-              <Input
-                type="number"
-                value={rateS}
-                onChange={(e) => setRateS(Number(e.target.value))}
-                placeholder="0"
-              />
-            </div>
-            <div>
-              <Label>Rate (Double)</Label>
-              <Input
-                type="number"
-                value={rateD}
-                onChange={(e) => setRateD(Number(e.target.value))}
-                placeholder="0"
-              />
-            </div>
-          </div>
+              <Button type="submit" className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3">
+                সাবমিট করুন
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
 
-          <Button onClick={handleSave} className="w-full">
-            Save Production Entry
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Production History</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Workers</TableHead>
-                  <TableHead className="text-center">S</TableHead>
-                  <TableHead className="text-center">D</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead className="text-center">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {history.map((entry, index) => (
-                  <TableRow key={entry.id}>
-                    <TableCell>{entry.date}</TableCell>
-                    <TableCell className="text-sm">{entry.names.join(', ')}</TableCell>
-                    <TableCell className="text-center">{entry.s}</TableCell>
-                    <TableCell className="text-center">{entry.d}</TableCell>
-                    <TableCell className="text-right font-medium">৳{entry.totalTk.toFixed(2)}</TableCell>
-                    <TableCell className="text-center">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(index)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </TableCell>
+        <Card className="border-emerald-200 shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-500">
+            <CardTitle className="text-lg text-white">প্রোডাকশন হিস্ট্রি</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>তারিখ</TableHead>
+                    <TableHead>নাম</TableHead>
+                    <TableHead>পরিমাণ</TableHead>
+                    <TableHead>রেট</TableHead>
+                    <TableHead className="text-right">মোট</TableHead>
+                    <TableHead className="text-center">অ্যাকশন</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={3} className="font-bold">TOTAL</TableCell>
-                  <TableCell className="text-center font-bold">{totalBody}</TableCell>
-                  <TableCell className="text-right font-bold">৳{totalTk.toFixed(2)}</TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+                </TableHeader>
+                <TableBody>
+                  {history.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                        কোনো এন্ট্রি নেই
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    history.map((entry) => (
+                      <TableRow key={entry.id}>
+                        <TableCell className="font-medium">{entry.date}</TableCell>
+                        <TableCell>{entry.names.join(', ')}</TableCell>
+                        <TableCell>{entry.quantity}</TableCell>
+                        <TableCell>৳{entry.amount}</TableCell>
+                        <TableCell className="text-right font-bold text-emerald-700">
+                          ৳{entry.total.toFixed(0)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setDeleteId(entry.id)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        title="এন্ট্রি মুছে ফেলুন"
+        description="আপনি কি নিশ্চিত যে আপনি এই এন্ট্রি মুছে ফেলতে চান?"
+        onConfirm={handleDelete}
+        confirmText="হ্যাঁ, মুছে ফেলুন"
+        cancelText="না"
+        variant="destructive"
+      />
+    </>
   );
 }

@@ -1,8 +1,6 @@
-import { useState, useEffect } from 'react';
 import { SessionProvider } from './state/session/SessionProvider';
 import { useSession } from './state/session/useSession';
 import LoginView from './features/auth/LoginView';
-import RegisterView from './features/auth/RegisterView';
 import AdminPanel from './features/admin/AdminPanel';
 import UserDashboard from './features/user/UserDashboard';
 import { Toaster } from './components/ui/sonner';
@@ -10,7 +8,6 @@ import { ThemeProvider } from 'next-themes';
 
 function AppContent() {
   const { session, isInitializing } = useSession();
-  const [showRegister, setShowRegister] = useState(false);
 
   if (isInitializing) {
     return (
@@ -24,11 +21,7 @@ function AppContent() {
   }
 
   if (!session) {
-    return showRegister ? (
-      <RegisterView onSwitchToLogin={() => setShowRegister(false)} />
-    ) : (
-      <LoginView onSwitchToRegister={() => setShowRegister(true)} />
-    );
+    return <LoginView />;
   }
 
   if (session.role === 'admin') {
