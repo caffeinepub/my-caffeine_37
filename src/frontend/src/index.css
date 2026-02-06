@@ -134,4 +134,22 @@
   .gradient-primary {
     background: linear-gradient(135deg, oklch(58% 0.16 195) 0%, oklch(62% 0.14 240) 100%);
   }
+
+  /* Unified dashboard header style - clean card-based aesthetic */
+  .unified-header {
+    @apply bg-white shadow-md border-b-2 border-gray-200;
+  }
+
+  /* Class-11 style utilities for consistent rounded containers and shadows */
+  .class11-container {
+    @apply rounded-3xl border-4 border-gray-800 shadow-2xl;
+  }
+
+  .class11-card {
+    @apply rounded-2xl border-3 border-gray-700 shadow-xl;
+  }
+
+  .class11-tile {
+    @apply rounded-3xl border-3 border-gray-300 shadow-lg;
+  }
 }

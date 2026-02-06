@@ -1,32 +1,50 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "UI layout update: make the top three circular buttons larger across full screen width, keep other buttons styled like the screenshot, and group the next three money-related buttons inside a full-width bordered container; ensure circular areas use round shapes.",
-  "architectural_notes": [],
+  "summary": "Build a home page UI redesign that keeps the existing color/icon/logo style, adds specified borders and section grouping, and applies the same design to both user and admin views with no additional screens while preserving existing functionality.",
+  "architectural_notes": [
+    "Homepage UI design should be shared between user and admin (single reusable layout/style) to ensure consistency."
+  ],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-update-the-admin-dashboard-top-summary-area-to-match-the-uploaded-screenshot-render-the-3-summary-items-total-work-total-taken-total-due-as-large-circular-buttons-in-a-single-row-that-spans-the-full-available-screen-width-with-consistent-spacing-and-clear-icon-label-value-layout-inside-each-circle",
-      "title": "Update the Admin dashboard top summary area to match the uploaded screenshot: render the 3 summary items (Total Work/Total Taken/Total Due) as large circular buttons in a single row that spans the full available screen width, with consistent spacing and clear icon/label/value layout inside each circle.",
+      "id": "feature-update-the-user-dashboard-homepage-layout-to-match-the-uploaded-reference-image-img-20260206-123940-2-jpg-keep-the-same-colors-icons-logo-style-but-wrap-the-three-kpi-cards-total-due-total-work-total-taken-inside-a-single-shared-bordered-container-while-preserving-the-kpi-values-and-calculations",
+      "title": "Update the User dashboard homepage layout to match the uploaded reference image (IMG_20260206_123940-2.jpg): keep the same colors/icons/logo style, but wrap the three KPI cards (Total Due, Total Work, Total Taken) inside a single shared bordered container, while preserving the KPI values and calculations.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-group-the-next-3-money-related-admin-grid-buttons-payment-loan-company-report-final-balance-inside-a-single-full-width-bordered-container-one-border-surrounding-all-three-while-keeping-the-individual-button-design-consistent-with-the-screenshot-same-tile-look-rounded-corners-shadows",
-      "title": "Group the next 3 money-related Admin grid buttons (Payment/Loan, Company Report, Final Balance) inside a single full-width bordered container (one border surrounding all three), while keeping the individual button design consistent with the screenshot (same tile look, rounded corners, shadows).",
+      "id": "feature-update-the-user-dashboard-homepage-action-tiles-to-match-the-uploaded-reference-image-layout-and-styling-display-production-work-and-nasta-tiles-in-one-row-3-columns-and-display-payment-loan-as-a-single-tile-on-the-next-row-aligned-to-the-left-ensure-each-tile-has-a-clear-rounded-border-and-shadow-consistent-with-the-reference-without-changing-what-each-tile-does",
+      "title": "Update the User dashboard homepage action tiles to match the uploaded reference image layout and styling: display Production, Work, and Nasta tiles in one row (3 columns), and display Payment/Loan as a single tile on the next row aligned to the left; ensure each tile has a clear rounded border and shadow consistent with the reference, without changing what each tile does.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-ensure-any-ui-element-intended-to-be-circular-in-the-admin-dashboard-especially-the-top-3-circles-is-perfectly-round-across-devices-no-oval-distortion-including-correct-aspect-ratio-centered-content-alignment-and-consistent-border-thickness",
-      "title": "Ensure any UI element intended to be circular in the Admin dashboard (especially the top 3 circles) is perfectly round across devices (no oval distortion), including correct aspect ratio, centered content alignment, and consistent border thickness.",
+      "id": "feature-update-the-admin-dashboard-homepage-to-use-the-same-design-language-as-the-user-homepage-and-the-uploaded-reference-image-the-top-totals-area-should-use-the-same-kpi-layout-1-full-width-card-2-half-width-cards-and-those-three-kpi-cards-must-also-be-wrapped-inside-a-single-shared-bordered-container-keep-the-same-totals-and-computations-currently-shown-in-admin-summary",
+      "title": "Update the Admin dashboard homepage to use the same design language as the User homepage and the uploaded reference image: the top totals area should use the same KPI layout (1 full-width card + 2 half-width cards) and those three KPI cards must also be wrapped inside a single shared bordered container; keep the same totals and computations currently shown in admin summary.",
       "reqIds": [
         "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-reorganize-and-style-the-admin-dashboard-homepage-menu-tiles-so-that-sections-are-visually-grouped-and-ordered-with-bordered-rounded-group-containers-consistent-with-the-reference-style-group-money-related-actions-together-group-work-related-actions-together-and-group-settings-related-actions-together-do-not-add-any-new-screens-and-do-not-change-what-any-tile-navigates-to",
+      "title": "Reorganize and style the Admin dashboard homepage menu tiles so that sections are visually grouped and ordered with bordered/rounded group containers consistent with the reference style: group money-related actions together, group work-related actions together, and group settings-related actions together; do not add any new screens and do not change what any tile navigates to.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-overall-screen-frame-border-and-per-section-borders-are-consistent-across-both-user-and-admin-homepages-including-a-clear-outer-screen-border-and-per-group-borders-matching-the-reference-image-s-emphasis-on-bordered-sections-while-keeping-all-existing-functionality-intact",
+      "title": "Ensure the overall screen/frame border and per-section borders are consistent across both User and Admin homepages (including a clear outer screen border and per-group borders), matching the reference image’s emphasis on bordered sections, while keeping all existing functionality intact.",
+      "reqIds": [
+        "REQ-5"
       ],
       "version": 1
     }
@@ -34,12 +52,12 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Update UI layout: enlarge top 3 circular buttons to span full screen width; keep other buttons as screenshot; group next 3 money-related buttons in a full-width bordered container; apply round shape for circular areas.",
+      "summary": "Redesign the homepage UI to match existing style (same colors/icons/logo), add borders/grouping for sections, order/layout sections, and apply same design to both user and admin without adding new screens while keeping functionality unchanged.",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "Admin dashboard UI update: large circular top 3 buttons + full-width bordered group for 3 money buttons",
+  "projectName": "Redesign User & Admin homepages to match uploaded reference layout with bordered section grouping",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

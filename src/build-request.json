@@ -1,74 +1,109 @@
 {
   "kind": "build_request",
-  "title": "Admin dashboard UI update: large circular top 3 buttons + full-width bordered group for 3 money buttons",
+  "title": "Redesign User & Admin homepages to match uploaded reference layout with bordered section grouping",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the Admin dashboard top summary area to match the uploaded screenshot: render the 3 summary items (Total Work/Total Taken/Total Due) as large circular buttons in a single row that spans the full available screen width, with consistent spacing and clear icon/label/value layout inside each circle.",
+      "text": "Update the User dashboard homepage layout to match the uploaded reference image (IMG_20260206_123940-2.jpg): keep the same colors/icons/logo style, but wrap the three KPI cards (Total Due, Total Work, Total Taken) inside a single shared bordered container, while preserving the KPI values and calculations.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-1"
+          "msg-1"
         ],
         "quotes": [
-          "এগুলোকে পুরো স্ক্রিন জুড়ে বড় আকারে দেখাতে চান?",
-          "এখানে সার্কের  তুমি দিবে  রাউন্ড শেপ"
+          "(মোট পাওনা, মোট কাজ, মোট নেওয়া)–এ\nএই তিনটি সেকশন একটি বর্ডারের ভিতরে"
         ]
       },
       "acceptanceCriteria": [
-        "On the Admin dashboard view, the top 3 summary actions are displayed as circles (not rounded rectangles) using fully round shape styling (e.g., fully-rounded).",
-        "The 3 circles appear in one horizontal row and collectively span the available content width (responsive on mobile).",
-        "Each circle shows its label and numeric value clearly; existing summary values remain correct (no logic changes to calculations).",
-        "The rest of the Admin dashboard layout below the top summary area remains functional and scrolls as before."
+        "On the User dashboard home view, the three KPI cards render together inside one shared container with a visible border and rounded corners (not three independent bordered blocks).",
+        "The KPI numbers shown remain unchanged from current behavior (same data source and calculations).",
+        "The overall visual style (colors/typography/rounded corners/shadows) remains consistent with the uploaded reference image."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Group the next 3 money-related Admin grid buttons (Payment/Loan, Company Report, Final Balance) inside a single full-width bordered container (one border surrounding all three), while keeping the individual button design consistent with the screenshot (same tile look, rounded corners, shadows).",
+      "text": "Update the User dashboard homepage action tiles to match the uploaded reference image layout and styling: display Production, Work, and Nasta tiles in one row (3 columns), and display Payment/Loan as a single tile on the next row aligned to the left; ensure each tile has a clear rounded border and shadow consistent with the reference, without changing what each tile does.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-1"
+          "msg-1"
         ],
         "quotes": [
-          "বাটন (যেগুলো টাকা‑সম্পর্কিত) একসাথে একটি বড় বর্ডারের ভিতরে ফুল‑স্ক্রিন চওড়ায় রাখতে হবে?",
-          "আরো পরের তিনটা বাটন ওগুলা একটা বর্ডারের ভিতর থাকবে ফুল স্ক্রিন"
+          "নিচের যে সেকশনগুলো আছে লোন পেমেন্ট এসব গুলা একটি একটি রাউন্ডের ভিতরে থাকবে আর প্রত্যেকটি সেকশনের অর্ডার দিয়ে দিবে"
         ]
       },
       "acceptanceCriteria": [
-        "In the Admin dashboard grid menu, the 3 money-related buttons are visually grouped inside one full-width container with a distinct border and rounded corners.",
-        "Inside the bordered container, the 3 buttons keep their existing per-button styling (gradient, icon, label, rounded tile shape, shadow) and remain clickable.",
-        "Buttons outside this money group (e.g., Production/Work/Nasta and other items) keep the same styling as before and are not unintentionally moved into the border group."
+        "User dashboard home action tiles are arranged as 3 tiles in the first row and 1 tile in the second row aligned left (matching the reference screenshot layout).",
+        "Each action tile has a rounded container with a visible border and consistent shadow treatment.",
+        "Clicking each tile still navigates to the same existing views as before (Production, Work, Payment history views, etc.)."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Ensure any UI element intended to be circular in the Admin dashboard (especially the top 3 circles) is perfectly round across devices (no oval distortion), including correct aspect ratio, centered content alignment, and consistent border thickness.",
+      "text": "Update the Admin dashboard homepage to use the same design language as the User homepage and the uploaded reference image: the top totals area should use the same KPI layout (1 full-width card + 2 half-width cards) and those three KPI cards must also be wrapped inside a single shared bordered container; keep the same totals and computations currently shown in admin summary.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-1"
+          "msg-1"
         ],
         "quotes": [
-          "এখানে সার্কের  তুমি দিবে  রাউন্ড শেপ"
+          "সেম ডিজাইন ইউজার এডমিন দোনো জায়গায় এপ্লাই হবে"
         ]
       },
       "acceptanceCriteria": [
-        "Top circular buttons remain perfectly circular (equal width/height) on common mobile widths.",
-        "Borders/shadows around circular buttons appear even and not clipped.",
-        "Touch/click targets are preserved and do not overlap the fixed header/footer."
+        "Admin dashboard 'dashboard' view shows the same KPI layout style as the User dashboard (1 wide card + 2 half cards).",
+        "The three admin KPI cards are inside one shared bordered container with rounded corners.",
+        "Admin totals values remain correct and based on the same underlying stored account data as before."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Reorganize and style the Admin dashboard homepage menu tiles so that sections are visually grouped and ordered with bordered/rounded group containers consistent with the reference style: group money-related actions together, group work-related actions together, and group settings-related actions together; do not add any new screens and do not change what any tile navigates to.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "টাকার সেকশন গুলা আছে এগুলা একপাশে রাখবে সেটিংসের গুলো এক পাশে রাখবে কাজের সেকশনগুলো রাখবে"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin dashboard menu tiles are grouped into clearly separated visual groups (each group has its own rounded border container).",
+        "Existing admin navigation destinations remain unchanged for each tile (Production, Work, Nasta, Payment/Loan, Company Report, Final Balance, Requests, Settings, Worker Rate Settings).",
+        "No new routes/views are introduced."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Ensure the overall screen/frame border and per-section borders are consistent across both User and Admin homepages (including a clear outer screen border and per-group borders), matching the reference image’s emphasis on bordered sections, while keeping all existing functionality intact.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "পুরা স্কিনে চারপাশে একটা বর্ডার দিয়ে"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Both User and Admin homepages show a clear outer frame border around the main content area.",
+        "Each grouped area (KPIs container and action group containers) has a visible border and rounded corners consistent with the reference image.",
+        "No functional regressions: login, logout, navigation, and all existing data displays/actions still work as before."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under frontend/immutablePaths (e.g., frontend/src/main.tsx, frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/components/ui/*).",
-    "Keep the backend as a single Motoko actor; no backend changes are required for this UI-only update."
+    "Do not add any additional screens beyond the existing ones.",
+    "Do not change existing business logic/data calculations; this is a UI layout/styling update only.",
+    "Do not modify files under frontend/src/components/ui (read-only components must be composed, not edited).",
+    "Keep all existing navigation targets and actions for tiles/buttons unchanged."
   ],
   "nonGoals": [
-    "Do not change Admin dashboard navigation behavior or routes beyond necessary layout restructuring.",
-    "Do not introduce new authentication methods or third-party integrations.",
-    "Do not redesign non-requested pages/sections (Production, Work, Nasta, Payment, etc.) beyond keeping their entry buttons styled as in the screenshot."
+    "Adding new admin/user features beyond layout/styling changes.",
+    "Changing the app’s language/content text (e.g., Bengali labels) unless required for layout.",
+    "Backend schema or Motoko actor changes."
   ],
   "imageRequirements": {
     "required": [],

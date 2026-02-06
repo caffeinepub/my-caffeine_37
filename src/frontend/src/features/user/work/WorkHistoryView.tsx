@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFoo
 import { safeGetItem } from '../../../lib/storage/safeStorage';
 import { ArrowLeft } from 'lucide-react';
 import { computeUserAmount } from '../../work/workAmount';
+import DashboardFooter from '../../../components/layout/DashboardFooter';
 
 interface WorkEntry {
   id: number;
@@ -54,8 +55,9 @@ export default function WorkHistoryView({ onBack }: WorkHistoryViewProps) {
   const totalTk = history.reduce((sum, h) => sum + calculateMyAmount(h), 0);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white py-6 px-4">
+    <div className="min-h-screen flex flex-col">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 z-20 bg-gradient-to-r from-teal-600 to-cyan-600 text-white py-6 px-4 shadow-xl">
         <div className="container mx-auto max-w-4xl">
           <Button
             onClick={onBack}
@@ -69,44 +71,52 @@ export default function WorkHistoryView({ onBack }: WorkHistoryViewProps) {
         </div>
       </div>
 
-      <div className="container mx-auto max-w-4xl px-4 py-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>আপনার কাজের রেকর্ড</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>তারিখ</TableHead>
-                    <TableHead className="text-center">সিঙ্গেল</TableHead>
-                    <TableHead className="text-center">ডাবল</TableHead>
-                    <TableHead className="text-right">আপনার টাকা</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {history.map((entry) => (
-                    <TableRow key={entry.id}>
-                      <TableCell>{entry.date}</TableCell>
-                      <TableCell className="text-center">{entry.s}</TableCell>
-                      <TableCell className="text-center">{entry.d}</TableCell>
-                      <TableCell className="text-right font-medium">
-                        ৳{calculateMyAmount(entry).toFixed(2)}
-                      </TableCell>
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto pt-[140px] pb-24 bg-slate-50">
+        <div className="container mx-auto max-w-4xl px-4 py-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>আপনার কাজের রেকর্ড</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>তারিখ</TableHead>
+                      <TableHead className="text-center">সিঙ্গেল</TableHead>
+                      <TableHead className="text-center">ডাবল</TableHead>
+                      <TableHead className="text-right">আপনার টাকা</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={3} className="font-bold">সর্বমোট</TableCell>
-                    <TableCell className="text-right font-bold">৳{totalTk.toFixed(2)}</TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {history.map((entry) => (
+                      <TableRow key={entry.id}>
+                        <TableCell>{entry.date}</TableCell>
+                        <TableCell className="text-center">{entry.s}</TableCell>
+                        <TableCell className="text-center">{entry.d}</TableCell>
+                        <TableCell className="text-right font-medium">
+                          ৳{calculateMyAmount(entry).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={3} className="font-bold">সর্বমোট</TableCell>
+                      <TableCell className="text-right font-bold">৳{totalTk.toFixed(2)}</TableCell>
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Fixed Footer */}
+      <div className="fixed bottom-0 left-0 right-0 z-20">
+        <DashboardFooter onSupportClick={() => {}} />
       </div>
     </div>
   );

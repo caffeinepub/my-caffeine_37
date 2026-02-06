@@ -41,31 +41,34 @@ export default function AdminPanel() {
         return (
           <DashboardFrame>
             <div className="flex flex-col h-full">
-              {/* Fixed Header */}
-              <div className="fixed top-0 left-0 right-0 z-20 bg-gradient-to-r from-blue-600 via-teal-500 to-purple-600 px-3 py-4 flex items-center justify-between shadow-xl">
+              {/* Fixed Header - Unified clean style matching User dashboard */}
+              <div className="fixed top-0 left-0 right-0 z-20 bg-white px-3 py-4 flex items-center justify-between shadow-md border-b-2 border-gray-200">
                 <div className="flex-1 text-center">
-                  <h1 className="text-2xl font-black text-white tracking-wide drop-shadow-lg" style={{ fontFamily: 'Impact, sans-serif' }}>
+                  <h1 className="text-2xl font-black text-gray-800 tracking-wide" style={{ fontFamily: 'Impact, sans-serif' }}>
                     ADMIN
                   </h1>
                 </div>
                 <button
                   type="button"
                   onClick={handleLogoutClick}
-                  className="flex-shrink-0 px-4 py-2 rounded-full bg-red-600 border-2 border-white shadow-xl flex items-center gap-2 hover:bg-red-700 transition-all active:scale-95 touch-manipulation"
+                  className="flex-shrink-0 px-4 py-2 rounded-full bg-red-600 border-2 border-red-700 shadow-md flex items-center gap-2 hover:bg-red-700 transition-all active:scale-95 touch-manipulation"
                 >
                   <LogOut className="w-5 h-5 text-white" />
                   <span className="text-white font-bold text-sm">LOGOUT</span>
                 </button>
               </div>
 
-              {/* Sticky Circular Summary Cards with top padding for fixed header */}
-              <div className="sticky top-[72px] z-10 bg-gradient-to-br from-gray-100 to-gray-200 px-3 py-4 shadow-lg mt-[72px]">
-                <AdminSummaryCards />
-              </div>
+              {/* Scrollable Content with top padding for fixed header */}
+              <div className="flex-1 overflow-y-auto pt-[72px] pb-24 px-3 bg-gray-100">
+                {/* Summary Cards - Now with same layout as User KPI */}
+                <div className="mt-3 mb-4">
+                  <AdminSummaryCards />
+                </div>
 
-              {/* Scrollable Content */}
-              <div className="flex-1 px-3 py-4 overflow-y-auto pb-32 bg-gradient-to-br from-gray-50 to-white">
-                <AdminGridMenu onNavigate={setActiveView} />
+                {/* Grid Menu - Now with bordered groups */}
+                <div className="mb-4">
+                  <AdminGridMenu onNavigate={setActiveView} />
+                </div>
               </div>
 
               {/* Fixed Footer */}

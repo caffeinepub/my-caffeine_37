@@ -27,40 +27,37 @@ export default function AdminSummaryCards() {
   };
 
   return (
-    <div className="w-full px-2">
-      <div className="flex justify-center gap-3">
-        {/* মোট কাজ - Green Circle */}
-        <div className="flex-1 max-w-[140px]">
-          <div className="relative aspect-square w-full">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-2xl border-4 border-green-400 flex flex-col items-center justify-center p-4">
-              <p className="text-white text-xs font-bold mb-2 text-center">মোট কাজ</p>
-              <div className="bg-black/80 rounded-full px-3 py-1.5 min-w-[60px]">
-                <p className="text-white text-sm font-bold text-center">{totalIncome.toFixed(0)}</p>
-              </div>
+    <div className="border-4 border-gray-900 rounded-3xl p-4 bg-white shadow-2xl">
+      <div className="space-y-3">
+        {/* Row 1: Full-width Due card - matching reference red card */}
+        <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-3xl p-5 shadow-lg border-2 border-gray-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <p className="text-white text-base font-bold">আমার মোট পাওনা</p>
             </div>
+          </div>
+          <div className="bg-white/90 rounded-2xl px-4 py-3">
+            <p className="text-gray-900 text-3xl font-bold text-center">{totalDue.toFixed(0)} ৳</p>
           </div>
         </div>
 
-        {/* মোট নেওয়া - Orange Circle */}
-        <div className="flex-1 max-w-[140px]">
-          <div className="relative aspect-square w-full">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 shadow-2xl border-4 border-orange-400 flex flex-col items-center justify-center p-4">
-              <p className="text-white text-xs font-bold mb-2 text-center">মোট নেওয়া</p>
-              <div className="bg-black/80 rounded-full px-3 py-1.5 min-w-[60px]">
-                <p className="text-white text-sm font-bold text-center">{totalExpense.toFixed(0)}</p>
-              </div>
+        {/* Row 2: Two half-width cards - matching reference green and gray cards */}
+        <div className="flex gap-3">
+          <div className="flex-1 bg-gradient-to-br from-green-600 to-green-700 rounded-3xl p-4 shadow-lg border-2 border-gray-300">
+            <div className="flex items-center gap-2 mb-2">
+              <p className="text-white text-sm font-bold">মোট কাজ</p>
+            </div>
+            <div className="bg-white/90 rounded-xl px-3 py-2">
+              <p className="text-gray-900 text-xl font-bold text-center">{totalIncome.toFixed(0)} ৳</p>
             </div>
           </div>
-        </div>
 
-        {/* পাওনা - Red Circle */}
-        <div className="flex-1 max-w-[140px]">
-          <div className="relative aspect-square w-full">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-500 to-red-600 shadow-2xl border-4 border-red-400 flex flex-col items-center justify-center p-4">
-              <p className="text-white text-xs font-bold mb-2 text-center">পাওনা</p>
-              <div className="bg-black/80 rounded-full px-3 py-1.5 min-w-[60px]">
-                <p className="text-white text-sm font-bold text-center">{totalDue.toFixed(0)}</p>
-              </div>
+          <div className="flex-1 bg-gradient-to-br from-slate-600 to-slate-700 rounded-3xl p-4 shadow-lg border-2 border-gray-300">
+            <div className="flex items-center gap-2 mb-2">
+              <p className="text-white text-sm font-bold">মোট নেওয়া</p>
+            </div>
+            <div className="bg-white/90 rounded-xl px-3 py-2">
+              <p className="text-gray-900 text-xl font-bold text-center">{totalExpense.toFixed(0)} ৳</p>
             </div>
           </div>
         </div>

@@ -1,31 +1,55 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-05T23:31:57.998Z",
+  "generatedAt": "2026-02-06T08:12:00.701Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 5,
+    "implemented": 5,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the Admin dashboard top summary area to match the uploaded screenshot: render the 3 summary items (Total Work/Total Taken/Total Due) as large circular buttons in a single row that spans the full available screen width, with consistent spacing and clear icon/label/value layout inside each circle.",
+        "summary": "Update the User dashboard homepage layout to match the uploaded reference image (IMG_20260206_123940-2.jpg): keep the same colors/icons/logo style, but wrap the three KPI cards (Total Due, Total Work, Total Taken) inside a single shared bordered container, while preserving the KPI values and calculations.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/components/AdminSummaryCards.tsx",
-          "frontend/src/features/admin/AdminPanel.tsx"
+          "frontend/src/features/user/components/UserKpiSummary.tsx",
+          "frontend/src/features/user/UserDashboard.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/components/AdminSummaryCards.tsx",
-          "frontend/src/features/admin/AdminPanel.tsx"
+          "frontend/src/features/user/components/UserKpiSummary.tsx",
+          "frontend/src/features/user/UserDashboard.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Group the next 3 money-related Admin grid buttons (Payment/Loan, Company Report, Final Balance) inside a single full-width bordered container (one border surrounding all three), while keeping the individual button design consistent with the screenshot (same tile look, rounded corners, shadows).",
+        "summary": "Update the User dashboard homepage action tiles to match the uploaded reference image layout and styling: display Production, Work, and Nasta tiles in one row (3 columns), and display Payment/Loan as a single tile on the next row aligned to the left; ensure each tile has a clear rounded border and shadow consistent with the reference, without changing what each tile does.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/features/user/UserDashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/features/user/UserDashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Update the Admin dashboard homepage to use the same design language as the User homepage and the uploaded reference image: the top totals area should use the same KPI layout (1 full-width card + 2 half-width cards) and those three KPI cards must also be wrapped inside a single shared bordered container; keep the same totals and computations currently shown in admin summary.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/features/admin/components/AdminSummaryCards.tsx",
+          "frontend/src/features/admin/AdminPanel.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/features/admin/components/AdminSummaryCards.tsx",
+          "frontend/src/features/admin/AdminPanel.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Reorganize and style the Admin dashboard homepage menu tiles so that sections are visually grouped and ordered with bordered/rounded group containers consistent with the reference style: group money-related actions together, group work-related actions together, and group settings-related actions together; do not add any new screens and do not change what any tile navigates to.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/features/admin/components/AdminGridMenu.tsx"
@@ -35,15 +59,16 @@
         ]
       },
       {
-        "id": "REQ-3",
-        "summary": "Ensure any UI element intended to be circular in the Admin dashboard (especially the top 3 circles) is perfectly round across devices (no oval distortion), including correct aspect ratio, centered content alignment, and consistent border thickness.",
+        "id": "REQ-5",
+        "summary": "Ensure the overall screen/frame border and per-section borders are consistent across both User and Admin homepages (including a clear outer screen border and per-group borders), matching the reference image’s emphasis on bordered sections, while keeping all existing functionality intact.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/components/AdminSummaryCards.tsx",
+          "frontend/src/components/layout/DashboardFrame.tsx",
+          "frontend/src/features/user/UserDashboard.tsx",
           "frontend/src/features/admin/AdminPanel.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/components/AdminSummaryCards.tsx",
+          "frontend/src/features/user/UserDashboard.tsx",
           "frontend/src/features/admin/AdminPanel.tsx"
         ]
       }
@@ -57,6 +82,8 @@
     "frontend/src/features/admin/AdminPanel.tsx",
     "frontend/src/features/admin/components/AdminGridMenu.tsx",
     "frontend/src/features/admin/components/AdminSummaryCards.tsx",
+    "frontend/src/features/user/UserDashboard.tsx",
+    "frontend/src/features/user/components/UserKpiSummary.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

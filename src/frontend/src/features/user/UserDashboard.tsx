@@ -9,8 +9,10 @@ import SupportView from '../support/SupportView';
 import DashboardFrame from '../../components/layout/DashboardFrame';
 import DashboardFooter from '../../components/layout/DashboardFooter';
 import { ConfirmDialog } from '../../components/feedback/ConfirmDialog';
-import { LogOut } from 'lucide-react';
+import { LogOut, Camera } from 'lucide-react';
 import UserKpiSummary from './components/UserKpiSummary';
+import ClockCard from './components/ClockCard';
+import ActionTile from '../../components/dashboard/ActionTile';
 
 type ViewMode = 'dashboard' | 'production' | 'work' | 'payment' | 'profile' | 'support';
 
@@ -68,10 +70,10 @@ export default function UserDashboard() {
     <>
       <DashboardFrame>
         <div className="flex flex-col h-full">
-          {/* Fixed Header */}
-          <div className="fixed top-0 left-0 right-0 z-20 bg-gradient-to-r from-purple-500 via-pink-400 to-orange-400 px-3 py-4 flex items-center justify-between shadow-xl">
+          {/* Fixed Header - Unified clean style */}
+          <div className="fixed top-0 left-0 right-0 z-20 bg-white px-3 py-4 flex items-center justify-between shadow-md border-b-2 border-gray-200">
             <div className="flex items-center gap-2">
-              <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center overflow-hidden border-2 border-white shadow-lg">
+              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border-2 border-gray-300 shadow-sm">
                 <img
                   src="/assets/generated/worker-avatar-placeholder.dim_512x512.png"
                   alt="Avatar"
@@ -79,88 +81,73 @@ export default function UserDashboard() {
                 />
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold text-white">{session?.userName || 'User'}</h1>
-                  <span className="px-2 py-0.5 bg-white/30 backdrop-blur-sm rounded-full text-[10px] font-bold text-white border border-white/50">
-                    v14
-                  </span>
-                </div>
-                <p className="text-xs text-white/90">User Dashboard</p>
+                <h1 className="text-xl font-bold text-gray-800">{session?.userName || 'User'}</h1>
               </div>
             </div>
-            <button
-              onClick={() => setShowLogoutDialog(true)}
-              className="flex-shrink-0 px-3 py-2 rounded-xl bg-white/20 backdrop-blur-sm border-2 border-white/40 shadow-xl flex items-center gap-2 hover:bg-white/30 transition-all"
-            >
-              <LogOut className="w-5 h-5 text-white" />
-              <span className="text-white font-bold text-xs">Log out</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button className="p-2 rounded-full bg-gray-100 border-2 border-gray-300 shadow-sm hover:bg-gray-200 transition-all">
+                <Camera className="w-5 h-5 text-gray-700" />
+              </button>
+              <button
+                onClick={() => setShowLogoutDialog(true)}
+                className="px-4 py-2 rounded-full bg-red-600 border-2 border-red-700 shadow-md flex items-center gap-2 hover:bg-red-700 transition-all"
+              >
+                <span className="text-white font-bold text-sm">LOGOUT</span>
+              </button>
+            </div>
           </div>
 
-          {/* Sticky KPI Cards with top padding for fixed header */}
-          <div className="sticky top-[88px] z-10 bg-white px-3 py-3 shadow-lg mt-[88px]">
-            <UserKpiSummary totalDue={totalDue} totalWork={totalWork} totalCost={totalCost} />
-          </div>
+          {/* Scrollable Content with top padding for fixed header */}
+          <div className="flex-1 overflow-y-auto pt-[88px] pb-24 px-3 bg-gray-100">
+            {/* Clock Card - Only on User Dashboard */}
+            <div className="mt-3 mb-3">
+              <ClockCard />
+            </div>
 
-          {/* Scrollable Content */}
-          <div className="flex-1 px-3 py-4 overflow-y-auto pb-32">
-            {/* Action Grid */}
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                onClick={() => setViewMode('production')}
-                className="bg-gradient-to-br from-green-600 to-green-700 rounded-3xl p-6 shadow-xl border-2 border-gray-700 hover:scale-105 transition-transform active:scale-95"
-              >
-                <div className="flex flex-col items-center gap-3">
-                  <img
-                    src="/assets/generated/icon-production.dim_256x256.png"
-                    alt="প্রোডাকশন"
-                    className="w-16 h-16"
-                  />
-                  <p className="text-white text-base font-bold">প্রোডাকশন</p>
-                </div>
-              </button>
+            {/* KPI Summary - Now wrapped in bordered container */}
+            <div className="mb-4">
+              <UserKpiSummary totalDue={totalDue} totalWork={totalWork} totalCost={totalCost} />
+            </div>
 
-              <button
-                onClick={() => setViewMode('work')}
-                className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-6 shadow-xl border-2 border-gray-700 hover:scale-105 transition-transform active:scale-95"
-              >
-                <div className="flex flex-col items-center gap-3">
-                  <img
-                    src="/assets/generated/icon-work.dim_256x256.png"
-                    alt="কাজ"
-                    className="w-16 h-16"
+            {/* Action Grid - 3 tiles in first row, 1 tile in second row */}
+            <div className="border-4 border-gray-900 rounded-3xl p-4 bg-white shadow-2xl">
+              <div className="space-y-3">
+                {/* First row: 3 tiles */}
+                <div className="grid grid-cols-3 gap-3">
+                  <ActionTile
+                    icon="/assets/generated/icon-production.dim_256x256.png"
+                    label="প্রোডাকশন"
+                    onClick={() => setViewMode('production')}
+                    bgGradient="from-green-600 to-green-700"
+                    size="small"
                   />
-                  <p className="text-white text-base font-bold">কাজ</p>
+                  <ActionTile
+                    icon="/assets/generated/icon-work.dim_256x256.png"
+                    label="কাজ"
+                    onClick={() => setViewMode('work')}
+                    bgGradient="from-pink-600 to-pink-700"
+                    size="small"
+                  />
+                  <ActionTile
+                    icon="/assets/generated/icon-nasta.dim_256x256.png"
+                    label="নাস্তা"
+                    onClick={() => setViewMode('payment')}
+                    bgGradient="from-slate-600 to-slate-700"
+                    size="small"
+                  />
                 </div>
-              </button>
 
-              <button
-                onClick={() => setViewMode('payment')}
-                className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-3xl p-6 shadow-xl border-2 border-gray-700 hover:scale-105 transition-transform active:scale-95"
-              >
-                <div className="flex flex-col items-center gap-3">
-                  <img
-                    src="/assets/generated/icon-payment-loan.dim_256x256.png"
-                    alt="পেমেন্ট"
-                    className="w-16 h-16"
+                {/* Second row: 1 tile aligned left */}
+                <div className="grid grid-cols-3 gap-3">
+                  <ActionTile
+                    icon="/assets/generated/icon-payment-loan.dim_256x256.png"
+                    label="পেমেন্ট/লোন"
+                    onClick={() => setViewMode('payment')}
+                    bgGradient="from-blue-700 to-blue-800"
+                    size="small"
                   />
-                  <p className="text-white text-base font-bold">পেমেন্ট</p>
                 </div>
-              </button>
-
-              <button
-                onClick={() => setViewMode('profile')}
-                className="bg-gradient-to-br from-teal-600 to-teal-700 rounded-3xl p-6 shadow-xl border-2 border-gray-700 hover:scale-105 transition-transform active:scale-95"
-              >
-                <div className="flex flex-col items-center gap-3">
-                  <img
-                    src="/assets/generated/icon-settings.dim_256x256.png"
-                    alt="প্রোফাইল সেটিংস"
-                    className="w-16 h-16"
-                  />
-                  <p className="text-white text-base font-bold">প্রোফাইল সেটিংস</p>
-                </div>
-              </button>
+              </div>
             </div>
           </div>
 

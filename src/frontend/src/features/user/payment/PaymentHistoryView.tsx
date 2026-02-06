@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFoo
 import { Badge } from '../../../components/ui/badge';
 import { safeGetItem } from '../../../lib/storage/safeStorage';
 import { ArrowLeft } from 'lucide-react';
+import DashboardFooter from '../../../components/layout/DashboardFooter';
 
 interface PaymentEntry {
   id: number;
@@ -91,8 +92,9 @@ export default function PaymentHistoryView({ onBack }: PaymentHistoryViewProps) 
   const totalAmount = history.reduce((sum, h) => sum + h.myAmount, 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
-      <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 text-white py-6 px-4 shadow-xl">
+    <div className="min-h-screen flex flex-col">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 z-20 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 text-white py-6 px-4 shadow-xl">
         <div className="container mx-auto max-w-4xl">
           <Button
             onClick={onBack}
@@ -106,63 +108,71 @@ export default function PaymentHistoryView({ onBack }: PaymentHistoryViewProps) 
         </div>
       </div>
 
-      <div className="container mx-auto max-w-4xl px-4 py-6">
-        <Card className="shadow-xl border-2 border-purple-200">
-          <CardHeader className="bg-gradient-to-r from-purple-100 to-pink-100">
-            <CardTitle className="text-purple-900">আপনার পেমেন্ট রেকর্ড</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
-            {isLoading ? (
-              <div className="text-center py-12">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent"></div>
-                <p className="mt-4 text-muted-foreground">লোড হচ্ছে...</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>তারিখ</TableHead>
-                      <TableHead>ধরন</TableHead>
-                      <TableHead>বিবরণ</TableHead>
-                      <TableHead className="text-right">পরিমাণ</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {history.length === 0 ? (
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto pt-[140px] pb-24 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+        <div className="container mx-auto max-w-4xl px-4 py-6">
+          <Card className="shadow-xl border-2 border-purple-200">
+            <CardHeader className="bg-gradient-to-r from-purple-100 to-pink-100">
+              <CardTitle className="text-purple-900">আপনার পেমেন্ট রেকর্ড</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              {isLoading ? (
+                <div className="text-center py-12">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent"></div>
+                  <p className="mt-4 text-muted-foreground">লোড হচ্ছে...</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center text-muted-foreground py-12">
-                          কোনো রেকর্ড নেই
-                        </TableCell>
+                        <TableHead>তারিখ</TableHead>
+                        <TableHead>ধরন</TableHead>
+                        <TableHead>বিবরণ</TableHead>
+                        <TableHead className="text-right">পরিমাণ</TableHead>
                       </TableRow>
-                    ) : (
-                      history.map((item, idx) => (
-                        <TableRow key={idx}>
-                          <TableCell className="font-medium">{item.entry.date || '-'}</TableCell>
-                          <TableCell>
-                            <Badge variant={item.type === 'Payment' ? 'destructive' : 'secondary'} className="font-bold">
-                              {item.type}
-                            </Badge>
+                    </TableHeader>
+                    <TableBody>
+                      {history.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center text-muted-foreground py-12">
+                            কোনো রেকর্ড নেই
                           </TableCell>
-                          <TableCell>{item.entry.note || '-'}</TableCell>
-                          <TableCell className="text-right font-bold text-lg">৳{item.myAmount.toFixed(2)}</TableCell>
                         </TableRow>
-                      ))
+                      ) : (
+                        history.map((item, idx) => (
+                          <TableRow key={idx}>
+                            <TableCell className="font-medium">{item.entry.date || '-'}</TableCell>
+                            <TableCell>
+                              <Badge variant={item.type === 'Payment' ? 'destructive' : 'secondary'} className="font-bold">
+                                {item.type}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>{item.entry.note || '-'}</TableCell>
+                            <TableCell className="text-right font-bold text-lg">৳{item.myAmount.toFixed(2)}</TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                    {history.length > 0 && (
+                      <TableFooter>
+                        <TableRow className="bg-purple-100">
+                          <TableCell colSpan={3} className="font-bold text-lg">সর্বমোট</TableCell>
+                          <TableCell className="text-right font-bold text-xl text-purple-900">৳{totalAmount.toFixed(2)}</TableCell>
+                        </TableRow>
+                      </TableFooter>
                     )}
-                  </TableBody>
-                  {history.length > 0 && (
-                    <TableFooter>
-                      <TableRow className="bg-purple-100">
-                        <TableCell colSpan={3} className="font-bold text-lg">সর্বমোট</TableCell>
-                        <TableCell className="text-right font-bold text-xl text-purple-900">৳{totalAmount.toFixed(2)}</TableCell>
-                      </TableRow>
-                    </TableFooter>
-                  )}
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Fixed Footer */}
+      <div className="fixed bottom-0 left-0 right-0 z-20">
+        <DashboardFooter onSupportClick={() => {}} />
       </div>
     </div>
   );

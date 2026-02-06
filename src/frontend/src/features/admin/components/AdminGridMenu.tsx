@@ -1,11 +1,12 @@
 import { AdminView } from './adminNavTypes';
+import ActionTile from '../../../components/dashboard/ActionTile';
 
 interface AdminGridMenuProps {
   onNavigate: (view: AdminView) => void;
 }
 
 export default function AdminGridMenu({ onNavigate }: AdminGridMenuProps) {
-  const topRowItems = [
+  const workItems = [
     {
       id: 'production' as AdminView,
       label: 'প্রোডাকশন',
@@ -31,7 +32,7 @@ export default function AdminGridMenu({ onNavigate }: AdminGridMenuProps) {
       id: 'payment' as AdminView,
       label: 'পেমেন্ট/লোন',
       icon: '/assets/generated/icon-payment-loan.dim_256x256.png',
-      bgColor: 'from-purple-500 to-purple-600',
+      bgColor: 'from-blue-700 to-blue-800',
     },
     {
       id: 'company-report' as AdminView,
@@ -43,11 +44,11 @@ export default function AdminGridMenu({ onNavigate }: AdminGridMenuProps) {
       id: 'final-balance' as AdminView,
       label: 'চূড়ান্ত ব্যালেন্স',
       icon: '/assets/generated/icon-due-balance.dim_256x256.png',
-      bgColor: 'from-blue-600 to-blue-700',
+      bgColor: 'from-purple-500 to-purple-600',
     },
   ];
 
-  const bottomRowItems = [
+  const settingsItems = [
     {
       id: 'user-requests' as AdminView,
       label: 'রিকোয়েস্ট',
@@ -69,55 +70,53 @@ export default function AdminGridMenu({ onNavigate }: AdminGridMenuProps) {
   ];
 
   return (
-    <div className="space-y-3">
-      {/* Top Row - 3 buttons */}
-      <div className="grid grid-cols-3 gap-2">
-        {topRowItems.map((item, index) => (
-          <button
-            key={index}
-            onClick={() => onNavigate(item.id)}
-            className={`bg-gradient-to-br ${item.bgColor} rounded-2xl p-4 shadow-lg hover:scale-105 transition-transform active:scale-95`}
-          >
-            <div className="flex flex-col items-center gap-2">
-              <img src={item.icon} alt={item.label} className="w-12 h-12" />
-              <p className="text-white text-xs font-bold text-center leading-tight">{item.label}</p>
-            </div>
-          </button>
-        ))}
-      </div>
-
-      {/* Money Group - Bordered Container */}
-      <div className="border-4 border-gray-800 rounded-3xl p-3 bg-gradient-to-br from-gray-50 to-gray-100 shadow-xl">
-        <div className="grid grid-cols-3 gap-2">
-          {moneyItems.map((item, index) => (
-            <button
-              key={index}
+    <div className="space-y-4">
+      {/* Work Group - Bordered Container */}
+      <div className="border-4 border-gray-900 rounded-3xl p-4 bg-white shadow-2xl">
+        <div className="grid grid-cols-3 gap-3">
+          {workItems.map((item) => (
+            <ActionTile
+              key={item.id}
+              icon={item.icon}
+              label={item.label}
               onClick={() => onNavigate(item.id)}
-              className={`bg-gradient-to-br ${item.bgColor} rounded-2xl p-4 shadow-lg hover:scale-105 transition-transform active:scale-95`}
-            >
-              <div className="flex flex-col items-center gap-2">
-                <img src={item.icon} alt={item.label} className="w-12 h-12" />
-                <p className="text-white text-xs font-bold text-center leading-tight">{item.label}</p>
-              </div>
-            </button>
+              bgGradient={item.bgColor}
+              size="small"
+            />
           ))}
         </div>
       </div>
 
-      {/* Bottom Row - 3 buttons */}
-      <div className="grid grid-cols-3 gap-2">
-        {bottomRowItems.map((item, index) => (
-          <button
-            key={index}
-            onClick={() => onNavigate(item.id)}
-            className={`bg-gradient-to-br ${item.bgColor} rounded-2xl p-4 shadow-lg hover:scale-105 transition-transform active:scale-95`}
-          >
-            <div className="flex flex-col items-center gap-2">
-              <img src={item.icon} alt={item.label} className="w-12 h-12" />
-              <p className="text-white text-xs font-bold text-center leading-tight">{item.label}</p>
-            </div>
-          </button>
-        ))}
+      {/* Money Group - Bordered Container */}
+      <div className="border-4 border-gray-900 rounded-3xl p-4 bg-white shadow-2xl">
+        <div className="grid grid-cols-3 gap-3">
+          {moneyItems.map((item) => (
+            <ActionTile
+              key={item.id}
+              icon={item.icon}
+              label={item.label}
+              onClick={() => onNavigate(item.id)}
+              bgGradient={item.bgColor}
+              size="small"
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Settings Group - Bordered Container */}
+      <div className="border-4 border-gray-900 rounded-3xl p-4 bg-white shadow-2xl">
+        <div className="grid grid-cols-3 gap-3">
+          {settingsItems.map((item) => (
+            <ActionTile
+              key={item.id}
+              icon={item.icon}
+              label={item.label}
+              onClick={() => onNavigate(item.id)}
+              bgGradient={item.bgColor}
+              size="small"
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
