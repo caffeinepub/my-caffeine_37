@@ -4,17 +4,33 @@ import { safeGetItem } from '../../lib/storage/safeStorage';
 import ProductionHistoryView from './production/ProductionHistoryView';
 import WorkHistoryView from './work/WorkHistoryView';
 import PaymentHistoryView from './payment/PaymentHistoryView';
+import NastaHistoryView from './payment/NastaHistoryView';
 import ProfileSettingsView from './profile/ProfileSettingsView';
 import SupportView from '../support/SupportView';
 import DashboardFrame from '../../components/layout/DashboardFrame';
 import DashboardFooter from '../../components/layout/DashboardFooter';
+import PopupModal from '../../components/layout/PopupModal';
 import { ConfirmDialog } from '../../components/feedback/ConfirmDialog';
-import { LogOut, Camera } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import UserKpiSummary from './components/UserKpiSummary';
 import ClockCard from './components/ClockCard';
 import ActionTile from '../../components/dashboard/ActionTile';
+import {
+  lowerSectionBorder,
+  lowerSectionPadding,
+  lowerSectionRadius,
+  lowerSectionShadow,
+  lowerSectionBg,
+  kpiGroupBorder,
+  kpiGroupPadding,
+  kpiGroupRadius,
+  kpiGroupShadow,
+  kpiGroupBg,
+} from '../../components/dashboard/dashboardBorders';
+import { getProfilePhoto } from '../../lib/storage/userProfileStorage';
+import { useUserNotice } from '../../hooks/useUserNotice';
 
-type ViewMode = 'dashboard' | 'production' | 'work' | 'payment' | 'profile' | 'support';
+type ViewMode = 'dashboard' | 'production' | 'work' | 'payment' | 'nasta' | 'profile' | 'support';
 
 export default function UserDashboard() {
   const { session, logout } = useSession();
@@ -23,10 +39,14 @@ export default function UserDashboard() {
   const [totalWork, setTotalWork] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
   const [totalDue, setTotalDue] = useState(0);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const noticeConfig = useUserNotice();
 
   useEffect(() => {
     if (session?.userName) {
       loadUserData();
+      const photo = getProfilePhoto(session.userName);
+      setProfilePhoto(photo);
     }
   }, [session?.userName]);
 
@@ -46,126 +66,149 @@ export default function UserDashboard() {
     setShowLogoutDialog(false);
   };
 
-  if (viewMode === 'production') {
-    return <ProductionHistoryView onBack={() => setViewMode('dashboard')} />;
-  }
+  const renderModalContent = () => {
+    switch (viewMode) {
+      case 'production':
+        return <ProductionHistoryView onBack={() => setViewMode('dashboard')} />;
+      case 'work':
+        return <WorkHistoryView onBack={() => setViewMode('dashboard')} />;
+      case 'payment':
+        return <PaymentHistoryView onBack={() => setViewMode('dashboard')} />;
+      case 'nasta':
+        return <NastaHistoryView />;
+      case 'profile':
+        return <ProfileSettingsView onBack={() => setViewMode('dashboard')} />;
+      case 'support':
+        return <SupportView onBack={() => setViewMode('dashboard')} />;
+      default:
+        return null;
+    }
+  };
 
-  if (viewMode === 'work') {
-    return <WorkHistoryView onBack={() => setViewMode('dashboard')} />;
-  }
-
-  if (viewMode === 'payment') {
-    return <PaymentHistoryView onBack={() => setViewMode('dashboard')} />;
-  }
-
-  if (viewMode === 'profile') {
-    return <ProfileSettingsView onBack={() => setViewMode('dashboard')} />;
-  }
-
-  if (viewMode === 'support') {
-    return <SupportView onBack={() => setViewMode('dashboard')} />;
+  if (viewMode === 'profile' || viewMode === 'support') {
+    return renderModalContent();
   }
 
   return (
     <>
       <DashboardFrame>
         <div className="flex flex-col h-full">
-          {/* Fixed Header - Unified clean style */}
-          <div className="fixed top-0 left-0 right-0 z-20 bg-white px-3 py-4 flex items-center justify-between shadow-md border-b-2 border-gray-200">
-            <div className="flex items-center gap-2">
-              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border-2 border-gray-300 shadow-sm">
-                <img
-                  src="/assets/generated/worker-avatar-placeholder.dim_512x512.png"
-                  alt="Avatar"
-                  className="w-full h-full object-cover"
-                />
+          {/* Fixed Header - Dashboard gradient with prominent username */}
+          <div className="fixed top-0 left-0 right-0 z-20 dashboard-gradient px-2 py-2 flex items-center justify-between shadow-md border-b-2 border-blue-900">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/50 shadow-md flex-shrink-0">
+                {profilePhoto ? (
+                  <img
+                    src={profilePhoto}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-teal-400 to-cyan-500" />
+                )}
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-800">{session?.userName || 'User'}</h1>
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="text-white/80 text-[10px] font-medium">User: {session?.userId || 'N/A'}</span>
+                <h1 className="text-xl font-black gradient-username tracking-wide leading-tight truncate" style={{ fontFamily: 'Impact, sans-serif' }}>
+                  {session?.userName || 'User'}
+                </h1>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <button className="p-2 rounded-full bg-gray-100 border-2 border-gray-300 shadow-sm hover:bg-gray-200 transition-all">
-                <Camera className="w-5 h-5 text-gray-700" />
-              </button>
-              <button
-                onClick={() => setShowLogoutDialog(true)}
-                className="px-4 py-2 rounded-full bg-red-600 border-2 border-red-700 shadow-md flex items-center gap-2 hover:bg-red-700 transition-all"
-              >
-                <span className="text-white font-bold text-sm">LOGOUT</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setShowLogoutDialog(true)}
+              className="flex-shrink-0 px-2.5 py-1.5 rounded-full bg-red-600 border-2 border-red-700 shadow-md flex items-center gap-1 hover:bg-red-700 transition-all active:scale-95 touch-manipulation"
+            >
+              <LogOut className="w-3.5 h-3.5 text-white" />
+              <span className="text-white font-bold text-[10px]">LOGOUT</span>
+            </button>
           </div>
 
-          {/* Scrollable Content with top padding for fixed header */}
-          <div className="flex-1 overflow-y-auto pt-[88px] pb-24 px-3 bg-gray-100">
-            {/* Clock Card - Only on User Dashboard */}
-            <div className="mt-3 mb-3">
+          {/* Scrollable Content with professional background */}
+          <div className="flex-1 overflow-y-auto overflow-x-hidden pt-[56px] pb-[72px] px-2 dashboard-professional-bg">
+            {/* Notice Marquee */}
+            {noticeConfig.enabled && noticeConfig.text && (
+              <div className="mb-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white py-1.5 px-3 rounded-lg shadow-md overflow-hidden">
+                <div className="marquee-container">
+                  <div className="marquee-content">
+                    <span className="font-bold text-xs">{noticeConfig.text}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Clock Card - Reduced size */}
+            <div className="mb-2">
               <ClockCard />
             </div>
 
-            {/* KPI Summary - Now wrapped in bordered container */}
-            <div className="mb-4">
-              <UserKpiSummary totalDue={totalDue} totalWork={totalWork} totalCost={totalCost} />
+            {/* KPI Summary - Wrapped in bordered container */}
+            <div className={`mb-2 ${kpiGroupBorder} ${kpiGroupPadding} ${kpiGroupRadius} ${kpiGroupShadow} ${kpiGroupBg}`}>
+              <UserKpiSummary totalWork={totalWork} totalCost={totalCost} totalDue={totalDue} />
             </div>
 
-            {/* Action Grid - 3 tiles in first row, 1 tile in second row */}
-            <div className="border-4 border-gray-900 rounded-3xl p-4 bg-white shadow-2xl">
-              <div className="space-y-3">
-                {/* First row: 3 tiles */}
-                <div className="grid grid-cols-3 gap-3">
-                  <ActionTile
-                    icon="/assets/generated/icon-production.dim_256x256.png"
-                    label="প্রোডাকশন"
-                    onClick={() => setViewMode('production')}
-                    bgGradient="from-green-600 to-green-700"
-                    size="small"
-                  />
-                  <ActionTile
-                    icon="/assets/generated/icon-work.dim_256x256.png"
-                    label="কাজ"
-                    onClick={() => setViewMode('work')}
-                    bgGradient="from-pink-600 to-pink-700"
-                    size="small"
-                  />
-                  <ActionTile
-                    icon="/assets/generated/icon-nasta.dim_256x256.png"
-                    label="নাস্তা"
-                    onClick={() => setViewMode('payment')}
-                    bgGradient="from-slate-600 to-slate-700"
-                    size="small"
-                  />
-                </div>
-
-                {/* Second row: 1 tile aligned left */}
-                <div className="grid grid-cols-3 gap-3">
-                  <ActionTile
-                    icon="/assets/generated/icon-payment-loan.dim_256x256.png"
-                    label="পেমেন্ট/লোন"
-                    onClick={() => setViewMode('payment')}
-                    bgGradient="from-blue-700 to-blue-800"
-                    size="small"
-                  />
-                </div>
+            {/* Action Tiles - Wrapped in bordered container with reduced size */}
+            <div className={`${lowerSectionBorder} ${lowerSectionPadding} ${lowerSectionRadius} ${lowerSectionShadow} ${lowerSectionBg}`}>
+              <div className="grid grid-cols-2 gap-2 w-full">
+                <ActionTile
+                  label="প্রোডাকশন"
+                  icon="/assets/generated/icon-production.dim_256x256.png"
+                  onClick={() => setViewMode('production')}
+                  bgGradient="from-emerald-500 to-teal-600"
+                  size="small"
+                />
+                <ActionTile
+                  label="কাজ"
+                  icon="/assets/generated/icon-work.dim_256x256.png"
+                  onClick={() => setViewMode('work')}
+                  bgGradient="from-cyan-500 to-blue-600"
+                  size="small"
+                />
+                <ActionTile
+                  label="নাস্তা"
+                  icon="/assets/generated/icon-nasta.dim_256x256.png"
+                  onClick={() => setViewMode('nasta')}
+                  bgGradient="from-amber-500 to-orange-600"
+                  size="small"
+                />
+                <ActionTile
+                  label="পেমেন্ট/লোন"
+                  icon="/assets/generated/icon-payment-loan.dim_256x256.png"
+                  onClick={() => setViewMode('payment')}
+                  bgGradient="from-rose-500 to-pink-600"
+                  size="small"
+                />
               </div>
             </div>
           </div>
 
           {/* Fixed Footer */}
           <div className="fixed bottom-0 left-0 right-0 z-20">
-            <DashboardFooter onSupportClick={() => setViewMode('support')} />
+            <DashboardFooter 
+              onSupportClick={() => setViewMode('support')} 
+              onSettingsClick={() => setViewMode('profile')}
+            />
           </div>
         </div>
       </DashboardFrame>
 
+      {/* Popup Modal for History Views */}
+      <PopupModal
+        isOpen={viewMode === 'production' || viewMode === 'work' || viewMode === 'payment' || viewMode === 'nasta'}
+        onClose={() => setViewMode('dashboard')}
+      >
+        {renderModalContent()}
+      </PopupModal>
+
+      {/* Logout Confirmation Dialog */}
       <ConfirmDialog
         open={showLogoutDialog}
         onOpenChange={setShowLogoutDialog}
-        title="লগআউট নিশ্চিত করুন"
-        description="আপনি কি নিশ্চিত যে আপনি লগআউট করতে চান?"
+        title="Confirm Logout"
+        description="Are you sure you want to log out?"
         onConfirm={handleLogout}
-        confirmText="হ্যাঁ, লগআউট করুন"
-        cancelText="না, থাকুন"
+        confirmText="Yes, Log out"
+        cancelText="Cancel"
         variant="default"
       />
     </>

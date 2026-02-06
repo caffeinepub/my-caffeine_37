@@ -2,10 +2,34 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-user-dashboard-homepage-layout-to-match-the-uploaded-reference-image-img-20260206-123940-2-jpg-keep-the-same-colors-icons-logo-style-but-wrap-the-three-kpi-cards-total-due-total-work-total-taken-inside-a-single-shared-bordered-container-while-preserving-the-kpi-values-and-calculations",
-      "featureTitle": "Update the User dashboard homepage layout to match the uploaded reference image (IMG_20260206_123940-2.jpg): keep the same colors/icons/logo style, but wrap the three KPI cards (Total Due, Total Work, Total Taken) inside a single shared bordered container, while preserving the KPI values and calculations.",
+      "featureId": "feature-update-the-user-dashboard-header-so-the-logged-in-user-name-is-visually-prominent-larger-size-attractive-designer-chosen-coloring-gradient-and-does-not-appear-as-plain-white-text-keep-the-header-showing-both-the-numeric-user-id-and-the-user-name-and-apply-the-styling-consistently-for-any-user-including-the-example-user-opu-id-1",
+      "featureTitle": "Update the User Dashboard header so the logged-in user name is visually prominent (larger size + attractive designer-chosen coloring/gradient) and does not appear as plain white text. Keep the header showing both the numeric user ID and the user name, and apply the styling consistently for any user (including the example user OPU, id=1).",
       "files": [
         "frontend/src/features/user/UserDashboard.tsx",
+        "frontend/src/index.css"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "user-approval@3.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-adjust-the-user-dashboard-main-dashboard-layout-so-the-four-action-tiles-production-payment-loan-work-snack-and-the-clock-card-fit-within-the-viewport-without-the-tiles-overflowing-outside-the-screen-reduce-the-visual-size-of-the-tiles-card-padding-icon-text-aspect-where-needed-and-make-the-clock-card-slightly-smaller-so-the-dashboard-content-fits-on-screen-without-requiring-vertical-scrolling-to-reach-the-tiles-on-common-mobile-devices",
+      "featureTitle": "Adjust the User Dashboard main (dashboard) layout so the four action tiles (Production, Payment/Loan, Work, Snack) and the clock card fit within the viewport without the tiles overflowing outside the screen. Reduce the visual size of the tiles (card padding/icon/text/aspect where needed) and make the clock card slightly smaller so the dashboard content fits on-screen without requiring vertical scrolling to reach the tiles on common mobile devices.",
+      "files": [
+        "frontend/src/components/dashboard/ActionTile.tsx",
+        "frontend/src/features/user/UserDashboard.tsx",
+        "frontend/src/features/user/components/ClockCard.tsx",
         "frontend/src/features/user/components/UserKpiSummary.tsx"
       ],
       "components": [
@@ -15,27 +39,8 @@
         "initial-app@1.0.0",
         "github-export-icp-cli@1.0.0",
         "authorization@4.0.0",
-        "user-approval@3.0.0"
-      ],
-      "testIds": [
-        "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-the-user-dashboard-homepage-action-tiles-to-match-the-uploaded-reference-image-layout-and-styling-display-production-work-and-nasta-tiles-in-one-row-3-columns-and-display-payment-loan-as-a-single-tile-on-the-next-row-aligned-to-the-left-ensure-each-tile-has-a-clear-rounded-border-and-shadow-consistent-with-the-reference-without-changing-what-each-tile-does",
-      "featureTitle": "Update the User dashboard homepage action tiles to match the uploaded reference image layout and styling: display Production, Work, and Nasta tiles in one row (3 columns), and display Payment/Loan as a single tile on the next row aligned to the left; ensure each tile has a clear rounded border and shadow consistent with the reference, without changing what each tile does.",
-      "files": [
-        "frontend/src/features/user/UserDashboard.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "user-approval@3.0.0"
+        "user-approval@3.0.0",
+        "blob-storage@4.0.0"
       ],
       "testIds": [
         "REQ-2"
@@ -43,11 +48,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-admin-dashboard-homepage-to-use-the-same-design-language-as-the-user-homepage-and-the-uploaded-reference-image-the-top-totals-area-should-use-the-same-kpi-layout-1-full-width-card-2-half-width-cards-and-those-three-kpi-cards-must-also-be-wrapped-inside-a-single-shared-bordered-container-keep-the-same-totals-and-computations-currently-shown-in-admin-summary",
-      "featureTitle": "Update the Admin dashboard homepage to use the same design language as the User homepage and the uploaded reference image: the top totals area should use the same KPI layout (1 full-width card + 2 half-width cards) and those three KPI cards must also be wrapped inside a single shared bordered container; keep the same totals and computations currently shown in admin summary.",
+      "featureId": "feature-restyle-the-new-user-registration-form-registerview-so-it-has-a-clear-attractive-color-theme-designer-choice-rather-than-appearing-uncolored-plain-apply-cohesive-colors-to-the-registration-card-background-form-fields-borders-focus-headings-and-primary-submit-button-while-keeping-readability-and-contrast",
+      "featureTitle": "Restyle the new user registration form (RegisterView) so it has a clear, attractive color theme (designer choice) rather than appearing uncolored/plain. Apply cohesive colors to the registration card background, form fields (borders/focus), headings, and primary submit button while keeping readability and contrast.",
       "files": [
-        "frontend/src/features/admin/AdminPanel.tsx",
-        "frontend/src/features/admin/components/AdminSummaryCards.tsx"
+        "frontend/src/features/auth/RegisterView.tsx",
+        "frontend/src/index.css"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -56,51 +61,11 @@
         "initial-app@1.0.0",
         "github-export-icp-cli@1.0.0",
         "authorization@4.0.0",
-        "user-approval@3.0.0"
+        "user-approval@3.0.0",
+        "blob-storage@4.0.0"
       ],
       "testIds": [
         "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-reorganize-and-style-the-admin-dashboard-homepage-menu-tiles-so-that-sections-are-visually-grouped-and-ordered-with-bordered-rounded-group-containers-consistent-with-the-reference-style-group-money-related-actions-together-group-work-related-actions-together-and-group-settings-related-actions-together-do-not-add-any-new-screens-and-do-not-change-what-any-tile-navigates-to",
-      "featureTitle": "Reorganize and style the Admin dashboard homepage menu tiles so that sections are visually grouped and ordered with bordered/rounded group containers consistent with the reference style: group money-related actions together, group work-related actions together, and group settings-related actions together; do not add any new screens and do not change what any tile navigates to.",
-      "files": [
-        "frontend/src/features/admin/components/AdminGridMenu.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "user-approval@3.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-ensure-the-overall-screen-frame-border-and-per-section-borders-are-consistent-across-both-user-and-admin-homepages-including-a-clear-outer-screen-border-and-per-group-borders-matching-the-reference-image-s-emphasis-on-bordered-sections-while-keeping-all-existing-functionality-intact",
-      "featureTitle": "Ensure the overall screen/frame border and per-section borders are consistent across both User and Admin homepages (including a clear outer screen border and per-group borders), matching the reference image’s emphasis on bordered sections, while keeping all existing functionality intact.",
-      "files": [
-        "frontend/src/features/admin/AdminPanel.tsx",
-        "frontend/src/features/user/UserDashboard.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "user-approval@3.0.0"
-      ],
-      "testIds": [
-        "REQ-5"
       ],
       "confidence": "high"
     }

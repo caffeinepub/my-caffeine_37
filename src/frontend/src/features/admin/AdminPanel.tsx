@@ -18,11 +18,13 @@ import { AdminView } from './components/adminNavTypes';
 import { useSession } from '../../state/session/useSession';
 import { ConfirmDialog } from '../../components/feedback/ConfirmDialog';
 import { LogOut } from 'lucide-react';
+import { useBranding } from '../../hooks/useBranding';
 
 export default function AdminPanel() {
   const [activeView, setActiveView] = useState<AdminView>('dashboard');
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const { logout } = useSession();
+  const { branding } = useBranding();
 
   const handleLogoutClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -41,32 +43,43 @@ export default function AdminPanel() {
         return (
           <DashboardFrame>
             <div className="flex flex-col h-full">
-              {/* Fixed Header - Unified clean style matching User dashboard */}
-              <div className="fixed top-0 left-0 right-0 z-20 bg-white px-3 py-4 flex items-center justify-between shadow-md border-b-2 border-gray-200">
+              {/* Fixed Header - Dashboard gradient */}
+              <div className="fixed top-0 left-0 right-0 z-20 dashboard-gradient px-2 py-2 flex items-center justify-between shadow-md border-b-2 border-blue-900">
+                <div className="flex items-center gap-2">
+                  {branding.logoDataUrl && (
+                    <div className="w-8 h-8 rounded-full overflow-hidden border border-white/30">
+                      <img
+                        src={branding.logoDataUrl}
+                        alt="Logo"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
                 <div className="flex-1 text-center">
-                  <h1 className="text-2xl font-black text-gray-800 tracking-wide" style={{ fontFamily: 'Impact, sans-serif' }}>
-                    ADMIN
+                  <h1 className="text-2xl font-black text-white tracking-widest uppercase" style={{ fontFamily: 'Impact, sans-serif', letterSpacing: '0.1em' }}>
+                    ADMIN PANEL
                   </h1>
                 </div>
                 <button
                   type="button"
                   onClick={handleLogoutClick}
-                  className="flex-shrink-0 px-4 py-2 rounded-full bg-red-600 border-2 border-red-700 shadow-md flex items-center gap-2 hover:bg-red-700 transition-all active:scale-95 touch-manipulation"
+                  className="flex-shrink-0 px-3 py-1.5 rounded-full bg-red-600 border-2 border-red-700 shadow-md flex items-center gap-1.5 hover:bg-red-700 transition-all active:scale-95 touch-manipulation"
                 >
-                  <LogOut className="w-5 h-5 text-white" />
-                  <span className="text-white font-bold text-sm">LOGOUT</span>
+                  <LogOut className="w-4 h-4 text-white" />
+                  <span className="text-white font-bold text-xs">LOGOUT</span>
                 </button>
               </div>
 
-              {/* Scrollable Content with top padding for fixed header */}
-              <div className="flex-1 overflow-y-auto pt-[72px] pb-24 px-3 bg-gray-100">
-                {/* Summary Cards - Now with same layout as User KPI */}
-                <div className="mt-3 mb-4">
+              {/* Scrollable Content with professional background */}
+              <div className="flex-1 overflow-y-auto pt-[52px] pb-[72px] px-2 dashboard-professional-bg">
+                {/* Summary Cards - Compact spacing */}
+                <div className="mt-2 mb-2">
                   <AdminSummaryCards />
                 </div>
 
-                {/* Grid Menu - Now with bordered groups */}
-                <div className="mb-4">
+                {/* Grid Menu - Compact spacing */}
+                <div className="mb-2">
                   <AdminGridMenu onNavigate={setActiveView} />
                 </div>
               </div>

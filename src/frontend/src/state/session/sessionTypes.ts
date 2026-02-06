@@ -2,6 +2,7 @@ export interface Session {
   role: 'admin' | 'user';
   userName?: string;
   mobile?: string;
+  userId?: number; // Stable auto-generated user ID
 }
 
 export interface LoginResult {
@@ -27,6 +28,7 @@ export interface ApprovedUser {
   name: string;
   mob: string;
   pass: string;
+  userId?: number; // Optional for backward compatibility
 }
 
 export interface PendingRequest {

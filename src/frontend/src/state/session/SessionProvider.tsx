@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, ReactNode } from 'react';
 import { Session, SessionContextValue, LoginResult, ApprovedUser, UpdateProfileParams } from './sessionTypes';
 import { safeGetItem, safeSetItem, safeRemoveItem, safeGetArray } from '../../lib/storage/safeStorage';
 import { ensureStorageSchema } from '../../lib/storage/storageSchema';
+import { ensureUserIds, getUserId } from '../../lib/storage/userIdStorage';
 
 export const SessionContext = createContext<SessionContextValue | undefined>(undefined);
 
@@ -17,9 +18,20 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     // Perform one-time storage reset before restoring session
     ensureStorageSchema();
     
+    // Ensure all approved users have IDs
+    ensureUserIds();
+    
     // Try to restore session from localStorage
     const savedSession = safeGetItem<Session>(SESSION_KEY);
     if (savedSession) {
+      // If user session, ensure userId is populated
+      if (savedSession.role === 'user' && savedSession.userName && !savedSession.userId) {
+        const userId = getUserId(savedSession.userName);
+        if (userId) {
+          savedSession.userId = userId;
+          safeSetItem(SESSION_KEY, savedSession);
+        }
+      }
       setSession(savedSession);
     }
     setIsInitializing(false);
@@ -34,6 +46,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         safeSetItem(SESSION_KEY, adminSession);
         return { success: true };
       }
+
+      // Ensure all users have IDs before login
+      ensureUserIds();
 
       // Check worker/user credentials - use safeGetArray to handle both old and new formats
       const approvedUsers = safeGetArray<ApprovedUser>('approved_users');
@@ -65,11 +80,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         };
       }
 
-      // Worker login successful - always include both userName and mobile
+      // Get user ID
+      const userId = getUserId(user.name) || 0;
+
+      // Worker login successful - always include userName, mobile, and userId
       const userSession: Session = {
         role: 'user',
         userName: user.name,
         mobile: user.mob,
+        userId,
       };
       setSession(userSession);
       safeSetItem(SESSION_KEY, userSession);

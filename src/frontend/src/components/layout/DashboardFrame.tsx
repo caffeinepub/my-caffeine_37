@@ -6,8 +6,8 @@ interface DashboardFrameProps {
 
 export default function DashboardFrame({ children }: DashboardFrameProps) {
   return (
-    <div className="min-h-screen bg-gray-100 p-1">
-      <div className="border-4 border-gray-900 rounded-3xl bg-white h-[calc(100dvh-0.5rem)] overflow-hidden flex flex-col shadow-2xl">
+    <div className="min-h-screen flex items-center justify-center p-0.5 dashboard-professional-bg">
+      <div className="w-full max-w-md h-screen border-3 border-gray-800 rounded-none shadow-2xl overflow-hidden dashboard-professional-bg">
         {children}
       </div>
     </div>

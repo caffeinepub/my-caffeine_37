@@ -1,75 +1,56 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-06T08:12:00.701Z",
+  "generatedAt": "2026-02-06T22:13:37.898Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 5,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the User dashboard homepage layout to match the uploaded reference image (IMG_20260206_123940-2.jpg): keep the same colors/icons/logo style, but wrap the three KPI cards (Total Due, Total Work, Total Taken) inside a single shared bordered container, while preserving the KPI values and calculations.",
+        "summary": "Update the User Dashboard header so the logged-in user name is visually prominent (larger size + attractive designer-chosen coloring/gradient) and does not appear as plain white text. Keep the header showing both the numeric user ID and the user name, and apply the styling consistently for any user (including the example user OPU, id=1).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/user/components/UserKpiSummary.tsx",
-          "frontend/src/features/user/UserDashboard.tsx"
+          "frontend/src/features/user/UserDashboard.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/features/user/components/UserKpiSummary.tsx",
-          "frontend/src/features/user/UserDashboard.tsx"
+          "frontend/src/features/user/UserDashboard.tsx",
+          "frontend/src/index.css"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Update the User dashboard homepage action tiles to match the uploaded reference image layout and styling: display Production, Work, and Nasta tiles in one row (3 columns), and display Payment/Loan as a single tile on the next row aligned to the left; ensure each tile has a clear rounded border and shadow consistent with the reference, without changing what each tile does.",
+        "summary": "Adjust the User Dashboard main (dashboard) layout so the four action tiles (Production, Payment/Loan, Work, Snack) and the clock card fit within the viewport without the tiles overflowing outside the screen. Reduce the visual size of the tiles (card padding/icon/text/aspect where needed) and make the clock card slightly smaller so the dashboard content fits on-screen without requiring vertical scrolling to reach the tiles on common mobile devices.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/user/UserDashboard.tsx"
+          "frontend/src/components/dashboard/ActionTile.tsx",
+          "frontend/src/features/user/components/ClockCard.tsx",
+          "frontend/src/features/user/UserDashboard.tsx",
+          "frontend/src/features/user/components/UserKpiSummary.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/user/UserDashboard.tsx"
+          "frontend/src/components/dashboard/ActionTile.tsx",
+          "frontend/src/features/user/components/ClockCard.tsx",
+          "frontend/src/features/user/UserDashboard.tsx",
+          "frontend/src/features/user/components/UserKpiSummary.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Update the Admin dashboard homepage to use the same design language as the User homepage and the uploaded reference image: the top totals area should use the same KPI layout (1 full-width card + 2 half-width cards) and those three KPI cards must also be wrapped inside a single shared bordered container; keep the same totals and computations currently shown in admin summary.",
+        "summary": "Restyle the new user registration form (RegisterView) so it has a clear, attractive color theme (designer choice) rather than appearing uncolored/plain. Apply cohesive colors to the registration card background, form fields (borders/focus), headings, and primary submit button while keeping readability and contrast.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/components/AdminSummaryCards.tsx",
-          "frontend/src/features/admin/AdminPanel.tsx"
+          "frontend/src/features/auth/RegisterView.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/components/AdminSummaryCards.tsx",
-          "frontend/src/features/admin/AdminPanel.tsx"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Reorganize and style the Admin dashboard homepage menu tiles so that sections are visually grouped and ordered with bordered/rounded group containers consistent with the reference style: group money-related actions together, group work-related actions together, and group settings-related actions together; do not add any new screens and do not change what any tile navigates to.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/admin/components/AdminGridMenu.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/admin/components/AdminGridMenu.tsx"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Ensure the overall screen/frame border and per-section borders are consistent across both User and Admin homepages (including a clear outer screen border and per-group borders), matching the reference image’s emphasis on bordered sections, while keeping all existing functionality intact.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/layout/DashboardFrame.tsx",
-          "frontend/src/features/user/UserDashboard.tsx",
-          "frontend/src/features/admin/AdminPanel.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/user/UserDashboard.tsx",
-          "frontend/src/features/admin/AdminPanel.tsx"
+          "frontend/src/features/auth/RegisterView.tsx",
+          "frontend/src/index.css"
         ]
       }
     ]
@@ -79,11 +60,12 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/features/admin/AdminPanel.tsx",
-    "frontend/src/features/admin/components/AdminGridMenu.tsx",
-    "frontend/src/features/admin/components/AdminSummaryCards.tsx",
+    "frontend/src/components/dashboard/ActionTile.tsx",
+    "frontend/src/features/auth/RegisterView.tsx",
     "frontend/src/features/user/UserDashboard.tsx",
+    "frontend/src/features/user/components/ClockCard.tsx",
     "frontend/src/features/user/components/UserKpiSummary.tsx",
+    "frontend/src/index.css",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

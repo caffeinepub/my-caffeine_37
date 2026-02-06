@@ -9,22 +9,22 @@ interface ActionTileProps {
 }
 
 export default function ActionTile({ icon, label, onClick, bgGradient, size = 'admin' }: ActionTileProps) {
-  // Size variants for different contexts - updated for rounded square tiles
+  // Compact size variants optimized for mobile viewport with thin black borders
   const sizeClasses = {
     admin: {
-      container: 'rounded-3xl p-6 border-3 border-gray-300 aspect-square',
-      icon: 'w-16 h-16',
-      text: 'text-base',
-    },
-    user: {
-      container: 'rounded-3xl p-5 border-2 border-gray-300 aspect-square',
-      icon: 'w-14 h-14',
+      container: 'rounded-2xl p-4 border-2 border-black w-full min-w-0',
+      icon: 'w-12 h-12',
       text: 'text-sm',
     },
-    small: {
-      container: 'rounded-2xl p-3 border-2 border-gray-300 aspect-square',
+    user: {
+      container: 'rounded-2xl p-3 border-2 border-black w-full min-w-0',
       icon: 'w-10 h-10',
       text: 'text-xs',
+    },
+    small: {
+      container: 'rounded-xl p-2 border-2 border-black w-full min-w-0',
+      icon: 'w-7 h-7',
+      text: 'text-[10px]',
     },
   };
 
@@ -33,15 +33,15 @@ export default function ActionTile({ icon, label, onClick, bgGradient, size = 'a
   return (
     <button
       onClick={onClick}
-      className={`bg-gradient-to-br ${bgGradient} ${styles.container} shadow-lg hover:scale-105 transition-transform active:scale-95 touch-manipulation`}
+      className={`bg-gradient-to-br ${bgGradient} ${styles.container} shadow-md active:scale-95 transition-transform touch-manipulation aspect-square`}
     >
-      <div className="flex flex-col items-center justify-center gap-2 h-full">
+      <div className="flex flex-col items-center justify-center gap-0.5 h-full">
         {typeof icon === 'string' ? (
           <img src={icon} alt={label} className={styles.icon} />
         ) : (
           <div className={`${styles.icon} flex items-center justify-center`}>{icon}</div>
         )}
-        <p className={`text-white ${styles.text} font-bold text-center leading-tight`}>{label}</p>
+        <p className={`text-white ${styles.text} font-bold text-center leading-tight break-words`}>{label}</p>
       </div>
     </button>
   );

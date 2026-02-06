@@ -40,3 +40,8 @@ export function getLogoUrl(): string {
   const settings = getBrandingSettings();
   return settings.logoDataUrl || '/assets/generated/mt-management-logo-v2.dim_512x512.png';
 }
+
+export function getLoginCircleImage(): string {
+  const settings = getBrandingSettings();
+  return settings.logoDataUrl || '/assets/generated/login-hero-illustration.dim_1024x1024.png';
+}

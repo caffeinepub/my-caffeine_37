@@ -28,12 +28,12 @@ export default function ClockCard() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black rounded-3xl p-6 shadow-2xl border-4 border-green-500">
+    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black rounded-xl p-2.5 shadow-xl border-2 border-green-500">
       <div className="text-center">
-        <div className="text-5xl font-black text-green-400 tracking-wider mb-2" style={{ fontFamily: 'monospace' }}>
+        <div className="text-2xl font-black text-green-400 tracking-wider mb-0.5" style={{ fontFamily: 'monospace' }}>
           {formatTime(time)}
         </div>
-        <div className="text-lg font-medium text-gray-300">
+        <div className="text-[10px] font-medium text-gray-300">
           {formatDate(time)}
         </div>
       </div>

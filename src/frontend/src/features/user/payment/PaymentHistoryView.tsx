@@ -1,12 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSession } from '../../../state/session/useSession';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
-import { Button } from '../../../components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '../../../components/ui/table';
 import { Badge } from '../../../components/ui/badge';
 import { safeGetItem } from '../../../lib/storage/safeStorage';
-import { ArrowLeft } from 'lucide-react';
-import DashboardFooter from '../../../components/layout/DashboardFooter';
 
 interface PaymentEntry {
   id: number;
@@ -53,7 +49,6 @@ export default function PaymentHistoryView({ onBack }: PaymentHistoryViewProps) 
       }
 
       const loanArray = Array.isArray(histories.loan) ? histories.loan : [];
-      const nastaArray = Array.isArray(histories.nasta) ? histories.nasta : [];
 
       const loans = loanArray
         .filter((h) => {
@@ -67,19 +62,7 @@ export default function PaymentHistoryView({ onBack }: PaymentHistoryViewProps) 
           myAmount: Array.isArray(h.names) ? (h.perHead || 0) : (h.amount || 0),
         }));
 
-      const nastas = nastaArray
-        .filter((h) => {
-          if (!h) return false;
-          if (Array.isArray(h.names)) return h.names.includes(session.userName!);
-          return h.name === session.userName;
-        })
-        .map((h) => ({
-          type: 'Nasta',
-          entry: h,
-          myAmount: Array.isArray(h.names) ? (h.perHead || 0) : (h.amount || 0),
-        }));
-
-      const combined = [...loans, ...nastas].sort((a, b) => (b.entry.id || 0) - (a.entry.id || 0));
+      const combined = [...loans].sort((a, b) => (b.entry.id || 0) - (a.entry.id || 0));
       setHistory(combined);
     } catch (error) {
       console.error('Error loading payment history:', error);
@@ -92,88 +75,61 @@ export default function PaymentHistoryView({ onBack }: PaymentHistoryViewProps) 
   const totalAmount = history.reduce((sum, h) => sum + h.myAmount, 0);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 z-20 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 text-white py-6 px-4 shadow-xl">
-        <div className="container mx-auto max-w-4xl">
-          <Button
-            onClick={onBack}
-            variant="ghost"
-            className="text-white hover:bg-white/20 mb-4 font-bold"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            ফিরে যান
-          </Button>
-          <h1 className="text-3xl font-bold">পেমেন্ট ও খরচ</h1>
-        </div>
-      </div>
-
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto pt-[140px] pb-24 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
-        <div className="container mx-auto max-w-4xl px-4 py-6">
-          <Card className="shadow-xl border-2 border-purple-200">
-            <CardHeader className="bg-gradient-to-r from-purple-100 to-pink-100">
-              <CardTitle className="text-purple-900">আপনার পেমেন্ট রেকর্ড</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              {isLoading ? (
-                <div className="text-center py-12">
-                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent"></div>
-                  <p className="mt-4 text-muted-foreground">লোড হচ্ছে...</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>তারিখ</TableHead>
-                        <TableHead>ধরন</TableHead>
-                        <TableHead>বিবরণ</TableHead>
-                        <TableHead className="text-right">পরিমাণ</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {history.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={4} className="text-center text-muted-foreground py-12">
-                            কোনো রেকর্ড নেই
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        history.map((item, idx) => (
-                          <TableRow key={idx}>
-                            <TableCell className="font-medium">{item.entry.date || '-'}</TableCell>
-                            <TableCell>
-                              <Badge variant={item.type === 'Payment' ? 'destructive' : 'secondary'} className="font-bold">
-                                {item.type}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>{item.entry.note || '-'}</TableCell>
-                            <TableCell className="text-right font-bold text-lg">৳{item.myAmount.toFixed(2)}</TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                    {history.length > 0 && (
-                      <TableFooter>
-                        <TableRow className="bg-purple-100">
-                          <TableCell colSpan={3} className="font-bold text-lg">সর্বমোট</TableCell>
-                          <TableCell className="text-right font-bold text-xl text-purple-900">৳{totalAmount.toFixed(2)}</TableCell>
-                        </TableRow>
-                      </TableFooter>
-                    )}
-                  </Table>
+    <div className="min-h-full bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-3">
+      <Card className="shadow-xl border-2 border-blue-200">
+        <CardHeader className="bg-gradient-to-r from-blue-100 to-indigo-100 py-3">
+          <CardTitle className="text-xl font-bold text-blue-900">পেমেন্ট ও লোন</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-4 px-2">
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
+              <p className="mt-4 text-base text-muted-foreground">লোড হচ্ছে...</p>
+            </div>
+          ) : (
+            <>
+              <div className="space-y-2">
+                {history.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-12 text-base">
+                    কোনো রেকর্ড নেই
+                  </div>
+                ) : (
+                  history.map((item, idx) => (
+                    <div key={idx} className="bg-white border-2 border-blue-200 rounded-lg p-3 shadow-sm">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Badge variant="destructive" className="font-bold text-xs">
+                              {item.type}
+                            </Badge>
+                            <span className="text-sm font-semibold text-blue-900">{item.entry.date || '-'}</span>
+                          </div>
+                          <div className="text-xs text-gray-600 break-words">
+                            {item.entry.note || '-'}
+                          </div>
+                        </div>
+                        <div className="text-right ml-2 flex-shrink-0">
+                          <div className="text-lg font-bold text-blue-700">৳{item.myAmount.toFixed(2)}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+              
+              {/* Total Summary */}
+              {history.length > 0 && (
+                <div className="mt-4 bg-blue-200 rounded-lg p-4 border-2 border-blue-300">
+                  <div className="flex justify-between items-center">
+                    <div className="text-base font-bold text-blue-900">সর্বমোট</div>
+                    <div className="text-2xl font-bold text-blue-900">৳{totalAmount.toFixed(2)}</div>
+                  </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Fixed Footer */}
-      <div className="fixed bottom-0 left-0 right-0 z-20">
-        <DashboardFooter onSupportClick={() => {}} />
-      </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

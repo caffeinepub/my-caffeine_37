@@ -3,23 +3,50 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
-import { useBranding } from '../../../hooks/useBranding';
-import { notify } from '../../../components/feedback/notify';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
+import { Textarea } from '../../../components/ui/textarea';
+import { Switch } from '../../../components/ui/switch';
+import { notify } from '../../../components/feedback/notify';
+import { getBrandingSettings, setBrandingSettings } from '../../../lib/branding/brandingStorage';
+import { loadDashboardOverrides, saveDashboardOverrides, DashboardOverrides } from '../../../lib/storage/dashboardOverridesStorage';
+import { loadNoticeConfig, saveNoticeConfig, NoticeConfig } from '../../../lib/storage/noticeStorage';
+import { Camera } from 'lucide-react';
 
 export default function SystemSettingsSection() {
-  const { branding, updateBranding } = useBranding();
-  const [companyName, setCompanyName] = useState(branding.companyName);
-  const [channelName, setChannelName] = useState(branding.channelName);
-  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [activeTab, setActiveTab] = useState('branding');
 
-  const handleSave = () => {
-    updateBranding({
-      companyName,
-      channelName,
-    });
-    notify.success('সেটিংস সফলভাবে সংরক্ষিত হয়েছে');
-  };
+  return (
+    <div className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="branding">ব্র্যান্ডিং</TabsTrigger>
+          <TabsTrigger value="labels">লেবেল এডিট</TabsTrigger>
+          <TabsTrigger value="notice">নোটিশ</TabsTrigger>
+          <TabsTrigger value="sections">সেকশন</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="branding">
+          <BrandingTab />
+        </TabsContent>
+
+        <TabsContent value="labels">
+          <LabelsTab />
+        </TabsContent>
+
+        <TabsContent value="notice">
+          <NoticeTab />
+        </TabsContent>
+
+        <TabsContent value="sections">
+          <SectionsTab />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+function BrandingTab() {
+  const [branding, setBranding] = useState(getBrandingSettings());
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -27,129 +54,190 @@ export default function SystemSettingsSection() {
       const reader = new FileReader();
       reader.onload = (event) => {
         const dataUrl = event.target?.result as string;
-        updateBranding({ logoDataUrl: dataUrl });
+        const updated = { ...branding, logoDataUrl: dataUrl };
+        setBranding(updated);
+        setBrandingSettings(updated);
         notify.success('লোগো আপলোড সফল হয়েছে');
       };
       reader.readAsDataURL(file);
-      setLogoFile(file);
     }
   };
 
-  const handleResetLogo = () => {
-    updateBranding({ logoDataUrl: null });
-    setLogoFile(null);
-    notify.success('লোগো রিসেট করা হয়েছে');
+  const handleSave = () => {
+    setBrandingSettings(branding);
+    notify.success('ব্র্যান্ডিং সেটিংস সংরক্ষিত হয়েছে');
   };
 
   return (
-    <div className="space-y-6">
-      <Tabs defaultValue="branding" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="branding">ব্র্যান্ডিং সেটিংস</TabsTrigger>
-          <TabsTrigger value="calculation">হিসাব সেটিংস</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="branding">
-          <Card className="border-indigo-200 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-500">
-              <CardTitle className="text-lg text-white">ওয়েবসাইট ব্র্যান্ডিং সেটিংস</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 pt-6">
-              <div className="space-y-2">
-                <Label htmlFor="companyName">কোম্পানির নাম</Label>
-                <Input
-                  id="companyName"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="কোম্পানির নাম লিখুন"
-                  className="border-2"
+    <Card>
+      <CardHeader>
+        <CardTitle>ব্র্যান্ডিং সেটিংস</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label>কোম্পানি লোগো</Label>
+          <div className="flex items-center gap-4">
+            {branding.logoDataUrl && (
+              <div className="w-24 h-24 rounded-lg overflow-hidden border-2 border-gray-300">
+                <img
+                  src={branding.logoDataUrl}
+                  alt="Company Logo"
+                  className="w-full h-full object-cover"
                 />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="channelName">চ্যানেলের নাম</Label>
-                <Input
-                  id="channelName"
-                  value={channelName}
-                  onChange={(e) => setChannelName(e.target.value)}
-                  placeholder="চ্যানেলের নাম লিখুন"
-                  className="border-2"
-                />
+            )}
+            <label htmlFor="logo-upload" className="cursor-pointer">
+              <div className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                <Camera className="w-5 h-5" />
+                <span>লোগো আপলোড করুন</span>
               </div>
+              <input
+                id="logo-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleLogoUpload}
+                className="hidden"
+              />
+            </label>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            এই লোগোটি লগইন পেজ এবং হেডারে প্রদর্শিত হবে
+          </p>
+        </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="logo">কোম্পানি লোগো</Label>
-                <div className="flex items-center gap-4">
-                  <Input
-                    id="logo"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                    className="flex-1 border-2"
-                  />
-                  <Button variant="outline" onClick={handleResetLogo} className="border-2">
-                    রিসেট
-                  </Button>
-                </div>
-                {branding.logoDataUrl && (
-                  <div className="mt-2">
-                    <img
-                      src={branding.logoDataUrl}
-                      alt="Logo Preview"
-                      className="w-24 h-24 object-contain border-2 rounded"
-                    />
-                  </div>
-                )}
-              </div>
+        <div className="space-y-2">
+          <Label htmlFor="companyName">কোম্পানির নাম</Label>
+          <Input
+            id="companyName"
+            value={branding.companyName}
+            onChange={(e) => setBranding({ ...branding, companyName: e.target.value })}
+            placeholder="কোম্পানির নাম লিখুন"
+          />
+        </div>
 
-              <Button onClick={handleSave} className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3">
-                সংরক্ষণ করুন
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        <div className="space-y-2">
+          <Label htmlFor="channelName">চ্যানেলের নাম</Label>
+          <Input
+            id="channelName"
+            value={branding.channelName}
+            onChange={(e) => setBranding({ ...branding, channelName: e.target.value })}
+            placeholder="চ্যানেলের নাম লিখুন"
+          />
+        </div>
 
-        <TabsContent value="calculation">
-          <Card className="border-cyan-200 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-cyan-500 to-blue-500">
-              <CardTitle className="text-lg text-white">হিসাব পদ্ধতি সেটিংস</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 pt-6">
-              <div className="space-y-4">
-                <div className="p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border-2 border-emerald-200">
-                  <h3 className="font-bold text-lg mb-2 text-emerald-800">কাস্টম হিসাব</h3>
-                  <p className="text-sm text-gray-700 mb-3">প্রতিটি কর্মীর জন্য আলাদা আলাদা পরিমাণ নির্ধারণ করুন</p>
-                  <Button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold">
-                    কাস্টম হিসাব সেটআপ
-                  </Button>
-                </div>
+        <Button onClick={handleSave} className="w-full">
+          সংরক্ষণ করুন
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
 
-                <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200">
-                  <h3 className="font-bold text-lg mb-2 text-blue-800">সমানভাগ হিসাব</h3>
-                  <p className="text-sm text-gray-700 mb-3">সকল কর্মীর মধ্যে সমান ভাগে বিতরণ করুন</p>
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold">
-                    সমানভাগ হিসাব সেটআপ
-                  </Button>
-                </div>
+function LabelsTab() {
+  const [overrides, setOverrides] = useState<DashboardOverrides>(loadDashboardOverrides());
 
-                <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200">
-                  <h3 className="font-bold text-lg mb-2 text-purple-800">নির্দিষ্ট ইউজার হিসাব</h3>
-                  <p className="text-sm text-gray-700 mb-3">নির্দিষ্ট কর্মীদের জন্য বিশেষ হিসাব পদ্ধতি</p>
-                  <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold">
-                    নির্দিষ্ট ইউজার সেটআপ
-                  </Button>
-                </div>
-              </div>
+  const handleSave = () => {
+    saveDashboardOverrides(overrides);
+    notify.success('লেবেল সেটিংস সংরক্ষিত হয়েছে');
+  };
 
-              <div className="mt-6 p-4 bg-amber-50 rounded-xl border-2 border-amber-200">
-                <p className="text-sm text-amber-800 font-medium">
-                  💡 টিপস: এই সেটিংস ব্যবহার করে আপনি বিভিন্ন ধরনের হিসাব পদ্ধতি প্রয়োগ করতে পারবেন। প্রতিটি অপশন আলাদা আলাদা কাজের জন্য উপযুক্ত।
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+  const sections = [
+    { key: 'productionLabel' as keyof DashboardOverrides, label: 'প্রোডাকশন' },
+    { key: 'workLabel' as keyof DashboardOverrides, label: 'কাজ' },
+    { key: 'nastaLabel' as keyof DashboardOverrides, label: 'নাস্তা' },
+    { key: 'paymentLabel' as keyof DashboardOverrides, label: 'পেমেন্ট/লোন' },
+    { key: 'requestLabel' as keyof DashboardOverrides, label: 'ইউজার রিকুয়েস্ট' },
+    { key: 'settingsLabel' as keyof DashboardOverrides, label: 'সেটিংস' },
+    { key: 'rateLabel' as keyof DashboardOverrides, label: 'রেট' },
+    { key: 'balanceLabel' as keyof DashboardOverrides, label: 'চূড়ান্ত ব্যালেন্স' },
+    { key: 'reportLabel' as keyof DashboardOverrides, label: 'কোম্পানি রিপোর্ট' },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>ড্যাশবোর্ড লেবেল কাস্টমাইজ করুন</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {sections.map((section) => (
+          <div key={section.key} className="space-y-2">
+            <Label htmlFor={section.key}>{section.label}</Label>
+            <Input
+              id={section.key}
+              value={overrides[section.key] || ''}
+              onChange={(e) => setOverrides({ ...overrides, [section.key]: e.target.value })}
+              placeholder={section.label}
+            />
+          </div>
+        ))}
+
+        <Button onClick={handleSave} className="w-full">
+          সংরক্ষণ করুন
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+function NoticeTab() {
+  const [config, setConfig] = useState<NoticeConfig>(loadNoticeConfig());
+
+  const handleSave = () => {
+    saveNoticeConfig(config);
+    notify.success('নোটিশ সেটিংস সংরক্ষিত হয়েছে');
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>ইউজার ড্যাশবোর্ড নোটিশ</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="notice-enabled">নোটিশ সক্রিয় করুন</Label>
+          <Switch
+            id="notice-enabled"
+            checked={config.enabled}
+            onCheckedChange={(checked) => setConfig({ ...config, enabled: checked })}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="notice-text">নোটিশ টেক্সট</Label>
+          <Textarea
+            id="notice-text"
+            value={config.text}
+            onChange={(e) => setConfig({ ...config, text: e.target.value })}
+            placeholder="নোটিশ টেক্সট লিখুন..."
+            rows={3}
+          />
+        </div>
+
+        <Button onClick={handleSave} className="w-full">
+          সংরক্ষণ করুন
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+function SectionsTab() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>সেকশন ম্যানেজমেন্ট</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="text-center py-8 text-muted-foreground">
+          <p className="text-lg font-medium mb-2">সেকশন ম্যানেজমেন্ট</p>
+          <p className="text-sm">
+            এখানে আপনি নতুন সেকশন যোগ করতে পারবেন এবং প্রতিটি সেকশনের জন্য ডিফল্ট রেট এবং ইউজার-নির্দিষ্ট রেট সেট করতে পারবেন।
+          </p>
+          <p className="text-sm mt-4 text-amber-600 font-medium">
+            এই ফিচারটি শীঘ্রই আসছে...
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

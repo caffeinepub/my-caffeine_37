@@ -4,67 +4,58 @@
 
 @layer base {
   :root {
-    /* Professional Blue-Green Light theme with vibrant multi-color support */
-    --background: oklch(98% 0.005 220);
-    --foreground: oklch(20% 0.02 240);
-
+    /* Light mode colors using OKLCH */
+    --background: oklch(98% 0.01 240);
+    --foreground: oklch(15% 0.02 240);
     --card: oklch(100% 0 0);
-    --card-foreground: oklch(20% 0.02 240);
-
+    --card-foreground: oklch(15% 0.02 240);
     --popover: oklch(100% 0 0);
-    --popover-foreground: oklch(20% 0.02 240);
+    --popover-foreground: oklch(15% 0.02 240);
+    --primary: oklch(50% 0.2 240);
+    --primary-foreground: oklch(98% 0.01 240);
+    --secondary: oklch(92% 0.02 240);
+    --secondary-foreground: oklch(15% 0.02 240);
+    --muted: oklch(92% 0.02 240);
+    --muted-foreground: oklch(45% 0.02 240);
+    --accent: oklch(92% 0.02 240);
+    --accent-foreground: oklch(15% 0.02 240);
+    --destructive: oklch(55% 0.22 25);
+    --destructive-foreground: oklch(98% 0.01 240);
+    --border: oklch(85% 0.02 240);
+    --input: oklch(85% 0.02 240);
+    --ring: oklch(50% 0.2 240);
+    --radius: 0.5rem;
+    --success: oklch(60% 0.18 145);
+    --success-foreground: oklch(98% 0.01 145);
+    --warning: oklch(70% 0.15 60);
+    --warning-foreground: oklch(15% 0.02 60);
+  }
 
-    /* Primary: Teal/Cyan */
-    --primary: oklch(58% 0.16 195);
-    --primary-foreground: oklch(99% 0.01 195);
-
-    /* Secondary: Blue */
-    --secondary: oklch(62% 0.14 240);
-    --secondary-foreground: oklch(99% 0.01 240);
-
-    --muted: oklch(96% 0.01 220);
-    --muted-foreground: oklch(48% 0.02 220);
-
-    /* Accent: Green-Teal */
-    --accent: oklch(65% 0.15 170);
-    --accent-foreground: oklch(99% 0.01 170);
-
-    --destructive: oklch(58% 0.22 25);
-    --destructive-foreground: oklch(99% 0.01 25);
-
-    --border: oklch(90% 0.01 220);
-    --input: oklch(90% 0.01 220);
-    --ring: oklch(58% 0.16 195);
-
-    --radius: 0.75rem;
-
-    /* Extended color palette for multi-color cards */
-    --success: oklch(62% 0.17 155);
-    --success-foreground: oklch(99% 0.01 155);
-
-    --warning: oklch(72% 0.16 75);
-    --warning-foreground: oklch(25% 0.02 75);
-
-    --info: oklch(60% 0.15 240);
-    --info-foreground: oklch(99% 0.01 240);
-
-    --rose: oklch(60% 0.20 15);
-    --rose-foreground: oklch(99% 0.01 15);
-
-    --amber: oklch(68% 0.18 65);
-    --amber-foreground: oklch(25% 0.02 65);
-
-    --emerald: oklch(64% 0.18 160);
-    --emerald-foreground: oklch(99% 0.01 160);
-
-    --cyan: oklch(66% 0.14 200);
-    --cyan-foreground: oklch(99% 0.01 200);
-
-    --indigo: oklch(56% 0.16 270);
-    --indigo-foreground: oklch(99% 0.01 270);
-
-    --slate: oklch(45% 0.03 240);
-    --slate-foreground: oklch(99% 0.01 240);
+  .dark {
+    /* Dark mode colors using OKLCH */
+    --background: oklch(15% 0.02 240);
+    --foreground: oklch(98% 0.01 240);
+    --card: oklch(18% 0.02 240);
+    --card-foreground: oklch(98% 0.01 240);
+    --popover: oklch(18% 0.02 240);
+    --popover-foreground: oklch(98% 0.01 240);
+    --primary: oklch(70% 0.2 240);
+    --primary-foreground: oklch(15% 0.02 240);
+    --secondary: oklch(25% 0.02 240);
+    --secondary-foreground: oklch(98% 0.01 240);
+    --muted: oklch(25% 0.02 240);
+    --muted-foreground: oklch(65% 0.02 240);
+    --accent: oklch(25% 0.02 240);
+    --accent-foreground: oklch(98% 0.01 240);
+    --destructive: oklch(55% 0.22 25);
+    --destructive-foreground: oklch(98% 0.01 240);
+    --border: oklch(30% 0.02 240);
+    --input: oklch(30% 0.02 240);
+    --ring: oklch(70% 0.2 240);
+    --success: oklch(60% 0.18 145);
+    --success-foreground: oklch(98% 0.01 145);
+    --warning: oklch(70% 0.15 60);
+    --warning-foreground: oklch(15% 0.02 60);
   }
 }
 
@@ -74,82 +65,86 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-
-  /* Prevent tap highlight and selection issues on mobile */
-  * {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-  }
-
-  /* Ensure buttons and interactive elements maintain readability */
-  button:active,
-  button:focus-visible {
-    outline: 2px solid oklch(58% 0.16 195 / 0.5);
-    outline-offset: 2px;
-  }
-
-  /* Prevent text selection on UI controls */
-  button,
-  [role="button"] {
-    user-select: none;
   }
 }
 
-/* Custom gradient utilities */
-@layer utilities {
-  .gradient-emerald {
-    background: linear-gradient(135deg, oklch(62% 0.17 155) 0%, oklch(58% 0.16 165) 100%);
-  }
+/* Dashboard gradient utility */
+.dashboard-gradient {
+  background: linear-gradient(135deg, #3b82f6 0%, #14b8a6 50%, #a855f7 100%);
+}
 
-  .gradient-rose {
-    background: linear-gradient(135deg, oklch(60% 0.20 15) 0%, oklch(56% 0.19 10) 100%);
-  }
+/* Professional dashboard background - soft neutral gradient */
+.dashboard-professional-bg {
+  background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #cbd5e1 100%);
+}
 
-  .gradient-cyan {
-    background: linear-gradient(135deg, oklch(66% 0.14 200) 0%, oklch(62% 0.13 195) 100%);
-  }
+/* Registration page vibrant background */
+.register-bg {
+  background: linear-gradient(135deg, #0891b2 0%, #06b6d4 25%, #14b8a6 50%, #10b981 75%, #059669 100%);
+}
 
-  .gradient-blue {
-    background: linear-gradient(135deg, oklch(62% 0.14 240) 0%, oklch(58% 0.13 245) 100%);
-  }
+/* Gradient username styling for header */
+.gradient-username {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 25%, #fb923c 50%, #f97316 75%, #ef4444 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-  .gradient-amber {
-    background: linear-gradient(135deg, oklch(68% 0.18 65) 0%, oklch(64% 0.17 60) 100%);
-  }
+/* Compact dashboard utilities */
+.dashboard-compact-card {
+  @apply p-3 rounded-lg shadow-sm;
+}
 
-  .gradient-indigo {
-    background: linear-gradient(135deg, oklch(56% 0.16 270) 0%, oklch(52% 0.15 275) 100%);
-  }
+.dashboard-compact-title {
+  @apply text-sm font-semibold mb-1;
+}
 
-  .gradient-slate {
-    background: linear-gradient(135deg, oklch(45% 0.03 240) 0%, oklch(40% 0.03 245) 100%);
-  }
+.dashboard-compact-value {
+  @apply text-2xl font-bold;
+}
 
-  .gradient-teal {
-    background: linear-gradient(135deg, oklch(60% 0.15 180) 0%, oklch(56% 0.14 185) 100%);
+/* Modal scale-in animation */
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
   }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
-  .gradient-primary {
-    background: linear-gradient(135deg, oklch(58% 0.16 195) 0%, oklch(62% 0.14 240) 100%);
-  }
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
 
-  /* Unified dashboard header style - clean card-based aesthetic */
-  .unified-header {
-    @apply bg-white shadow-md border-b-2 border-gray-200;
-  }
+/* Marquee animation for scrolling notice */
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+}
 
-  /* Class-11 style utilities for consistent rounded containers and shadows */
-  .class11-container {
-    @apply rounded-3xl border-4 border-gray-800 shadow-2xl;
-  }
+.marquee-content {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
+}
 
-  .class11-card {
-    @apply rounded-2xl border-3 border-gray-700 shadow-xl;
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
   }
+  100% {
+    transform: translateX(-100%);
+  }
+}
 
-  .class11-tile {
-    @apply rounded-3xl border-3 border-gray-300 shadow-lg;
-  }
+/* Ensure touch targets are accessible */
+button,
+a,
+[role="button"] {
+  min-height: 44px;
+  min-width: 44px;
 }

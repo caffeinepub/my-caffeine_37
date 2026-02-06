@@ -1,109 +1,75 @@
 {
   "kind": "build_request",
-  "title": "Redesign User & Admin homepages to match uploaded reference layout with bordered section grouping",
+  "title": "User panel UI fixes: highlight username, fit dashboard tiles on-screen, and add color styling to registration form",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the User dashboard homepage layout to match the uploaded reference image (IMG_20260206_123940-2.jpg): keep the same colors/icons/logo style, but wrap the three KPI cards (Total Due, Total Work, Total Taken) inside a single shared bordered container, while preserving the KPI values and calculations.",
+      "text": "Update the User Dashboard header so the logged-in user name is visually prominent (larger size + attractive designer-chosen coloring/gradient) and does not appear as plain white text. Keep the header showing both the numeric user ID and the user name, and apply the styling consistently for any user (including the example user OPU, id=1).",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "(মোট পাওনা, মোট কাজ, মোট নেওয়া)–এ\nএই তিনটি সেকশন একটি বর্ডারের ভিতরে"
+          "১/হেডারেও ইউযারের নামটা এভাবে আসবে না ... নামটা যেন কালারিং হয় বড় দেখা যায়",
+          "OPU id:1"
         ]
       },
       "acceptanceCriteria": [
-        "On the User dashboard home view, the three KPI cards render together inside one shared container with a visible border and rounded corners (not three independent bordered blocks).",
-        "The KPI numbers shown remain unchanged from current behavior (same data source and calculations).",
-        "The overall visual style (colors/typography/rounded corners/shadows) remains consistent with the uploaded reference image."
+        "On the user dashboard header, the user name is noticeably larger than before and uses a clear colored/gradient styling (not plain white-only).",
+        "The header still shows both “User: <id>” and the user name.",
+        "No layout overlap occurs in the header at common mobile widths (e.g., 360px)."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Update the User dashboard homepage action tiles to match the uploaded reference image layout and styling: display Production, Work, and Nasta tiles in one row (3 columns), and display Payment/Loan as a single tile on the next row aligned to the left; ensure each tile has a clear rounded border and shadow consistent with the reference, without changing what each tile does.",
+      "text": "Adjust the User Dashboard main (dashboard) layout so the four action tiles (Production, Payment/Loan, Work, Snack) and the clock card fit within the viewport without the tiles overflowing outside the screen. Reduce the visual size of the tiles (card padding/icon/text/aspect where needed) and make the clock card slightly smaller so the dashboard content fits on-screen without requiring vertical scrolling to reach the tiles on common mobile devices.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "নিচের যে সেকশনগুলো আছে লোন পেমেন্ট এসব গুলা একটি একটি রাউন্ডের ভিতরে থাকবে আর প্রত্যেকটি সেকশনের অর্ডার দিয়ে দিবে"
+          "২/ইউজার ফেনেলের সেকশন গুলা বড় হয়ে গেছে ... এগুলা স্ক্রিনের ভিতরেই থাকবে যেন স্লইট করতে না হয়",
+          "কার্ডগুলো একটু ছোট করে দিলেই উপরে ঘড়িটা একটু ছোট করলেই স্কিনের ভিতরে ফিট হয়ে যাবে"
         ]
       },
       "acceptanceCriteria": [
-        "User dashboard home action tiles are arranged as 3 tiles in the first row and 1 tile in the second row aligned left (matching the reference screenshot layout).",
-        "Each action tile has a rounded container with a visible border and consistent shadow treatment.",
-        "Clicking each tile still navigates to the same existing views as before (Production, Work, Payment history views, etc.)."
+        "At a typical mobile viewport (e.g., 360x800), the dashboard shows the notice (if enabled), clock, KPI summary, and the 2x2 tile grid without tiles rendering outside the frame/container.",
+        "The tile grid remains fully visible within the dashboard frame without horizontal overflow.",
+        "The clock card is slightly reduced in height/typography compared to current, while remaining readable.",
+        "No new scrolling/overlap regressions are introduced with the fixed header and fixed footer present."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Update the Admin dashboard homepage to use the same design language as the User homepage and the uploaded reference image: the top totals area should use the same KPI layout (1 full-width card + 2 half-width cards) and those three KPI cards must also be wrapped inside a single shared bordered container; keep the same totals and computations currently shown in admin summary.",
+      "text": "Restyle the new user registration form (RegisterView) so it has a clear, attractive color theme (designer choice) rather than appearing uncolored/plain. Apply cohesive colors to the registration card background, form fields (borders/focus), headings, and primary submit button while keeping readability and contrast.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "সেম ডিজাইন ইউজার এডমিন দোনো জায়গায় এপ্লাই হবে"
+          "৩/নতুন রেজিস্ট্রেশন অপশনে ক্লিক করলে যে ফর্মটা আসে ... ডিজাইনটাতে কোন কালার নেই ওই ফর্মটা কালার করে দিও",
+          "৩/তোমার মন মতো দিয়ে দাও"
         ]
       },
       "acceptanceCriteria": [
-        "Admin dashboard 'dashboard' view shows the same KPI layout style as the User dashboard (1 wide card + 2 half cards).",
-        "The three admin KPI cards are inside one shared bordered container with rounded corners.",
-        "Admin totals values remain correct and based on the same underlying stored account data as before."
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Reorganize and style the Admin dashboard homepage menu tiles so that sections are visually grouped and ordered with bordered/rounded group containers consistent with the reference style: group money-related actions together, group work-related actions together, and group settings-related actions together; do not add any new screens and do not change what any tile navigates to.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "টাকার সেকশন গুলা আছে এগুলা একপাশে রাখবে সেটিংসের গুলো এক পাশে রাখবে কাজের সেকশনগুলো রাখবে"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Admin dashboard menu tiles are grouped into clearly separated visual groups (each group has its own rounded border container).",
-        "Existing admin navigation destinations remain unchanged for each tile (Production, Work, Nasta, Payment/Loan, Company Report, Final Balance, Requests, Settings, Worker Rate Settings).",
-        "No new routes/views are introduced."
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Ensure the overall screen/frame border and per-section borders are consistent across both User and Admin homepages (including a clear outer screen border and per-group borders), matching the reference image’s emphasis on bordered sections, while keeping all existing functionality intact.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "পুরা স্কিনে চারপাশে একটা বর্ডার দিয়ে"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Both User and Admin homepages show a clear outer frame border around the main content area.",
-        "Each grouped area (KPIs container and action group containers) has a visible border and rounded corners consistent with the reference image.",
-        "No functional regressions: login, logout, navigation, and all existing data displays/actions still work as before."
+        "The registration screen uses a cohesive, visually distinct color theme (background + card + inputs + button) rather than mostly neutral/unstyled colors.",
+        "Text remains readable with sufficient contrast in both light conditions and on mobile.",
+        "Form behavior (validation, pending request storage, success messaging, switching back to login) remains unchanged."
       ]
     }
   ],
   "constraints": [
-    "Do not add any additional screens beyond the existing ones.",
-    "Do not change existing business logic/data calculations; this is a UI layout/styling update only.",
-    "Do not modify files under frontend/src/components/ui (read-only components must be composed, not edited).",
-    "Keep all existing navigation targets and actions for tiles/buttons unchanged."
+    "Frontend immutable paths (e.g., frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui) must not be edited.",
+    "Keep all changes limited to UI/styling/layout; do not change backend data models or workflows for login/registration/approvals."
   ],
   "nonGoals": [
-    "Adding new admin/user features beyond layout/styling changes.",
-    "Changing the app’s language/content text (e.g., Bengali labels) unless required for layout.",
-    "Backend schema or Motoko actor changes."
+    "Do not add new features to the admin panel or change admin behavior.",
+    "Do not introduce new authentication methods beyond the existing flow.",
+    "Do not change the language/content of existing Bangla labels unless required for layout (styling changes only)."
   ],
   "imageRequirements": {
     "required": [],

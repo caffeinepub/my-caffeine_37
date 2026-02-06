@@ -5,7 +5,7 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import RegisterView from './RegisterView';
 import { useBranding } from '../../hooks/useBranding';
-import { getLogoUrl } from '../../lib/branding/brandingStorage';
+import { getLoginCircleImage } from '../../lib/branding/brandingStorage';
 
 export default function LoginView() {
   const { login } = useSession();
@@ -45,35 +45,28 @@ export default function LoginView() {
     return <RegisterView onSwitchToLogin={() => setShowRegister(false)} />;
   }
 
-  const logoUrl = getLogoUrl();
+  const circleImage = getLoginCircleImage();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center dashboard-professional-bg p-4">
       <div className="w-full max-w-md space-y-6">
-        {/* Hero Circle */}
+        {/* Hero Circle - Read-only, synced with branding logo */}
         <div className="flex justify-center mb-6">
-          <div className="w-48 h-48 rounded-full bg-white shadow-2xl flex items-center justify-center overflow-hidden">
+          <div className="relative w-48 h-48 rounded-full bg-white shadow-2xl flex items-center justify-center overflow-hidden">
             <img
-              src="/assets/generated/login-hero-illustration.dim_1024x1024.png"
+              src={circleImage}
               alt="Hero"
               className="w-full h-full object-cover"
             />
           </div>
         </div>
 
-        {/* Title Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-6 text-center">
-          <div className="flex justify-center mb-3">
-            <img
-              src={logoUrl}
-              alt={branding.companyName}
-              className="w-16 h-16 object-contain"
-            />
-          </div>
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+        {/* Brand Name - Text only, no box */}
+        <div className="text-center">
+          <h1 className="text-4xl font-black text-slate-800 tracking-tight drop-shadow-lg">
             {branding.companyName}
           </h1>
-          <p className="text-slate-600 mt-1 text-sm">Worker Management System</p>
+          <p className="text-slate-700 mt-2 text-sm drop-shadow">Worker Management System</p>
         </div>
 
         {/* Login Form */}
@@ -117,20 +110,21 @@ export default function LoginView() {
             </Button>
           </form>
           <div className="mt-4 text-center">
-            <button
+            <Button
               onClick={() => setShowRegister(true)}
-              className="text-sm text-slate-700 hover:text-slate-900 transition-colors font-medium underline"
               disabled={isLoading}
+              variant="outline"
+              className="w-full bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white font-bold border-2 border-teal-700 shadow-md rounded-2xl h-11"
             >
               নতুন ইউজার রেজিস্ট্রেশন
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="text-center text-sm text-white/80">
+        <div className="text-center text-sm text-slate-700">
           © 2026. Built with ❤️ using{' '}
-          <a href="https://caffeine.ai" target="_blank" rel="noopener noreferrer" className="text-white hover:text-white/90 underline">
+          <a href="https://caffeine.ai" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 font-semibold">
             caffeine.ai
           </a>
         </div>

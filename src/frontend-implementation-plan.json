@@ -1,105 +1,79 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "User/Admin dashboard homepage bordered grouping redesign (match reference layout)",
+  "title": "User panel UI styling + mobile-fit dashboard adjustments",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Wrap the three User KPI cards inside a single shared bordered container while keeping KPI values/calculations unchanged and matching the reference styling.",
+      "summary": "Make the logged-in username in the User Dashboard header visually prominent with larger sizing and a designer-chosen color/gradient while still showing the numeric user ID.",
       "acceptanceCriteria": [
-        "On the User dashboard home view, the three KPI cards render together inside one shared container with a visible border and rounded corners (not three independent bordered blocks).",
-        "The KPI numbers shown remain unchanged from current behavior (same data source and calculations).",
-        "The overall visual style (colors/typography/rounded corners/shadows) remains consistent with the uploaded reference image."
+        "On the user dashboard header, the user name is noticeably larger than before and uses a clear colored/gradient styling (not plain white-only).",
+        "The header still shows both “User: <id>” and the user name.",
+        "No layout overlap occurs in the header at common mobile widths (e.g., 360px)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/user/components/UserKpiSummary.tsx",
-          "operation": "modify",
-          "description": "Refactor the KPI markup so the 1-wide + 2-half cards are nested inside one shared, rounded, bordered container; remove/soften per-card outer borders as needed so the grouping reads as a single section; do not change props, value formatting, or any calculations."
-        },
-        {
           "path": "frontend/src/features/user/UserDashboard.tsx",
           "operation": "modify",
-          "description": "Adjust the KPI section wrapper spacing/margins if needed to match the reference layout after the KPI shared bordered container change, without altering any KPI data loading logic."
+          "description": "Update the fixed header typography/layout to highlight the username (larger font, gradient/colored text treatment instead of plain white), keep “User: <id>” visible, and add overflow-safe behavior (wrapping/truncation) so the header does not overlap at ~360px widths."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add/adjust a small reusable utility class for gradient text (e.g., background-clip text + text-transparent pattern) to support consistent username styling in the dashboard header without changing application copy."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Re-layout User dashboard action tiles to 3 tiles in the first row and a single Payment/Loan tile in a second row aligned left, preserving existing navigation behavior and tile styling.",
+      "summary": "Reduce dashboard tile and clock card sizing so notice/clock/KPIs/2x2 tiles fit within common mobile viewports without tiles overflowing off-screen.",
       "acceptanceCriteria": [
-        "User dashboard home action tiles are arranged as 3 tiles in the first row and 1 tile in the second row aligned left (matching the reference screenshot layout).",
-        "Each action tile has a rounded container with a visible border and consistent shadow treatment.",
-        "Clicking each tile still navigates to the same existing views as before (Production, Work, Payment history views, etc.)."
+        "At a typical mobile viewport (e.g., 360x800), the dashboard shows the notice (if enabled), clock, KPI summary, and the 2x2 tile grid without tiles rendering outside the frame/container.",
+        "The tile grid remains fully visible within the dashboard frame without horizontal overflow.",
+        "The clock card is slightly reduced in height/typography compared to current, while remaining readable.",
+        "No new scrolling/overlap regressions are introduced with the fixed header and fixed footer present."
       ],
       "file_operations": [
         {
+          "path": "frontend/src/components/dashboard/ActionTile.tsx",
+          "operation": "modify",
+          "description": "Adjust the 'user' (and/or 'small') size variant to be more compact on mobile by reducing padding, icon size, and label typography; also tweak sizing constraints (e.g., aspect/spacing) to prevent overflow while keeping tiles readable."
+        },
+        {
+          "path": "frontend/src/features/user/components/ClockCard.tsx",
+          "operation": "modify",
+          "description": "Reduce clock card visual footprint (padding, border thickness, time/date font sizes, and overall vertical spacing) while preserving readability to help the dashboard fit on common mobile screens."
+        },
+        {
           "path": "frontend/src/features/user/UserDashboard.tsx",
           "operation": "modify",
-          "description": "Update the action tiles layout from a 2x2 grid to a 3-column first row (Production, Work, Nasta) and a second row with only the Payment/Loan tile aligned to the left; keep the same onClick handlers/viewMode transitions for each tile."
+          "description": "Tune the dashboard layout spacing (content padding, section margins, grid gap, and tile size prop selection) to ensure the 2x2 tile grid stays fully within the viewport/frame without horizontal overflow and with fixed header/footer present."
+        },
+        {
+          "path": "frontend/src/features/user/components/UserKpiSummary.tsx",
+          "operation": "modify",
+          "description": "Slightly compact KPI card spacing/typography (without changing labels/content) to support the overall goal of fitting notice + clock + KPIs + tiles on typical mobile viewports."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Update Admin dashboard top totals area to match the User KPI layout (1 full-width + 2 half-width) inside a single shared bordered container, preserving existing totals calculations.",
+      "summary": "Apply a cohesive, attractive color theme to the registration form (RegisterView) while keeping all behaviors unchanged.",
       "acceptanceCriteria": [
-        "Admin dashboard 'dashboard' view shows the same KPI layout style as the User dashboard (1 wide card + 2 half cards).",
-        "The three admin KPI cards are inside one shared bordered container with rounded corners.",
-        "Admin totals values remain correct and based on the same underlying stored account data as before."
+        "The registration screen uses a cohesive, visually distinct color theme (background + card + inputs + button) rather than mostly neutral/unstyled colors.",
+        "Text remains readable with sufficient contrast in both light conditions and on mobile.",
+        "Form behavior (validation, pending request storage, success messaging, switching back to login) remains unchanged."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/admin/components/AdminSummaryCards.tsx",
+          "path": "frontend/src/features/auth/RegisterView.tsx",
           "operation": "modify",
-          "description": "Replace the circular totals UI with the same 1-wide + 2-half KPI card layout used on the User dashboard, wrapped inside a single shared bordered/rounded container; keep the existing totals data source and computations intact (no logic changes)."
+          "description": "Restyle the registration screen with a cohesive theme: enhance page background, card styling, headings, input borders/focus states, and the primary submit button; keep validation logic and submission flow unchanged. Use the shadcn-ui Card/Input/Button components already present for consistent theming. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/features/admin/AdminPanel.tsx",
+          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Adjust admin dashboard summary area container styling (around AdminSummaryCards) so it visually matches the reference (border emphasis and spacing) after the AdminSummaryCards layout change, without changing navigation or logout behavior."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Reorganize Admin dashboard menu tiles into bordered/rounded visual groups for money-related, work-related, and settings-related actions while keeping all existing navigation destinations unchanged and adding no new views.",
-      "acceptanceCriteria": [
-        "Admin dashboard menu tiles are grouped into clearly separated visual groups (each group has its own rounded border container).",
-        "Existing admin navigation destinations remain unchanged for each tile (Production, Work, Nasta, Payment/Loan, Company Report, Final Balance, Requests, Settings, Worker Rate Settings).",
-        "No new routes/views are introduced."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/features/admin/components/AdminGridMenu.tsx",
-          "operation": "modify",
-          "description": "Rework the menu rendering to create three clearly separated bordered group containers: (1) work-related tiles (Production, Work, Nasta), (2) money-related tiles (Payment/Loan, Company Report, Final Balance), and (3) settings-related tiles (Requests, Settings, Worker Rate Settings); preserve each tile's onNavigate target and do not introduce any new views."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Ensure consistent outer screen/frame border and per-section/group bordered styling across both User and Admin homepages, matching the reference’s emphasis on bordered sections without functional regressions.",
-      "acceptanceCriteria": [
-        "Both User and Admin homepages show a clear outer frame border around the main content area.",
-        "Each grouped area (KPIs container and action group containers) has a visible border and rounded corners consistent with the reference image.",
-        "No functional regressions: login, logout, navigation, and all existing data displays/actions still work as before."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/layout/DashboardFrame.tsx",
-          "operation": "modify",
-          "description": "Normalize the outer frame border/rounding/shadow tokens (if needed) so the User and Admin home dashboards share the same strong, consistent outer border treatment matching the reference."
-        },
-        {
-          "path": "frontend/src/features/user/UserDashboard.tsx",
-          "operation": "modify",
-          "description": "Wrap the User action tiles area inside a single bordered/rounded group container (in addition to per-tile borders) so the dashboard reads as bordered sections like the reference; keep all tile actions and viewMode transitions unchanged."
-        },
-        {
-          "path": "frontend/src/features/admin/AdminPanel.tsx",
-          "operation": "modify",
-          "description": "Ensure the Admin dashboard menu area (AdminGridMenu) is presented as clearly bordered section groups (work/money/settings) with consistent spacing and borders comparable to the User homepage; do not change any navigation targets or introduce new views."
+          "description": "Add/adjust any minimal global utility styles needed to support the new RegisterView color theme (e.g., an auth background or input focus glow utility), ensuring readability/contrast on mobile and avoiding changes to backend workflows."
         }
       ]
     }

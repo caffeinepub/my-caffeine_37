@@ -5,7 +5,6 @@ import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../../../components/ui/dialog';
 import { notify } from '../../../components/feedback/notify';
 import { getProfilePhoto, setProfilePhoto } from '../../../lib/storage/userProfileStorage';
 import DashboardFooter from '../../../components/layout/DashboardFooter';
@@ -21,9 +20,9 @@ export default function ProfileSettingsView({ onBack }: ProfileSettingsViewProps
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showMobileDialog, setShowMobileDialog] = useState(false);
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
-  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
+  const [showMobilePanel, setShowMobilePanel] = useState(false);
+  const [showPasswordPanel, setShowPasswordPanel] = useState(false);
+  const [showSettingsPanel, setShowSettingsPanel] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -63,7 +62,7 @@ export default function ProfileSettingsView({ onBack }: ProfileSettingsViewProps
 
     if (newMobile === session.mobile) {
       notify.info('এটি আপনার বর্তমান মোবাইল নাম্বার');
-      setShowMobileDialog(false);
+      setShowMobilePanel(false);
       return;
     }
 
@@ -77,7 +76,7 @@ export default function ProfileSettingsView({ onBack }: ProfileSettingsViewProps
       const result = await updateUserProfile({ mobile: newMobile });
       if (result.success) {
         notify.success('মোবাইল নাম্বার আপডেট হয়েছে');
-        setShowMobileDialog(false);
+        setShowMobilePanel(false);
       } else {
         notify.error(result.error || 'মোবাইল নাম্বার আপডেট করতে সমস্যা হয়েছে');
       }
@@ -116,7 +115,7 @@ export default function ProfileSettingsView({ onBack }: ProfileSettingsViewProps
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
-        setShowPasswordDialog(false);
+        setShowPasswordPanel(false);
       } else {
         notify.error(result.error || 'পাসওয়ার্ড আপডেট করতে সমস্যা হয়েছে');
       }
@@ -216,7 +215,7 @@ export default function ProfileSettingsView({ onBack }: ProfileSettingsViewProps
                     className="bg-muted flex-1"
                   />
                   <Button
-                    onClick={() => setShowMobileDialog(true)}
+                    onClick={() => setShowMobilePanel(!showMobilePanel)}
                     variant="outline"
                     size="icon"
                   >
@@ -224,6 +223,40 @@ export default function ProfileSettingsView({ onBack }: ProfileSettingsViewProps
                   </Button>
                 </div>
               </div>
+
+              {/* Mobile Change Panel */}
+              {showMobilePanel && (
+                <div className="p-4 bg-slate-100 rounded-lg border-2 border-teal-500 space-y-3">
+                  <h3 className="font-bold text-teal-700">মোবাইল নাম্বার পরিবর্তন</h3>
+                  <div className="space-y-2">
+                    <Label>নতুন মোবাইল নাম্বার</Label>
+                    <Input
+                      type="tel"
+                      placeholder="01XXXXXXXXX"
+                      value={newMobile}
+                      onChange={(e) => setNewMobile(e.target.value)}
+                      maxLength={11}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowMobilePanel(false)}
+                      disabled={isLoading}
+                      className="flex-1"
+                    >
+                      বাতিল করুন
+                    </Button>
+                    <Button
+                      onClick={handleMobileChange}
+                      disabled={isLoading}
+                      className="flex-1"
+                    >
+                      {isLoading ? 'আপডেট হচ্ছে...' : 'আপডেট করুন'}
+                    </Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -235,15 +268,63 @@ export default function ProfileSettingsView({ onBack }: ProfileSettingsViewProps
                 পাসওয়ার্ড পরিবর্তন
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <Button
-                onClick={() => setShowPasswordDialog(true)}
+                onClick={() => setShowPasswordPanel(!showPasswordPanel)}
                 className="w-full"
                 variant="outline"
               >
                 <Lock className="w-4 h-4 mr-2" />
                 পাসওয়ার্ড পরিবর্তন করুন
               </Button>
+
+              {/* Password Change Panel */}
+              {showPasswordPanel && (
+                <div className="p-4 bg-slate-100 rounded-lg border-2 border-rose-500 space-y-3">
+                  <h3 className="font-bold text-rose-700">পাসওয়ার্ড পরিবর্তন</h3>
+                  <div className="space-y-2">
+                    <Label>বর্তমান পাসওয়ার্ড</Label>
+                    <Input
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>নতুন পাসওয়ার্ড</Label>
+                    <Input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>নতুন পাসওয়ার্ড নিশ্চিত করুন</Label>
+                    <Input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowPasswordPanel(false)}
+                      disabled={isLoading}
+                      className="flex-1"
+                    >
+                      বাতিল করুন
+                    </Button>
+                    <Button
+                      onClick={handlePasswordChange}
+                      disabled={isLoading}
+                      className="flex-1"
+                    >
+                      {isLoading ? 'আপডেট হচ্ছে...' : 'আপডেট করুন'}
+                    </Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -255,14 +336,27 @@ export default function ProfileSettingsView({ onBack }: ProfileSettingsViewProps
                 সেটিংস
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <Button
-                onClick={() => setShowSettingsDialog(true)}
+                onClick={() => setShowSettingsPanel(!showSettingsPanel)}
                 className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white"
               >
                 <Settings className="w-4 h-4 mr-2" />
                 সেটিংস খুলুন
               </Button>
+
+              {/* Settings Panel */}
+              {showSettingsPanel && (
+                <div className="p-6 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-lg border-2 border-teal-500">
+                  <div className="text-center">
+                    <Settings className="w-16 h-16 mx-auto mb-4 text-teal-600" />
+                    <p className="text-lg font-medium mb-2">সেটিংস বিভাগ</p>
+                    <p className="text-sm text-muted-foreground">
+                      এখানে আপনার অ্যাপ্লিকেশন সেটিংস এবং পছন্দসমূহ পরিচালনা করতে পারবেন।
+                    </p>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -272,130 +366,6 @@ export default function ProfileSettingsView({ onBack }: ProfileSettingsViewProps
       <div className="fixed bottom-0 left-0 right-0 z-20">
         <DashboardFooter onSupportClick={() => {}} />
       </div>
-
-      {/* Mobile Change Dialog */}
-      <Dialog open={showMobileDialog} onOpenChange={setShowMobileDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>মোবাইল নাম্বার পরিবর্তন</DialogTitle>
-            <DialogDescription>
-              নতুন মোবাইল নাম্বার দিন
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>নতুন মোবাইল নাম্বার</Label>
-              <Input
-                type="tel"
-                placeholder="01XXXXXXXXX"
-                value={newMobile}
-                onChange={(e) => setNewMobile(e.target.value)}
-                maxLength={11}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowMobileDialog(false)}
-              disabled={isLoading}
-            >
-              বাতিল করুন
-            </Button>
-            <Button
-              onClick={handleMobileChange}
-              disabled={isLoading}
-            >
-              {isLoading ? 'আপডেট হচ্ছে...' : 'আপডেট করুন'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Password Change Dialog */}
-      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>পাসওয়ার্ড পরিবর্তন</DialogTitle>
-            <DialogDescription>
-              বর্তমান এবং নতুন পাসওয়ার্ড দিন
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>বর্তমান পাসওয়ার্ড</Label>
-              <Input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>নতুন পাসওয়ার্ড</Label>
-              <Input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>নতুন পাসওয়ার্ড নিশ্চিত করুন</Label>
-              <Input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowPasswordDialog(false)}
-              disabled={isLoading}
-            >
-              বাতিল করুন
-            </Button>
-            <Button
-              onClick={handlePasswordChange}
-              disabled={isLoading}
-            >
-              {isLoading ? 'আপডেট হচ্ছে...' : 'আপডেট করুন'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Settings Dialog */}
-      <Dialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Settings className="w-5 h-5" />
-              সেটিংস
-            </DialogTitle>
-            <DialogDescription>
-              অ্যাপ্লিকেশন সেটিংস এবং পছন্দসমূহ
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-6">
-            <div className="text-center text-muted-foreground">
-              <Settings className="w-16 h-16 mx-auto mb-4 text-teal-600" />
-              <p className="text-lg font-medium mb-2">সেটিংস বিভাগ</p>
-              <p className="text-sm">
-                এখানে আপনার অ্যাপ্লিকেশন সেটিংস এবং পছন্দসমূহ পরিচালনা করতে পারবেন।
-              </p>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              onClick={() => setShowSettingsDialog(false)}
-              className="w-full"
-            >
-              বন্ধ করুন
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
