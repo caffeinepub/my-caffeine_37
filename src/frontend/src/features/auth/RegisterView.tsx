@@ -69,11 +69,18 @@ export default function RegisterView({ onSwitchToLogin }: RegisterViewProps) {
         return;
       }
 
-      // Add to pending requests
+      // Get next available user ID
+      const USER_ID_COUNTER_KEY = 'user_id_counter';
+      let counter = parseInt(localStorage.getItem(USER_ID_COUNTER_KEY) || '0', 10);
+      counter++;
+      localStorage.setItem(USER_ID_COUNTER_KEY, counter.toString());
+
+      // Add to pending requests with pre-assigned ID
       pendingRequests.push({ 
         name: trimmedName, 
         mob: trimmedMobile, 
-        pass: password 
+        pass: password,
+        userId: counter
       });
       safeSetItem('pending_reqs', pendingRequests);
 

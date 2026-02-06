@@ -14,114 +14,123 @@ export default function ApprovalsSection({ onApprovalChange }: ApprovalsSectionP
   const [pendingRequests, setPendingRequests] = useState<PendingRequest[]>([]);
 
   useEffect(() => {
-    loadRequests();
+    loadPendingRequests();
   }, []);
 
-  const loadRequests = () => {
+  const loadPendingRequests = () => {
     const requests = safeGetArray<PendingRequest>('pending_reqs');
     setPendingRequests(requests);
   };
 
-  const handleApprove = (index: number) => {
+  const handleApprove = (request: PendingRequest) => {
     try {
-      const request = pendingRequests[index];
-      
-      // Get approved users as array (new format)
+      // Check for duplicate mobile in approved users
       const approvedUsers = safeGetArray<ApprovedUser>('approved_users');
+      const mobileExists = approvedUsers.some((user) => user.mob === request.mob);
       
-      // Check for duplicates by mobile (primary unique identifier)
-      const mobileExists = approvedUsers.some((u) => u.mob === request.mob);
       if (mobileExists) {
         notify.error('এই মোবাইল নম্বর দিয়ে ইতিমধ্যে একটি অ্যাকাউন্ট আছে');
         return;
       }
 
-      // Check for duplicates by name (also unique)
-      const nameExists = approvedUsers.some((u) => u.name === request.name);
+      // Check for duplicate name in approved users
+      const nameExists = approvedUsers.some((user) => user.name === request.name);
+      
       if (nameExists) {
         notify.error('এই নাম দিয়ে ইতিমধ্যে একটি অ্যাকাউন্ট আছে');
         return;
       }
 
-      // Add to approved users array
-      approvedUsers.push({
+      // Add to approved users with the pre-assigned userId from the pending request
+      const newUser: ApprovedUser = {
         name: request.name,
         mob: request.mob,
         pass: request.pass,
-      });
+        userId: request.userId // Preserve the registration-order ID
+      };
+      approvedUsers.push(newUser);
       safeSetItem('approved_users', approvedUsers);
 
-      // Add to workers list
-      const workers = safeGetArray<string>('workers');
-      if (!workers.includes(request.name)) {
-        workers.push(request.name);
-        safeSetItem('workers', workers);
-
-        // Initialize rates for the worker
-        const rates = safeGetArray<Record<string, { s: number; d: number }>>('rates');
-        const ratesObj = rates.length > 0 && typeof rates[0] === 'object' ? rates[0] : {};
-        ratesObj[request.name] = { s: 0, d: 0 };
-        safeSetItem('rates', ratesObj);
-      }
-
       // Remove from pending requests
-      const updatedRequests = pendingRequests.filter((_, i) => i !== index);
+      const updatedRequests = pendingRequests.filter((req) => req.mob !== request.mob);
       setPendingRequests(updatedRequests);
       safeSetItem('pending_reqs', updatedRequests);
 
-      notify.success(`${request.name} সফলভাবে অনুমোদিত হয়েছে`);
+      // Initialize worker account
+      const accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+      if (!accounts[request.name]) {
+        accounts[request.name] = { bill: 0, cost: 0 };
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+      }
+
+      notify.success(`${request.name} কে অনুমোদন করা হয়েছে`);
       onApprovalChange();
     } catch (error) {
       console.error('Approval error:', error);
-      notify.error('অনুমোদন করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+      notify.error('অনুমোদন ব্যর্থ হয়েছে');
     }
   };
 
-  if (pendingRequests.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Pending Requests</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground text-center py-4">কোনো পেন্ডিং রিকোয়েস্ট নেই</p>
-        </CardContent>
-      </Card>
-    );
-  }
+  const handleReject = (request: PendingRequest) => {
+    try {
+      const updatedRequests = pendingRequests.filter((req) => req.mob !== request.mob);
+      setPendingRequests(updatedRequests);
+      safeSetItem('pending_reqs', updatedRequests);
+      notify.success(`${request.name} এর রিকোয়েস্ট বাতিল করা হয়েছে`);
+      onApprovalChange();
+    } catch (error) {
+      console.error('Rejection error:', error);
+      notify.error('বাতিল করা ব্যর্থ হয়েছে');
+    }
+  };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Pending Requests</CardTitle>
+        <CardTitle>পেন্ডিং রেজিস্ট্রেশন রিকোয়েস্ট</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Mobile</TableHead>
-              <TableHead className="text-center">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {pendingRequests.map((request, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium">{request.name}</TableCell>
-                <TableCell>{request.mob}</TableCell>
-                <TableCell className="text-center">
-                  <Button
-                    onClick={() => handleApprove(index)}
-                    size="sm"
-                    className="bg-emerald-600 hover:bg-emerald-700"
-                  >
-                    Approve
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        {pendingRequests.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8">কোনো পেন্ডিং রিকোয়েস্ট নেই</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>নাম</TableHead>
+                  <TableHead>মোবাইল</TableHead>
+                  <TableHead>ID</TableHead>
+                  <TableHead className="text-right">অ্যাকশন</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {pendingRequests.map((request, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{request.name}</TableCell>
+                    <TableCell>{request.mob}</TableCell>
+                    <TableCell>{request.userId || 'N/A'}</TableCell>
+                    <TableCell className="text-right space-x-2">
+                      <Button
+                        size="sm"
+                        onClick={() => handleApprove(request)}
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        অনুমোদন
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleReject(request)}
+                      >
+                        বাতিল
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

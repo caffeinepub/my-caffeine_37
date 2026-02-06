@@ -1,33 +1,32 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "App UI update focused on user panel: style header username, resize user panel cards/clock to fit on-screen without scrolling, and add color theme to the new registration form.",
+  "summary": "Project includes a user panel UI update: header should show user name prominently with a centered ID beneath it, IDs should be assigned in registration order (auto-increment), and user panel buttons/layout must fit neatly within a single screen like the admin panel.",
   "architectural_notes": [],
   "known_issues": [
-    "User panel sections/cards overflow screen and require scrolling; should fit within screen",
-    "New registration form lacks styling/colors"
+    "User panel buttons/layout can overflow outside the visible screen; needs responsive sizing to fit within viewport."
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-update-the-user-dashboard-header-so-the-logged-in-user-name-is-visually-prominent-larger-size-attractive-designer-chosen-coloring-gradient-and-does-not-appear-as-plain-white-text-keep-the-header-showing-both-the-numeric-user-id-and-the-user-name-and-apply-the-styling-consistently-for-any-user-including-the-example-user-opu-id-1",
-      "title": "Update the User Dashboard header so the logged-in user name is visually prominent (larger size + attractive designer-chosen coloring/gradient) and does not appear as plain white text. Keep the header showing both the numeric user ID and the user name, and apply the styling consistently for any user (including the example user OPU, id=1).",
+      "id": "feature-update-the-user-panel-header-userdashboard-so-the-user-name-is-clearly-readable-in-white-high-contrast-text-displayed-larger-than-the-id-and-the-numeric-user-id-is-shown-centered-directly-beneath-the-name-format-equivalent-to-user-opu-and-id-1-apply-this-change-only-in-the-user-panel",
+      "title": "Update the User Panel header (UserDashboard) so the user name is clearly readable in white/high-contrast text, displayed larger than the ID, and the numeric user ID is shown centered directly beneath the name (format equivalent to “User: OPU” and “ID: 1”). Apply this change only in the user panel.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-adjust-the-user-dashboard-main-dashboard-layout-so-the-four-action-tiles-production-payment-loan-work-snack-and-the-clock-card-fit-within-the-viewport-without-the-tiles-overflowing-outside-the-screen-reduce-the-visual-size-of-the-tiles-card-padding-icon-text-aspect-where-needed-and-make-the-clock-card-slightly-smaller-so-the-dashboard-content-fits-on-screen-without-requiring-vertical-scrolling-to-reach-the-tiles-on-common-mobile-devices",
-      "title": "Adjust the User Dashboard main (dashboard) layout so the four action tiles (Production, Payment/Loan, Work, Snack) and the clock card fit within the viewport without the tiles overflowing outside the screen. Reduce the visual size of the tiles (card padding/icon/text/aspect where needed) and make the clock card slightly smaller so the dashboard content fits on-screen without requiring vertical scrolling to reach the tiles on common mobile devices.",
+      "id": "feature-fix-the-user-panel-layout-so-the-user-dashboard-content-including-header-tiles-grid-and-footer-always-fits-within-the-visible-dashboard-frame-viewport-and-does-not-overflow-off-screen-match-the-admin-panel-s-everything-stays-inside-one-screen-behavior-apply-only-to-the-user-panel",
+      "title": "Fix the User Panel layout so the user dashboard content (including header, tiles grid, and footer) always fits within the visible dashboard frame/viewport and does not overflow off-screen. Match the admin panel’s ‘everything stays inside one screen’ behavior; apply only to the user panel.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-restyle-the-new-user-registration-form-registerview-so-it-has-a-clear-attractive-color-theme-designer-choice-rather-than-appearing-uncolored-plain-apply-cohesive-colors-to-the-registration-card-background-form-fields-borders-focus-headings-and-primary-submit-button-while-keeping-readability-and-contrast",
-      "title": "Restyle the new user registration form (RegisterView) so it has a clear, attractive color theme (designer choice) rather than appearing uncolored/plain. Apply cohesive colors to the registration card background, form fields (borders/focus), headings, and primary submit button while keeping readability and contrast.",
+      "id": "feature-ensure-user-ids-are-assigned-as-a-stable-auto-increment-serial-strictly-by-registration-order-first-registrant-gets-id-1-then-2-etc-and-the-same-user-always-retains-the-same-id-across-sessions-this-must-work-even-if-admin-approvals-happen-in-a-different-order-than-registrations",
+      "title": "Ensure user IDs are assigned as a stable auto-increment serial strictly by registration order (first registrant gets ID 1, then 2, etc.), and the same user always retains the same ID across sessions. This must work even if admin approvals happen in a different order than registrations.",
       "reqIds": [
         "REQ-3"
       ],
@@ -37,24 +36,24 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Style header user name (larger, colored) for user id=1 (OPU)",
+      "summary": "User panel header: show user name in larger white/high-contrast text with centered user ID below it",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Resize user panel sections/cards (Production, Payment/Loan, Work, Snack) and make clock slightly smaller so everything fits within screen without scrolling",
+      "summary": "Assign user IDs by registration order (auto-increment serial starting at 1)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Add attractive color theme/styling to the new registration form (currently no color)",
+      "summary": "User panel buttons/layout: resize/reflow so content fits within the screen (match admin panel single-screen fit)",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "User panel UI fixes: highlight username, fit dashboard tiles on-screen, and add color styling to registration form",
+  "projectName": "User panel header + ID serial + dashboard fit within screen",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

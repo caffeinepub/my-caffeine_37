@@ -94,9 +94,9 @@ export default function UserDashboard() {
       <DashboardFrame>
         <div className="flex flex-col h-full">
           {/* Fixed Header - Dashboard gradient with prominent username */}
-          <div className="fixed top-0 left-0 right-0 z-20 dashboard-gradient px-2 py-2 flex items-center justify-between shadow-md border-b-2 border-blue-900">
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/50 shadow-md flex-shrink-0">
+          <div className="dashboard-gradient px-3 py-3 flex items-center justify-between shadow-md border-b-2 border-blue-900">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/50 shadow-md flex-shrink-0">
                 {profilePhoto ? (
                   <img
                     src={profilePhoto}
@@ -107,11 +107,11 @@ export default function UserDashboard() {
                   <div className="w-full h-full bg-gradient-to-br from-teal-400 to-cyan-500" />
                 )}
               </div>
-              <div className="flex flex-col min-w-0 flex-1">
-                <span className="text-white/80 text-[10px] font-medium">User: {session?.userId || 'N/A'}</span>
-                <h1 className="text-xl font-black gradient-username tracking-wide leading-tight truncate" style={{ fontFamily: 'Impact, sans-serif' }}>
+              <div className="flex flex-col items-center min-w-0 flex-1">
+                <h1 className="text-2xl font-black text-white tracking-wide leading-tight truncate" style={{ fontFamily: 'Impact, sans-serif' }}>
                   {session?.userName || 'User'}
                 </h1>
+                <span className="text-white/90 text-xs font-medium">ID: {session?.userId || 'N/A'}</span>
               </div>
             </div>
             <button
@@ -125,10 +125,10 @@ export default function UserDashboard() {
           </div>
 
           {/* Scrollable Content with professional background */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden pt-[56px] pb-[72px] px-2 dashboard-professional-bg">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden pb-[72px] px-2 dashboard-professional-bg">
             {/* Notice Marquee */}
             {noticeConfig.enabled && noticeConfig.text && (
-              <div className="mb-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white py-1.5 px-3 rounded-lg shadow-md overflow-hidden">
+              <div className="mt-2 mb-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white py-1.5 px-3 rounded-lg shadow-md overflow-hidden">
                 <div className="marquee-container">
                   <div className="marquee-content">
                     <span className="font-bold text-xs">{noticeConfig.text}</span>
@@ -138,7 +138,7 @@ export default function UserDashboard() {
             )}
 
             {/* Clock Card - Reduced size */}
-            <div className="mb-2">
+            <div className="mt-2 mb-2">
               <ClockCard />
             </div>
 

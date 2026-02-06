@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-06T22:13:37.898Z",
+  "generatedAt": "2026-02-06T22:40:20.684Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -12,45 +12,45 @@
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the User Dashboard header so the logged-in user name is visually prominent (larger size + attractive designer-chosen coloring/gradient) and does not appear as plain white text. Keep the header showing both the numeric user ID and the user name, and apply the styling consistently for any user (including the example user OPU, id=1).",
+        "summary": "Update the User Panel header (UserDashboard) so the user name is clearly readable in white/high-contrast text, displayed larger than the ID, and the numeric user ID is shown centered directly beneath the name (format equivalent to “User: OPU” and “ID: 1”). Apply this change only in the user panel.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/user/UserDashboard.tsx",
-          "frontend/src/index.css"
+          "frontend/src/features/user/UserDashboard.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/user/UserDashboard.tsx",
-          "frontend/src/index.css"
+          "frontend/src/features/user/UserDashboard.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Adjust the User Dashboard main (dashboard) layout so the four action tiles (Production, Payment/Loan, Work, Snack) and the clock card fit within the viewport without the tiles overflowing outside the screen. Reduce the visual size of the tiles (card padding/icon/text/aspect where needed) and make the clock card slightly smaller so the dashboard content fits on-screen without requiring vertical scrolling to reach the tiles on common mobile devices.",
+        "summary": "Fix the User Panel layout so the user dashboard content (including header, tiles grid, and footer) always fits within the visible dashboard frame/viewport and does not overflow off-screen. Match the admin panel’s ‘everything stays inside one screen’ behavior; apply only to the user panel.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/dashboard/ActionTile.tsx",
-          "frontend/src/features/user/components/ClockCard.tsx",
-          "frontend/src/features/user/UserDashboard.tsx",
-          "frontend/src/features/user/components/UserKpiSummary.tsx"
+          "frontend/src/components/layout/DashboardFrame.tsx",
+          "frontend/src/features/user/UserDashboard.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/dashboard/ActionTile.tsx",
-          "frontend/src/features/user/components/ClockCard.tsx",
-          "frontend/src/features/user/UserDashboard.tsx",
-          "frontend/src/features/user/components/UserKpiSummary.tsx"
+          "frontend/src/components/layout/DashboardFrame.tsx",
+          "frontend/src/features/user/UserDashboard.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Restyle the new user registration form (RegisterView) so it has a clear, attractive color theme (designer choice) rather than appearing uncolored/plain. Apply cohesive colors to the registration card background, form fields (borders/focus), headings, and primary submit button while keeping readability and contrast.",
+        "summary": "Ensure user IDs are assigned as a stable auto-increment serial strictly by registration order (first registrant gets ID 1, then 2, etc.), and the same user always retains the same ID across sessions. This must work even if admin approvals happen in a different order than registrations.",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/src/state/session/sessionTypes.ts",
           "frontend/src/features/auth/RegisterView.tsx",
-          "frontend/src/index.css"
+          "frontend/src/features/admin/sections/ApprovalsSection.tsx",
+          "frontend/src/lib/storage/userIdStorage.ts",
+          "frontend/src/state/session/SessionProvider.tsx"
         ],
         "matchedFiles": [
+          "frontend/src/state/session/sessionTypes.ts",
           "frontend/src/features/auth/RegisterView.tsx",
-          "frontend/src/index.css"
+          "frontend/src/features/admin/sections/ApprovalsSection.tsx",
+          "frontend/src/lib/storage/userIdStorage.ts",
+          "frontend/src/state/session/SessionProvider.tsx"
         ]
       }
     ]
@@ -60,12 +60,13 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/dashboard/ActionTile.tsx",
+    "frontend/src/components/layout/DashboardFrame.tsx",
+    "frontend/src/features/admin/sections/ApprovalsSection.tsx",
     "frontend/src/features/auth/RegisterView.tsx",
     "frontend/src/features/user/UserDashboard.tsx",
-    "frontend/src/features/user/components/ClockCard.tsx",
-    "frontend/src/features/user/components/UserKpiSummary.tsx",
-    "frontend/src/index.css",
+    "frontend/src/lib/storage/userIdStorage.ts",
+    "frontend/src/state/session/SessionProvider.tsx",
+    "frontend/src/state/session/sessionTypes.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

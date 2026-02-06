@@ -1,78 +1,90 @@
 {
   "kind": "build_request",
-  "title": "User panel UI fixes: highlight username, fit dashboard tiles on-screen, and add color styling to registration form",
+  "title": "User panel header + ID serial + dashboard fit within screen",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the User Dashboard header so the logged-in user name is visually prominent (larger size + attractive designer-chosen coloring/gradient) and does not appear as plain white text. Keep the header showing both the numeric user ID and the user name, and apply the styling consistently for any user (including the example user OPU, id=1).",
+      "text": "Update the User Panel header (UserDashboard) so the user name is clearly readable in white/high-contrast text, displayed larger than the ID, and the numeric user ID is shown centered directly beneath the name (format equivalent to “User: OPU” and “ID: 1”). Apply this change only in the user panel.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "১/হেডারেও ইউযারের নামটা এভাবে আসবে না ... নামটা যেন কালারিং হয় বড় দেখা যায়",
-          "OPU id:1"
+          "১/নামটি সাদা/হাই-কনট্রাস্ট রঙে হোক, নামটা একটু বড় হবে নিচে আইডি থাকবে",
+          "৩/“User panel only”"
         ]
       },
       "acceptanceCriteria": [
-        "On the user dashboard header, the user name is noticeably larger than before and uses a clear colored/gradient styling (not plain white-only).",
-        "The header still shows both “User: <id>” and the user name.",
-        "No layout overlap occurs in the header at common mobile widths (e.g., 360px)."
+        "In the user dashboard header, the username uses a high-contrast white (or equivalent) style and is visually more prominent than the ID.",
+        "The ID is rendered on its own line directly below the username and is horizontally centered relative to the name block.",
+        "The header continues to show the correct session userName and userId values.",
+        "No admin panel header styling is changed."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Adjust the User Dashboard main (dashboard) layout so the four action tiles (Production, Payment/Loan, Work, Snack) and the clock card fit within the viewport without the tiles overflowing outside the screen. Reduce the visual size of the tiles (card padding/icon/text/aspect where needed) and make the clock card slightly smaller so the dashboard content fits on-screen without requiring vertical scrolling to reach the tiles on common mobile devices.",
+      "text": "Fix the User Panel layout so the user dashboard content (including header, tiles grid, and footer) always fits within the visible dashboard frame/viewport and does not overflow off-screen. Match the admin panel’s ‘everything stays inside one screen’ behavior; apply only to the user panel.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "২/ইউজার ফেনেলের সেকশন গুলা বড় হয়ে গেছে ... এগুলা স্ক্রিনের ভিতরেই থাকবে যেন স্লইট করতে না হয়",
-          "কার্ডগুলো একটু ছোট করে দিলেই উপরে ঘড়িটা একটু ছোট করলেই স্কিনের ভিতরে ফিট হয়ে যাবে"
+          "২/অ্যাডমিন প্যানেলের স্ক্রিনশটের মতো (এক স্ক্রিনে পরিপাটিভাবে ফিট) করতে হবে",
+          "এভাবে ... স্ক্রিনের ভিতরেই থাকবে ... বাইরে চলে গেছে"
         ]
       },
       "acceptanceCriteria": [
-        "At a typical mobile viewport (e.g., 360x800), the dashboard shows the notice (if enabled), clock, KPI summary, and the 2x2 tile grid without tiles rendering outside the frame/container.",
-        "The tile grid remains fully visible within the dashboard frame without horizontal overflow.",
-        "The clock card is slightly reduced in height/typography compared to current, while remaining readable.",
-        "No new scrolling/overlap regressions are introduced with the fixed header and fixed footer present."
+        "On common mobile viewport sizes, the user dashboard action tiles remain fully visible within the dashboard frame and do not extend beyond the left/right edges.",
+        "The user dashboard header and footer do not escape the dashboard frame (i.e., they are positioned relative to the frame rather than the full window).",
+        "The main scroll area scrolls vertically as needed without introducing horizontal scrolling."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Restyle the new user registration form (RegisterView) so it has a clear, attractive color theme (designer choice) rather than appearing uncolored/plain. Apply cohesive colors to the registration card background, form fields (borders/focus), headings, and primary submit button while keeping readability and contrast.",
+      "text": "Ensure user IDs are assigned as a stable auto-increment serial strictly by registration order (first registrant gets ID 1, then 2, etc.), and the same user always retains the same ID across sessions. This must work even if admin approvals happen in a different order than registrations.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "৩/নতুন রেজিস্ট্রেশন অপশনে ক্লিক করলে যে ফর্মটা আসে ... ডিজাইনটাতে কোন কালার নেই ওই ফর্মটা কালার করে দিও",
-          "৩/তোমার মন মতো দিয়ে দাও"
+          "১/যে সর্বপ্রথম রেজিস্ট্রেশন করবে সে সেই সিরিয়ালে আইডি পাবে"
         ]
       },
       "acceptanceCriteria": [
-        "The registration screen uses a cohesive, visually distinct color theme (background + card + inputs + button) rather than mostly neutral/unstyled colors.",
-        "Text remains readable with sufficient contrast in both light conditions and on mobile.",
-        "Form behavior (validation, pending request storage, success messaging, switching back to login) remains unchanged."
+        "Each new registration request is assigned the next available serial number at the time the request is created, starting from 1.",
+        "When a pending request is approved, the approved user record retains the same serial number as the user’s ID.",
+        "Existing approved users that already have a userId keep it unchanged.",
+        "Existing approved users without a userId get one assigned exactly once and it remains stable afterward.",
+        "UserDashboard displays the correct stable ID for the logged-in user."
       ]
     }
   ],
   "constraints": [
-    "Frontend immutable paths (e.g., frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui) must not be edited.",
-    "Keep all changes limited to UI/styling/layout; do not change backend data models or workflows for login/registration/approvals."
+    "Frontend changes must be limited to the user panel only for layout/styling requests (do not alter admin panel UI).",
+    "Do not edit files under frontend/src/components/ui (shadcn components are read-only).",
+    "Backend must remain single-actor; do not add additional backend services."
   ],
   "nonGoals": [
-    "Do not add new features to the admin panel or change admin behavior.",
-    "Do not introduce new authentication methods beyond the existing flow.",
-    "Do not change the language/content of existing Bangla labels unless required for layout (styling changes only)."
+    "Do not redesign or change admin panel layout.",
+    "Do not introduce new authentication methods beyond the existing local/session behavior.",
+    "Do not add real-time features (e.g., WebSockets) or external databases/services."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

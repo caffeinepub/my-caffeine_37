@@ -35,4 +35,5 @@ export interface PendingRequest {
   name: string;
   mob: string;
   pass: string;
+  userId?: number; // Pre-assigned registration-order ID
 }

@@ -1,79 +1,81 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "User panel UI styling + mobile-fit dashboard adjustments",
+  "title": "User panel header readability, within-frame dashboard layout, and stable registration-order user IDs",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Make the logged-in username in the User Dashboard header visually prominent with larger sizing and a designer-chosen color/gradient while still showing the numeric user ID.",
+      "summary": "Adjust only the user panel (UserDashboard) header so the username is larger, white/high-contrast, and the numeric ID is centered directly beneath it.",
       "acceptanceCriteria": [
-        "On the user dashboard header, the user name is noticeably larger than before and uses a clear colored/gradient styling (not plain white-only).",
-        "The header still shows both “User: <id>” and the user name.",
-        "No layout overlap occurs in the header at common mobile widths (e.g., 360px)."
+        "In the user dashboard header, the username uses a high-contrast white (or equivalent) style and is visually more prominent than the ID.",
+        "The ID is rendered on its own line directly below the username and is horizontally centered relative to the name block.",
+        "The header continues to show the correct session userName and userId values.",
+        "No admin panel header styling is changed."
       ],
       "file_operations": [
         {
           "path": "frontend/src/features/user/UserDashboard.tsx",
           "operation": "modify",
-          "description": "Update the fixed header typography/layout to highlight the username (larger font, gradient/colored text treatment instead of plain white), keep “User: <id>” visible, and add overflow-safe behavior (wrapping/truncation) so the header does not overlap at ~360px widths."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Add/adjust a small reusable utility class for gradient text (e.g., background-clip text + text-transparent pattern) to support consistent username styling in the dashboard header without changing application copy."
+          "description": "Update the user panel header markup/styles so the primary line reads in the “User: <name>” format with high-contrast white styling and larger typography, and render “ID: <number>” centered on the next line under the name block; keep changes scoped to UserDashboard only."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Reduce dashboard tile and clock card sizing so notice/clock/KPIs/2x2 tiles fit within common mobile viewports without tiles overflowing off-screen.",
+      "summary": "Make the user dashboard header/content/footer stay within the dashboard frame on mobile (no off-screen overflow) while allowing vertical scrolling without horizontal scrollbars.",
       "acceptanceCriteria": [
-        "At a typical mobile viewport (e.g., 360x800), the dashboard shows the notice (if enabled), clock, KPI summary, and the 2x2 tile grid without tiles rendering outside the frame/container.",
-        "The tile grid remains fully visible within the dashboard frame without horizontal overflow.",
-        "The clock card is slightly reduced in height/typography compared to current, while remaining readable.",
-        "No new scrolling/overlap regressions are introduced with the fixed header and fixed footer present."
+        "On common mobile viewport sizes, the user dashboard action tiles remain fully visible within the dashboard frame and do not extend beyond the left/right edges.",
+        "The user dashboard header and footer do not escape the dashboard frame (i.e., they are positioned relative to the frame rather than the full window).",
+        "The main scroll area scrolls vertically as needed without introducing horizontal scrolling."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/dashboard/ActionTile.tsx",
+          "path": "frontend/src/components/layout/DashboardFrame.tsx",
           "operation": "modify",
-          "description": "Adjust the 'user' (and/or 'small') size variant to be more compact on mobile by reducing padding, icon size, and label typography; also tweak sizing constraints (e.g., aspect/spacing) to prevent overflow while keeping tiles readable."
-        },
-        {
-          "path": "frontend/src/features/user/components/ClockCard.tsx",
-          "operation": "modify",
-          "description": "Reduce clock card visual footprint (padding, border thickness, time/date font sizes, and overall vertical spacing) while preserving readability to help the dashboard fit on common mobile screens."
+          "description": "Adjust the dashboard frame container so it acts as a reliable positioning context (e.g., relative) and uses a viewport-fitting height strategy (mobile-safe) to prevent content from rendering outside the visible frame."
         },
         {
           "path": "frontend/src/features/user/UserDashboard.tsx",
           "operation": "modify",
-          "description": "Tune the dashboard layout spacing (content padding, section margins, grid gap, and tile size prop selection) to ensure the 2x2 tile grid stays fully within the viewport/frame without horizontal overflow and with fixed header/footer present."
-        },
-        {
-          "path": "frontend/src/features/user/components/UserKpiSummary.tsx",
-          "operation": "modify",
-          "description": "Slightly compact KPI card spacing/typography (without changing labels/content) to support the overall goal of fitting notice + clock + KPIs + tiles on typical mobile viewports."
+          "description": "Refactor user panel layout to position header/footer relative to the DashboardFrame (avoid window-level fixed positioning), and ensure the content area uses vertical scrolling with overflow-x hidden and appropriate top/bottom padding so tiles/header/footer remain inside the frame."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Apply a cohesive, attractive color theme to the registration form (RegisterView) while keeping all behaviors unchanged.",
+      "summary": "Ensure stable auto-increment user IDs are assigned strictly by registration order and retained across sessions, independent of approval order, with UserDashboard showing the correct stable ID.",
       "acceptanceCriteria": [
-        "The registration screen uses a cohesive, visually distinct color theme (background + card + inputs + button) rather than mostly neutral/unstyled colors.",
-        "Text remains readable with sufficient contrast in both light conditions and on mobile.",
-        "Form behavior (validation, pending request storage, success messaging, switching back to login) remains unchanged."
+        "Each new registration request is assigned the next available serial number at the time the request is created, starting from 1.",
+        "When a pending request is approved, the approved user record retains the same serial number as the user’s ID.",
+        "Existing approved users that already have a userId keep it unchanged.",
+        "Existing approved users without a userId get one assigned exactly once and it remains stable afterward.",
+        "UserDashboard displays the correct stable ID for the logged-in user."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/auth/RegisterView.tsx",
+          "path": "frontend/src/state/session/sessionTypes.ts",
           "operation": "modify",
-          "description": "Restyle the registration screen with a cohesive theme: enhance page background, card styling, headings, input borders/focus states, and the primary submit button; keep validation logic and submission flow unchanged. Use the shadcn-ui Card/Input/Button components already present for consistent theming. Verify the component's usage instructions before implementing."
+          "description": "Extend the PendingRequest type to persist the assigned registration-order serial (numeric ID) so it can be carried through approval into the approved user record."
         },
         {
-          "path": "frontend/src/index.css",
+          "path": "frontend/src/features/auth/RegisterView.tsx",
           "operation": "modify",
-          "description": "Add/adjust any minimal global utility styles needed to support the new RegisterView color theme (e.g., an auth background or input focus glow utility), ensuring readability/contrast on mobile and avoiding changes to backend workflows."
+          "description": "Assign the next available numeric serial at registration time (when creating the pending request) and store it on the pending request so the ID is based strictly on registration order."
+        },
+        {
+          "path": "frontend/src/features/admin/sections/ApprovalsSection.tsx",
+          "operation": "modify",
+          "description": "When approving a pending request, copy the pending request’s preassigned serial into the approved user record so approval order cannot change user ID ordering; keep admin UI layout/styling unchanged."
+        },
+        {
+          "path": "frontend/src/lib/storage/userIdStorage.ts",
+          "operation": "modify",
+          "description": "Update ID assignment logic so it preserves existing approved user IDs, assigns IDs only once for legacy users missing an ID, and never reorders/reassigns IDs based on approval/array ordering (ensure stable mapping across sessions)."
+        },
+        {
+          "path": "frontend/src/state/session/SessionProvider.tsx",
+          "operation": "modify",
+          "description": "Ensure session userId hydration continues to resolve to the stable stored numeric ID (including for legacy users) without changing admin authentication behavior."
         }
       ]
     }
