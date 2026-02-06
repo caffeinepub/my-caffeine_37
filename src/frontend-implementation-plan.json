@@ -1,81 +1,20 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "User panel header readability, within-frame dashboard layout, and stable registration-order user IDs",
+  "title": "Retry build and redeploy after intermittent deployment failure",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Adjust only the user panel (UserDashboard) header so the username is larger, white/high-contrast, and the numeric ID is centered directly beneath it.",
+      "summary": "Trigger a rebuild/redeploy retry for the current revision without changing application source code, and record deployment logs for troubleshooting if it fails again.",
       "acceptanceCriteria": [
-        "In the user dashboard header, the username uses a high-contrast white (or equivalent) style and is visually more prominent than the ID.",
-        "The ID is rendered on its own line directly below the username and is horizontally centered relative to the name block.",
-        "The header continues to show the correct session userName and userId values.",
-        "No admin panel header styling is changed."
+        "A new build/deploy attempt is triggered for the current project revision (no source changes).",
+        "If the deployment fails again, the build output/error logs are captured and surfaced so the next request can target a specific fix."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/user/UserDashboard.tsx",
-          "operation": "modify",
-          "description": "Update the user panel header markup/styles so the primary line reads in the “User: <name>” format with high-contrast white styling and larger typography, and render “ID: <number>” centered on the next line under the name block; keep changes scoped to UserDashboard only."
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Make the user dashboard header/content/footer stay within the dashboard frame on mobile (no off-screen overflow) while allowing vertical scrolling without horizontal scrollbars.",
-      "acceptanceCriteria": [
-        "On common mobile viewport sizes, the user dashboard action tiles remain fully visible within the dashboard frame and do not extend beyond the left/right edges.",
-        "The user dashboard header and footer do not escape the dashboard frame (i.e., they are positioned relative to the frame rather than the full window).",
-        "The main scroll area scrolls vertically as needed without introducing horizontal scrolling."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/layout/DashboardFrame.tsx",
-          "operation": "modify",
-          "description": "Adjust the dashboard frame container so it acts as a reliable positioning context (e.g., relative) and uses a viewport-fitting height strategy (mobile-safe) to prevent content from rendering outside the visible frame."
-        },
-        {
-          "path": "frontend/src/features/user/UserDashboard.tsx",
-          "operation": "modify",
-          "description": "Refactor user panel layout to position header/footer relative to the DashboardFrame (avoid window-level fixed positioning), and ensure the content area uses vertical scrolling with overflow-x hidden and appropriate top/bottom padding so tiles/header/footer remain inside the frame."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Ensure stable auto-increment user IDs are assigned strictly by registration order and retained across sessions, independent of approval order, with UserDashboard showing the correct stable ID.",
-      "acceptanceCriteria": [
-        "Each new registration request is assigned the next available serial number at the time the request is created, starting from 1.",
-        "When a pending request is approved, the approved user record retains the same serial number as the user’s ID.",
-        "Existing approved users that already have a userId keep it unchanged.",
-        "Existing approved users without a userId get one assigned exactly once and it remains stable afterward.",
-        "UserDashboard displays the correct stable ID for the logged-in user."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/state/session/sessionTypes.ts",
-          "operation": "modify",
-          "description": "Extend the PendingRequest type to persist the assigned registration-order serial (numeric ID) so it can be carried through approval into the approved user record."
-        },
-        {
-          "path": "frontend/src/features/auth/RegisterView.tsx",
-          "operation": "modify",
-          "description": "Assign the next available numeric serial at registration time (when creating the pending request) and store it on the pending request so the ID is based strictly on registration order."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/ApprovalsSection.tsx",
-          "operation": "modify",
-          "description": "When approving a pending request, copy the pending request’s preassigned serial into the approved user record so approval order cannot change user ID ordering; keep admin UI layout/styling unchanged."
-        },
-        {
-          "path": "frontend/src/lib/storage/userIdStorage.ts",
-          "operation": "modify",
-          "description": "Update ID assignment logic so it preserves existing approved user IDs, assigns IDs only once for legacy users missing an ID, and never reorders/reassigns IDs based on approval/array ordering (ensure stable mapping across sessions)."
-        },
-        {
-          "path": "frontend/src/state/session/SessionProvider.tsx",
-          "operation": "modify",
-          "description": "Ensure session userId hydration continues to resolve to the stable stored numeric ID (including for legacy users) without changing admin authentication behavior."
+          "path": "frontend/DEPLOY_RETRY_RUNBOOK.md",
+          "operation": "create",
+          "description": "Add a non-code runbook describing how to retrigger the build/deploy for the current revision without source changes, and where to capture/paste build output and error logs if the deployment fails again."
         }
       ]
     }

@@ -1,90 +1,35 @@
 {
   "kind": "build_request",
-  "title": "User panel header + ID serial + dashboard fit within screen",
+  "title": "Retry build and redeploy after intermittent deployment failure",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the User Panel header (UserDashboard) so the user name is clearly readable in white/high-contrast text, displayed larger than the ID, and the numeric user ID is shown centered directly beneath the name (format equivalent to “User: OPU” and “ID: 1”). Apply this change only in the user panel.",
-      "target": "frontend",
+      "text": "Retry the application build and deployment without introducing any code changes, since the user explicitly requested a rebuild after an intermittent deployment failure.",
+      "target": "unknown",
       "source": {
         "messageIds": [
-          "msg-1"
+          "recent-msg-user-1"
         ],
         "quotes": [
-          "১/নামটি সাদা/হাই-কনট্রাস্ট রঙে হোক, নামটা একটু বড় হবে নিচে আইডি থাকবে",
-          "৩/“User panel only”"
+          "আবার বিল্ড কর"
         ]
       },
       "acceptanceCriteria": [
-        "In the user dashboard header, the username uses a high-contrast white (or equivalent) style and is visually more prominent than the ID.",
-        "The ID is rendered on its own line directly below the username and is horizontally centered relative to the name block.",
-        "The header continues to show the correct session userName and userId values.",
-        "No admin panel header styling is changed."
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Fix the User Panel layout so the user dashboard content (including header, tiles grid, and footer) always fits within the visible dashboard frame/viewport and does not overflow off-screen. Match the admin panel’s ‘everything stays inside one screen’ behavior; apply only to the user panel.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "২/অ্যাডমিন প্যানেলের স্ক্রিনশটের মতো (এক স্ক্রিনে পরিপাটিভাবে ফিট) করতে হবে",
-          "এভাবে ... স্ক্রিনের ভিতরেই থাকবে ... বাইরে চলে গেছে"
-        ]
-      },
-      "acceptanceCriteria": [
-        "On common mobile viewport sizes, the user dashboard action tiles remain fully visible within the dashboard frame and do not extend beyond the left/right edges.",
-        "The user dashboard header and footer do not escape the dashboard frame (i.e., they are positioned relative to the frame rather than the full window).",
-        "The main scroll area scrolls vertically as needed without introducing horizontal scrolling."
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Ensure user IDs are assigned as a stable auto-increment serial strictly by registration order (first registrant gets ID 1, then 2, etc.), and the same user always retains the same ID across sessions. This must work even if admin approvals happen in a different order than registrations.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "১/যে সর্বপ্রথম রেজিস্ট্রেশন করবে সে সেই সিরিয়ালে আইডি পাবে"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Each new registration request is assigned the next available serial number at the time the request is created, starting from 1.",
-        "When a pending request is approved, the approved user record retains the same serial number as the user’s ID.",
-        "Existing approved users that already have a userId keep it unchanged.",
-        "Existing approved users without a userId get one assigned exactly once and it remains stable afterward.",
-        "UserDashboard displays the correct stable ID for the logged-in user."
+        "A new build/deploy attempt is triggered for the current project revision (no source changes).",
+        "If the deployment fails again, the build output/error logs are captured and surfaced so the next request can target a specific fix."
       ]
     }
   ],
   "constraints": [
-    "Frontend changes must be limited to the user panel only for layout/styling requests (do not alter admin panel UI).",
-    "Do not edit files under frontend/src/components/ui (shadcn components are read-only).",
-    "Backend must remain single-actor; do not add additional backend services."
+    "Do not modify any frontend or backend code as part of this request; this is a rebuild/redeploy retry only."
   ],
   "nonGoals": [
-    "Do not redesign or change admin panel layout.",
-    "Do not introduce new authentication methods beyond the existing local/session behavior.",
-    "Do not add real-time features (e.g., WebSockets) or external databases/services."
+    "Do not implement the pending UI/ID fixes described in project_state.json as part of this request.",
+    "Do not refactor or change application behavior."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

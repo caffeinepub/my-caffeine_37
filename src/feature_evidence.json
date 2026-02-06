@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-user-panel-header-userdashboard-so-the-user-name-is-clearly-readable-in-white-high-contrast-text-displayed-larger-than-the-id-and-the-numeric-user-id-is-shown-centered-directly-beneath-the-name-format-equivalent-to-user-opu-and-id-1-apply-this-change-only-in-the-user-panel",
-      "featureTitle": "Update the User Panel header (UserDashboard) so the user name is clearly readable in white/high-contrast text, displayed larger than the ID, and the numeric user ID is shown centered directly beneath the name (format equivalent to “User: OPU” and “ID: 1”). Apply this change only in the user panel.",
+      "featureId": "feature-retry-the-application-build-and-deployment-without-introducing-any-code-changes-since-the-user-explicitly-requested-a-rebuild-after-an-intermittent-deployment-failure",
+      "featureTitle": "Retry the application build and deployment without introducing any code changes, since the user explicitly requested a rebuild after an intermittent deployment failure.",
       "files": [
-        "frontend/src/features/user/UserDashboard.tsx"
+        "frontend/DEPLOY_RETRY_RUNBOOK.md"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -19,53 +19,6 @@
       ],
       "testIds": [
         "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-fix-the-user-panel-layout-so-the-user-dashboard-content-including-header-tiles-grid-and-footer-always-fits-within-the-visible-dashboard-frame-viewport-and-does-not-overflow-off-screen-match-the-admin-panel-s-everything-stays-inside-one-screen-behavior-apply-only-to-the-user-panel",
-      "featureTitle": "Fix the User Panel layout so the user dashboard content (including header, tiles grid, and footer) always fits within the visible dashboard frame/viewport and does not overflow off-screen. Match the admin panel’s ‘everything stays inside one screen’ behavior; apply only to the user panel.",
-      "files": [
-        "frontend/src/components/layout/DashboardFrame.tsx",
-        "frontend/src/features/user/UserDashboard.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "user-approval@3.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-ensure-user-ids-are-assigned-as-a-stable-auto-increment-serial-strictly-by-registration-order-first-registrant-gets-id-1-then-2-etc-and-the-same-user-always-retains-the-same-id-across-sessions-this-must-work-even-if-admin-approvals-happen-in-a-different-order-than-registrations",
-      "featureTitle": "Ensure user IDs are assigned as a stable auto-increment serial strictly by registration order (first registrant gets ID 1, then 2, etc.), and the same user always retains the same ID across sessions. This must work even if admin approvals happen in a different order than registrations.",
-      "files": [
-        "frontend/src/features/admin/sections/ApprovalsSection.tsx",
-        "frontend/src/features/auth/RegisterView.tsx",
-        "frontend/src/lib/storage/userIdStorage.ts",
-        "frontend/src/state/session/SessionProvider.tsx",
-        "frontend/src/state/session/sessionTypes.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "user-approval@3.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-3"
       ],
       "confidence": "high"
     }

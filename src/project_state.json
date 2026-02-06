@@ -1,59 +1,24 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Project includes a user panel UI update: header should show user name prominently with a centered ID beneath it, IDs should be assigned in registration order (auto-increment), and user panel buttons/layout must fit neatly within a single screen like the admin panel.",
+  "summary": "New project",
   "architectural_notes": [],
   "known_issues": [
-    "User panel buttons/layout can overflow outside the visible screen; needs responsive sizing to fit within viewport."
+    "Intermittent deployment/build failures (likely network/server-side) requiring a rebuild retry."
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-update-the-user-panel-header-userdashboard-so-the-user-name-is-clearly-readable-in-white-high-contrast-text-displayed-larger-than-the-id-and-the-numeric-user-id-is-shown-centered-directly-beneath-the-name-format-equivalent-to-user-opu-and-id-1-apply-this-change-only-in-the-user-panel",
-      "title": "Update the User Panel header (UserDashboard) so the user name is clearly readable in white/high-contrast text, displayed larger than the ID, and the numeric user ID is shown centered directly beneath the name (format equivalent to “User: OPU” and “ID: 1”). Apply this change only in the user panel.",
+      "id": "feature-retry-the-application-build-and-deployment-without-introducing-any-code-changes-since-the-user-explicitly-requested-a-rebuild-after-an-intermittent-deployment-failure",
+      "title": "Retry the application build and deployment without introducing any code changes, since the user explicitly requested a rebuild after an intermittent deployment failure.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
-    },
-    {
-      "id": "feature-fix-the-user-panel-layout-so-the-user-dashboard-content-including-header-tiles-grid-and-footer-always-fits-within-the-visible-dashboard-frame-viewport-and-does-not-overflow-off-screen-match-the-admin-panel-s-everything-stays-inside-one-screen-behavior-apply-only-to-the-user-panel",
-      "title": "Fix the User Panel layout so the user dashboard content (including header, tiles grid, and footer) always fits within the visible dashboard frame/viewport and does not overflow off-screen. Match the admin panel’s ‘everything stays inside one screen’ behavior; apply only to the user panel.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-ensure-user-ids-are-assigned-as-a-stable-auto-increment-serial-strictly-by-registration-order-first-registrant-gets-id-1-then-2-etc-and-the-same-user-always-retains-the-same-id-across-sessions-this-must-work-even-if-admin-approvals-happen-in-a-different-order-than-registrations",
-      "title": "Ensure user IDs are assigned as a stable auto-increment serial strictly by registration order (first registrant gets ID 1, then 2, etc.), and the same user always retains the same ID across sessions. This must work even if admin approvals happen in a different order than registrations.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
     }
   ],
-  "new_feature_requests": [
-    {
-      "id": "AR-1",
-      "summary": "User panel header: show user name in larger white/high-contrast text with centered user ID below it",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Assign user IDs by registration order (auto-increment serial starting at 1)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "User panel buttons/layout: resize/reflow so content fits within the screen (match admin panel single-screen fit)",
-      "reqIds": [],
-      "status": "pending"
-    }
-  ],
-  "projectName": "User panel header + ID serial + dashboard fit within screen",
+  "new_feature_requests": [],
+  "projectName": "Retry build and redeploy after intermittent deployment failure",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

@@ -57,5 +57,6 @@
   "frontend/src/hooks/useUserNotice.ts": "React hook that reads notice configuration from localStorage and subscribes to update events for live changes.",
   "frontend/src/lib/storage/userIdStorage.ts": "localStorage utilities for stable auto-generated user IDs that preserve existing IDs, assign IDs only once for legacy users, and never reorder based on approval order.",
   "frontend/src/components/layout/PopupModal.tsx": "Reusable popup modal with larger screen-filling size (95vh height, max-w-5xl), overflow-x-hidden for no horizontal scrolling, and dashboard gradient header.",
-  "frontend/src/features/user/payment/NastaHistoryView.tsx": "User nasta history with card-based layout (no tables), larger readable text, break-words for long notes, and no horizontal scrolling."
+  "frontend/src/features/user/payment/NastaHistoryView.tsx": "User nasta history with card-based layout (no tables), larger readable text, break-words for long notes, and no horizontal scrolling.",
+  "frontend/DEPLOY_RETRY_RUNBOOK.md": "Documentation for retrying builds/deploys after intermittent failures, including troubleshooting steps and common issues without requiring code changes."
 }
