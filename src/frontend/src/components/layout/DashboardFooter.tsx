@@ -1,71 +1,54 @@
-import { Button } from '../ui/button';
-import { MessageCircle, LucideIcon } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 interface FooterAction {
   label: string;
   onClick: () => void;
-  icon?: LucideIcon;
+  icon: LucideIcon;
 }
 
 interface DashboardFooterProps {
-  leftAction?: FooterAction;
-  centerAction?: FooterAction;
-  rightAction?: FooterAction;
+  leftAction: FooterAction;
+  centerAction: FooterAction;
+  rightAction: FooterAction;
 }
 
-export default function DashboardFooter({
-  leftAction,
-  centerAction,
-  rightAction,
-}: DashboardFooterProps) {
+export default function DashboardFooter({ leftAction, centerAction, rightAction }: DashboardFooterProps) {
   return (
     <div className="bg-white/95 backdrop-blur-md border-t-2 border-gray-300 shadow-2xl pb-safe-bottom">
-      <div className="container mx-auto px-3 py-2.5">
-        <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-2">
-          <div className="grid grid-cols-3 gap-2">
-            {/* Left Action */}
-            <div className="flex justify-start">
-              {leftAction && (
-                <Button
-                  onClick={leftAction.onClick}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-full px-3 sm:px-4 py-2 shadow-lg transition-all text-xs sm:text-sm whitespace-nowrap min-h-[44px]"
-                >
-                  {leftAction.icon && <leftAction.icon className="w-4 h-4 mr-1" />}
-                  {leftAction.label}
-                </Button>
-              )}
-            </div>
+      <div className="px-2 py-2">
+        <div className="grid grid-cols-3 gap-2">
+          {/* Left Button */}
+          <button
+            onClick={leftAction.onClick}
+            className="flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-2xl shadow-lg transition-all active:scale-95 border-2 border-blue-800 min-h-[56px] touch-manipulation"
+          >
+            <leftAction.icon className="w-5 h-5 flex-shrink-0" />
+            <span className="text-[10px] font-bold leading-tight text-center px-1 truncate w-full min-w-0">
+              {leftAction.label}
+            </span>
+          </button>
 
-            {/* Center Action */}
-            <div className="flex justify-center">
-              {centerAction && (
-                <Button
-                  onClick={centerAction.onClick}
-                  className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-bold rounded-full px-3 sm:px-4 py-2 shadow-lg transition-all text-xs sm:text-sm whitespace-nowrap min-h-[44px]"
-                >
-                  {centerAction.icon ? (
-                    <centerAction.icon className="w-4 h-4 mr-1" />
-                  ) : (
-                    <MessageCircle className="w-4 h-4 mr-1" />
-                  )}
-                  {centerAction.label}
-                </Button>
-              )}
-            </div>
+          {/* Center Button */}
+          <button
+            onClick={centerAction.onClick}
+            className="flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-teal-600 to-cyan-700 hover:from-teal-700 hover:to-cyan-800 text-white rounded-2xl shadow-lg transition-all active:scale-95 border-2 border-teal-800 min-h-[56px] touch-manipulation"
+          >
+            <centerAction.icon className="w-5 h-5 flex-shrink-0" />
+            <span className="text-[10px] font-bold leading-tight text-center px-1 truncate w-full min-w-0">
+              {centerAction.label}
+            </span>
+          </button>
 
-            {/* Right Action */}
-            <div className="flex justify-end">
-              {rightAction && (
-                <Button
-                  onClick={rightAction.onClick}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-full px-3 sm:px-4 py-2 shadow-lg transition-all text-xs sm:text-sm whitespace-nowrap min-h-[44px]"
-                >
-                  {rightAction.icon && <rightAction.icon className="w-4 h-4 mr-1" />}
-                  {rightAction.label}
-                </Button>
-              )}
-            </div>
-          </div>
+          {/* Right Button */}
+          <button
+            onClick={rightAction.onClick}
+            className="flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-purple-600 to-pink-700 hover:from-purple-700 hover:to-pink-800 text-white rounded-2xl shadow-lg transition-all active:scale-95 border-2 border-purple-800 min-h-[56px] touch-manipulation"
+          >
+            <rightAction.icon className="w-5 h-5 flex-shrink-0" />
+            <span className="text-[10px] font-bold leading-tight text-center px-1 truncate w-full min-w-0">
+              {rightAction.label}
+            </span>
+          </button>
         </div>
       </div>
     </div>

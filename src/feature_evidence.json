@@ -2,12 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-enlarge-the-main-white-content-card-under-the-settings-tabs-increase-effective-width-on-mobile-desktop-and-increase-vertical-spacing-and-visually-group-the-settings-tab-buttons-inside-a-clearer-rounded-bordered-container-so-the-tabs-feel-placed-inside-the-box-apply-this-to-the-settings-view-rendered-by-adminlayoutshell-systemsettingssection",
-      "featureTitle": "Enlarge the main white content card under the Settings tabs (increase effective width on mobile/desktop and increase vertical spacing), and visually group the Settings tab buttons inside a clearer rounded, bordered container so the tabs feel placed “inside the box”. Apply this to the Settings view rendered by AdminLayoutShell + SystemSettingsSection.",
+      "featureId": "feature-add-a-new-settings-card-section-in-the-currently-empty-top-area-of-the-settings-screen-that-contains-1-a-name-input-2-a-password-input-and-3-a-save-button-persist-the-saved-name-password-locally-so-they-remain-available-after-refresh",
+      "featureTitle": "Add a new Settings card/section in the currently empty top area of the Settings screen that contains: (1) a Name input, (2) a Password input, and (3) a Save button. Persist the saved Name+Password locally so they remain available after refresh.",
       "files": [
-        "frontend/src/features/admin/components/AdminLayoutShell.tsx",
         "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-        "frontend/src/index.css"
+        "frontend/src/lib/storage/mtLoanSettingsStorage.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -25,11 +24,14 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-fix-select-dropdown-readability-in-settings-so-that-when-the-dropdown-opens-option-text-is-not-blurry-cut-off-and-the-dropdown-panel-positions-and-stacks-correctly-above-surrounding-cards-ensure-consistent-font-size-line-height-and-adequate-padding-for-selecttrigger-selectcontent-in-systemsettingssection-and-any-similar-select-usage-in-admin-settings",
-      "featureTitle": "Fix Select/dropdown readability in Settings so that when the dropdown opens, option text is not blurry/cut off and the dropdown panel positions and stacks correctly above surrounding cards. Ensure consistent font size, line height, and adequate padding for SelectTrigger/SelectContent in SystemSettingsSection (and any similar Select usage in admin settings).",
+      "featureId": "feature-implement-mt-loan-password-gating-when-the-mt-loan-button-is-clicked-existing-header-quick-action-show-a-password-prompt-modal-if-the-entered-password-does-not-match-the-admin-saved-mt-loan-password-block-access-and-show-an-error-message-if-it-matches-mark-the-session-as-authorized-for-mt-loan-and-auto-create-a-user-identity-using-the-admin-saved-name-store-locally-do-not-expose-the-user-panel-ui-yet-integration-navigation-will-be-done-later",
+      "featureTitle": "Implement MT Loan password gating: when the MT-LOAN button is clicked (existing header quick action), show a password prompt modal. If the entered password does not match the admin-saved MT Loan password, block access and show an error message. If it matches, mark the session as authorized for MT Loan and auto-create a user identity using the admin-saved Name (store locally); do not expose the User Panel UI yet (integration/navigation will be done later).",
       "files": [
-        "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-        "frontend/src/index.css"
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/features/admin/AdminPanel.tsx",
+        "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx",
+        "frontend/src/lib/storage/mtLoanAuthStorage.ts",
+        "frontend/src/lib/storage/mtLoanIdentityStorage.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -47,11 +49,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-improve-the-visibility-contrast-of-the-worker-rate-settings-section-title-and-restyle-all-input-boxes-in-that-section-to-match-the-lighter-cleaner-input-style-used-elsewhere-consistent-background-shade-border-focus-ring-apply-to-workerratesettingssection-inputs-new-worker-name-rate-inputs-and-any-settings-inputs-that-currently-look-washed-out",
-      "featureTitle": "Improve the visibility/contrast of the \"Worker & Rate Settings\" section title and restyle all input boxes in that section to match the lighter, cleaner input style used elsewhere (consistent background shade, border, focus ring). Apply to WorkerRateSettingsSection inputs (new worker name, rate inputs) and any Settings inputs that currently look washed out.",
+      "featureId": "feature-create-keep-a-user-panel-layout-skeleton-in-the-codebase-but-ensure-the-entire-user-panel-is-fully-hidden-blocked-from-users-for-now-include-a-logout-button-placeholder-structure-in-the-hidden-user-panel-layout-so-it-is-ready-for-later-activation",
+      "featureTitle": "Create/keep a User Panel layout skeleton in the codebase, but ensure the entire User Panel is fully hidden/blocked from users for now. Include a logout button placeholder/structure in the hidden User Panel layout so it is ready for later activation.",
       "files": [
-        "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
-        "frontend/src/index.css"
+        "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -69,12 +70,12 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-an-admin-header-profile-avatar-to-the-right-side-of-the-adminlayoutshell-header-the-avatar-should-display-a-stored-profile-photo-when-available-reuse-existing-profile-photo-storage-approach-otherwise-show-a-default-placeholder-avatar-image-ensure-it-fits-in-the-header-without-breaking-title-back-button-layout",
-      "featureTitle": "Add an admin header profile avatar to the right side of the AdminLayoutShell header. The avatar should display a stored profile photo when available (reuse existing profile photo storage approach); otherwise show a default placeholder avatar image. Ensure it fits in the header without breaking title/back button layout.",
+      "featureId": "feature-do-not-change-any-existing-ui-design-or-styling-while-implementing-req-1-to-req-3-only-add-the-new-settings-card-and-the-password-prompt-modal-using-existing-ui-primitives-and-existing-styling-conventions-so-the-rest-of-the-app-remains-visually-unchanged",
+      "featureTitle": "Do not change any existing UI design or styling while implementing REQ-1 to REQ-3. Only add the new Settings card and the password prompt modal using existing UI primitives and existing styling conventions so the rest of the app remains visually unchanged.",
       "files": [
-        "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
-        "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-        "frontend/src/lib/storage/userProfileStorage.ts"
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/features/admin/AdminPanel.tsx",
+        "frontend/src/features/admin/sections/SystemSettingsSection.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -88,94 +89,6 @@
       ],
       "testIds": [
         "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-reposition-restyle-the-bottom-fixed-action-buttons-mt-loan-support-calculator-so-they-appear-visually-clean-above-on-top-of-the-content-card-without-obscuring-content-ensure-adequate-bottom-spacing-in-scrollable-content-and-adjust-footer-container-styling-rounded-floating-bar-look-consistent-shadow-border-if-needed",
-      "featureTitle": "Reposition/restyle the bottom fixed action buttons (MT-LOAN / Support / Calculator) so they appear visually clean “above/on top of” the content card without obscuring content. Ensure adequate bottom spacing in scrollable content, and adjust footer container styling (rounded floating bar look, consistent shadow/border) if needed.",
-      "files": [
-        "frontend/src/components/layout/DashboardFooter.tsx",
-        "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-        "frontend/src/index.css"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "user-approval@3.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-5"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-redesign-the-top-3-admin-money-summary-cards-so-the-numeric-readout-does-not-show-an-ugly-white-patch-behind-the-text-replace-the-current-inner-white-opaque-block-style-with-a-cleaner-display-screen-readout-look-high-contrast-no-harsh-white-rectangle-consistent-across-all-three-cards",
-      "featureTitle": "Redesign the top 3 admin money summary cards so the numeric readout does not show an ugly white patch behind the text. Replace the current inner white/opaque block style with a cleaner “display/screen” readout look (high contrast, no harsh white rectangle, consistent across all three cards).",
-      "files": [
-        "frontend/src/components/dashboard/dashboardBorders.ts",
-        "frontend/src/features/admin/components/AdminSummaryCards.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "user-approval@3.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-6"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-confirmation-dialog-ui-to-a-round-shaped-colorful-bangladesh-style-vibrant-look-while-maintaining-readability-apply-to-the-shared-confirmdialog-component-so-admin-confirmations-e-g-delete-worker-logout-confirm-usage-where-applicable-have-improved-visual-appeal-and-clear-button-hierarchy",
-      "featureTitle": "Update confirmation dialog UI to a round-shaped, colorful (Bangladesh-style vibrant) look while maintaining readability. Apply to the shared ConfirmDialog component so admin confirmations (e.g., delete worker, logout confirm usage where applicable) have improved visual appeal and clear button hierarchy.",
-      "files": [
-        "frontend/src/components/feedback/ConfirmDialog.tsx",
-        "frontend/src/index.css"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "user-approval@3.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-7"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-the-generated-default-avatar-placeholder-image-as-a-static-asset-and-wire-it-into-the-admin-header-avatar-fallback-do-not-serve-it-from-the-backend",
-      "featureTitle": "Add the generated default avatar placeholder image as a static asset and wire it into the admin header avatar fallback (do not serve it from the backend).",
-      "files": [
-        "frontend/src/features/admin/components/AdminHeaderAvatar.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "user-approval@3.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-8"
       ],
       "confidence": "high"
     }

@@ -1,77 +1,43 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Admin panel UI/UX polishing requests: adjust tab section card layout/colors, standardize input styles, improve readability of dropdown/confirmation messages, refine dashboard summary cards display, add header profile picture, and reposition action buttons; then build/deploy updated draft.",
-  "architectural_notes": [],
-  "known_issues": [
-    "Dropdown: on click, inside text/options are not clearly readable (blurry/cut off)",
-    "Settings section title color/contrast appears washed out/unclear",
-    "Top money cards: text area shows an unwanted white background patch"
+  "summary": "Add an MT Loan access control setup in Settings (name + password + save) and prepare a hidden/blocked User Panel layout skeleton without changing existing design.",
+  "architectural_notes": [
+    "Implement new Settings section without altering existing UI styling/layout beyond inserting the new card in the designated empty space.",
+    "User Panel should be present structurally but gated behind a global hide/block flag so users cannot view/use it until enabled."
   ],
-  "isFixRequest": true,
-  "imageRequirements": "## Required Images\n- Default round avatar placeholder illustration (admin-avatar-placeholder.dim_128x128.png)",
+  "known_issues": [],
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-enlarge-the-main-white-content-card-under-the-settings-tabs-increase-effective-width-on-mobile-desktop-and-increase-vertical-spacing-and-visually-group-the-settings-tab-buttons-inside-a-clearer-rounded-bordered-container-so-the-tabs-feel-placed-inside-the-box-apply-this-to-the-settings-view-rendered-by-adminlayoutshell-systemsettingssection",
-      "title": "Enlarge the main white content card under the Settings tabs (increase effective width on mobile/desktop and increase vertical spacing), and visually group the Settings tab buttons inside a clearer rounded, bordered container so the tabs feel placed “inside the box”. Apply this to the Settings view rendered by AdminLayoutShell + SystemSettingsSection.",
+      "id": "feature-add-a-new-settings-card-section-in-the-currently-empty-top-area-of-the-settings-screen-that-contains-1-a-name-input-2-a-password-input-and-3-a-save-button-persist-the-saved-name-password-locally-so-they-remain-available-after-refresh",
+      "title": "Add a new Settings card/section in the currently empty top area of the Settings screen that contains: (1) a Name input, (2) a Password input, and (3) a Save button. Persist the saved Name+Password locally so they remain available after refresh.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-fix-select-dropdown-readability-in-settings-so-that-when-the-dropdown-opens-option-text-is-not-blurry-cut-off-and-the-dropdown-panel-positions-and-stacks-correctly-above-surrounding-cards-ensure-consistent-font-size-line-height-and-adequate-padding-for-selecttrigger-selectcontent-in-systemsettingssection-and-any-similar-select-usage-in-admin-settings",
-      "title": "Fix Select/dropdown readability in Settings so that when the dropdown opens, option text is not blurry/cut off and the dropdown panel positions and stacks correctly above surrounding cards. Ensure consistent font size, line height, and adequate padding for SelectTrigger/SelectContent in SystemSettingsSection (and any similar Select usage in admin settings).",
+      "id": "feature-implement-mt-loan-password-gating-when-the-mt-loan-button-is-clicked-existing-header-quick-action-show-a-password-prompt-modal-if-the-entered-password-does-not-match-the-admin-saved-mt-loan-password-block-access-and-show-an-error-message-if-it-matches-mark-the-session-as-authorized-for-mt-loan-and-auto-create-a-user-identity-using-the-admin-saved-name-store-locally-do-not-expose-the-user-panel-ui-yet-integration-navigation-will-be-done-later",
+      "title": "Implement MT Loan password gating: when the MT-LOAN button is clicked (existing header quick action), show a password prompt modal. If the entered password does not match the admin-saved MT Loan password, block access and show an error message. If it matches, mark the session as authorized for MT Loan and auto-create a user identity using the admin-saved Name (store locally); do not expose the User Panel UI yet (integration/navigation will be done later).",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-improve-the-visibility-contrast-of-the-worker-rate-settings-section-title-and-restyle-all-input-boxes-in-that-section-to-match-the-lighter-cleaner-input-style-used-elsewhere-consistent-background-shade-border-focus-ring-apply-to-workerratesettingssection-inputs-new-worker-name-rate-inputs-and-any-settings-inputs-that-currently-look-washed-out",
-      "title": "Improve the visibility/contrast of the \"Worker & Rate Settings\" section title and restyle all input boxes in that section to match the lighter, cleaner input style used elsewhere (consistent background shade, border, focus ring). Apply to WorkerRateSettingsSection inputs (new worker name, rate inputs) and any Settings inputs that currently look washed out.",
+      "id": "feature-create-keep-a-user-panel-layout-skeleton-in-the-codebase-but-ensure-the-entire-user-panel-is-fully-hidden-blocked-from-users-for-now-include-a-logout-button-placeholder-structure-in-the-hidden-user-panel-layout-so-it-is-ready-for-later-activation",
+      "title": "Create/keep a User Panel layout skeleton in the codebase, but ensure the entire User Panel is fully hidden/blocked from users for now. Include a logout button placeholder/structure in the hidden User Panel layout so it is ready for later activation.",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-an-admin-header-profile-avatar-to-the-right-side-of-the-adminlayoutshell-header-the-avatar-should-display-a-stored-profile-photo-when-available-reuse-existing-profile-photo-storage-approach-otherwise-show-a-default-placeholder-avatar-image-ensure-it-fits-in-the-header-without-breaking-title-back-button-layout",
-      "title": "Add an admin header profile avatar to the right side of the AdminLayoutShell header. The avatar should display a stored profile photo when available (reuse existing profile photo storage approach); otherwise show a default placeholder avatar image. Ensure it fits in the header without breaking title/back button layout.",
+      "id": "feature-do-not-change-any-existing-ui-design-or-styling-while-implementing-req-1-to-req-3-only-add-the-new-settings-card-and-the-password-prompt-modal-using-existing-ui-primitives-and-existing-styling-conventions-so-the-rest-of-the-app-remains-visually-unchanged",
+      "title": "Do not change any existing UI design or styling while implementing REQ-1 to REQ-3. Only add the new Settings card and the password prompt modal using existing UI primitives and existing styling conventions so the rest of the app remains visually unchanged.",
       "reqIds": [
         "REQ-4"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-reposition-restyle-the-bottom-fixed-action-buttons-mt-loan-support-calculator-so-they-appear-visually-clean-above-on-top-of-the-content-card-without-obscuring-content-ensure-adequate-bottom-spacing-in-scrollable-content-and-adjust-footer-container-styling-rounded-floating-bar-look-consistent-shadow-border-if-needed",
-      "title": "Reposition/restyle the bottom fixed action buttons (MT-LOAN / Support / Calculator) so they appear visually clean “above/on top of” the content card without obscuring content. Ensure adequate bottom spacing in scrollable content, and adjust footer container styling (rounded floating bar look, consistent shadow/border) if needed.",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-redesign-the-top-3-admin-money-summary-cards-so-the-numeric-readout-does-not-show-an-ugly-white-patch-behind-the-text-replace-the-current-inner-white-opaque-block-style-with-a-cleaner-display-screen-readout-look-high-contrast-no-harsh-white-rectangle-consistent-across-all-three-cards",
-      "title": "Redesign the top 3 admin money summary cards so the numeric readout does not show an ugly white patch behind the text. Replace the current inner white/opaque block style with a cleaner “display/screen” readout look (high contrast, no harsh white rectangle, consistent across all three cards).",
-      "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-confirmation-dialog-ui-to-a-round-shaped-colorful-bangladesh-style-vibrant-look-while-maintaining-readability-apply-to-the-shared-confirmdialog-component-so-admin-confirmations-e-g-delete-worker-logout-confirm-usage-where-applicable-have-improved-visual-appeal-and-clear-button-hierarchy",
-      "title": "Update confirmation dialog UI to a round-shaped, colorful (Bangladesh-style vibrant) look while maintaining readability. Apply to the shared ConfirmDialog component so admin confirmations (e.g., delete worker, logout confirm usage where applicable) have improved visual appeal and clear button hierarchy.",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-the-generated-default-avatar-placeholder-image-as-a-static-asset-and-wire-it-into-the-admin-header-avatar-fallback-do-not-serve-it-from-the-backend",
-      "title": "Add the generated default avatar placeholder image as a static asset and wire it into the admin header avatar fallback (do not serve it from the backend).",
-      "reqIds": [
-        "REQ-8"
       ],
       "version": 1
     }
@@ -79,48 +45,31 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Increase size (height+width) of the large white card under the top tab section and place/align the tab buttons within a clearer bordered/colored container",
+      "summary": "Add new Settings card/section in empty top area with inputs for Name and Password plus a Save button (admin-configured)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Fix Settings section 'কর্মী ও রেট সেটিংস' title visibility (color/contrast) and restyle all input boxes to match other sections with a lighter shade/consistent design",
+      "summary": "Add MT Loan button in Settings; on click show password prompt and allow access only if password matches; auto-create user identity by configured name on successful entry (full user-panel integration later)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Add a profile picture/avatar in the admin panel header",
+      "summary": "Create User Panel layout/structure skeleton but keep the entire panel hidden/blocked from users for now; include logout button placeholder/structure",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Reposition/style the bottom action buttons so they appear cleanly on/above the target card and look nicer",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Redesign the top three money summary cards so the text doesn't show an ugly white patch behind it and looks like a clean display/screen-style readout",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Fix dropdown click state so the inside text/options are clearly readable (not blurry/cut off)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "Update confirmation message UI to a round-shaped, BD colorful, visually appealing style",
+      "summary": "Do not change any existing UI design while implementing pending items",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "Admin panel UI polish: settings tabs container, dropdown readability, KPI display cards, confirmation dialog style, header avatar, and footer button placement",
+  "gameProjectType": "none",
+  "projectName": "Add MT Loan settings + password-gated entry and keep User Panel fully hidden (no design changes)",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

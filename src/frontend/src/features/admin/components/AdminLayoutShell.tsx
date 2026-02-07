@@ -1,96 +1,125 @@
-import { ReactNode } from 'react';
-import { Button } from '../../../components/ui/button';
-import { ArrowLeft, DollarSign, Calculator, MessageCircle } from 'lucide-react';
-import DashboardFooter from '../../../components/layout/DashboardFooter';
-import { notify } from '../../../components/feedback/notify';
+import { useEffect, useState } from 'react';
+import AdminBottomNav from './AdminBottomNav';
+import { AdminView } from './adminNavTypes';
+import { ArrowLeft } from 'lucide-react';
 import AdminHeaderAvatar from './AdminHeaderAvatar';
 
 interface AdminLayoutShellProps {
-  title: string;
-  children: ReactNode;
-  headerActions?: ReactNode;
-  onBack?: () => void;
-  showFooter?: boolean;
-  onLeftButtonClick?: () => void;
-  onRightButtonClick?: () => void;
-  leftButtonLabel?: string;
-  rightButtonLabel?: string;
+  children: React.ReactNode;
+  currentView: AdminView;
+  onNavigate: (view: AdminView) => void;
+  onMtLoanClick: () => void;
 }
 
-export default function AdminLayoutShell({ 
-  title, 
-  children, 
-  headerActions, 
-  onBack,
-  showFooter = true,
-  onLeftButtonClick,
-  onRightButtonClick,
-  leftButtonLabel,
-  rightButtonLabel
+export default function AdminLayoutShell({
+  children,
+  currentView,
+  onNavigate,
+  onMtLoanClick,
 }: AdminLayoutShellProps) {
-  const handleMTLoanClick = () => {
-    notify.info('MT-LOAN ফিচার শীঘ্রই আসছে');
-  };
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  const handleCalculatorClick = () => {
-    notify.info('ক্যালকুলেটর শীঘ্রই আসছে');
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const getViewTitle = (): string => {
+    switch (currentView) {
+      case 'dashboard':
+        return 'এডমিন ড্যাশবোর্ড';
+      case 'production':
+        return 'উৎপাদন';
+      case 'work':
+        return 'কাজ';
+      case 'nasta':
+        return 'নাস্তা';
+      case 'payment':
+        return 'পেমেন্ট/লোন';
+      case 'user-requests':
+        return 'ইউজার রিকোয়েস্ট';
+      case 'settings':
+        return 'সেটিংস';
+      case 'worker-rate-settings':
+        return 'ওয়ার্কার রেট';
+      case 'final-balance':
+        return 'ফাইনাল ব্যালেন্স';
+      case 'company-report':
+        return 'কোম্পানি রিপোর্ট';
+      case 'support':
+        return 'সাপোর্ট';
+      default:
+        return 'Admin Panel';
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col dashboard-professional-bg">
-      {/* Fixed Header - Dashboard gradient with enhanced border/shadow */}
-      <div className="fixed top-0 left-0 right-0 z-20 dashboard-gradient text-white px-3 py-3 shadow-lg border-b-2 border-blue-900 backdrop-blur-sm">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            {onBack && (
-              <Button
-                onClick={onBack}
-                className="back-button-colored px-3 py-1.5 rounded-lg text-xs flex-shrink-0"
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 pb-20 touch-manipulation">
+      {/* Header */}
+      <header
+        className={`sticky top-0 z-40 transition-all duration-300 ${
+          isScrolled
+            ? 'bg-white/80 backdrop-blur-md border-b-2 border-blue-200 shadow-lg'
+            : 'bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 border-b-2 border-blue-400'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {currentView !== 'dashboard' && (
+              <button
+                onClick={() => onNavigate('dashboard')}
+                className={`p-2 rounded-lg transition-all touch-manipulation ${
+                  isScrolled
+                    ? 'hover:bg-gray-100'
+                    : 'hover:bg-white/20'
+                }`}
               >
-                <ArrowLeft className="w-4 h-4 mr-1" />
-                ফিরে যান
-              </Button>
+                <ArrowLeft
+                  className={`w-5 h-5 ${
+                    isScrolled ? 'text-gray-700' : 'text-white'
+                  }`}
+                />
+              </button>
             )}
-            <h2 className="text-base sm:text-lg font-bold section-title-accent truncate">{title}</h2>
+            <h1
+              className={`text-lg font-bold transition-colors ${
+                isScrolled
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'
+                  : 'text-white'
+              }`}
+            >
+              {getViewTitle()}
+            </h1>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {headerActions}
+
+          <div className="flex items-center gap-3">
+            {currentView === 'dashboard' && (
+              <button
+                onClick={onMtLoanClick}
+                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all touch-manipulation ${
+                  isScrolled
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                MT-LOAN
+              </button>
+            )}
             <AdminHeaderAvatar />
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Scrollable Content with professional background */}
-      <div className="flex-1 overflow-y-auto pt-[60px] pb-[88px] dashboard-professional-bg">
-        <div className="container mx-auto py-3 px-3 max-w-7xl">
-          <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-200 overflow-hidden">
-            <div className="p-5 sm:p-6">{children}</div>
-          </div>
-        </div>
-      </div>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto p-4">
+        {children}
+      </main>
 
-      {/* Fixed Footer */}
-      {showFooter && (
-        <div className="fixed bottom-0 left-0 right-0 z-20">
-          <DashboardFooter 
-            leftAction={{
-              label: leftButtonLabel || 'MT-LOAN',
-              onClick: onLeftButtonClick || handleMTLoanClick,
-              icon: DollarSign,
-            }}
-            centerAction={{
-              label: 'সাপোর্ট / চ্যাট',
-              onClick: () => {},
-              icon: MessageCircle,
-            }}
-            rightAction={{
-              label: rightButtonLabel || 'ক্যালকুলেটর',
-              onClick: onRightButtonClick || handleCalculatorClick,
-              icon: Calculator,
-            }}
-          />
-        </div>
-      )}
+      {/* Bottom Navigation */}
+      <AdminBottomNav activeView={currentView} onNavigate={onNavigate} />
     </div>
   );
 }

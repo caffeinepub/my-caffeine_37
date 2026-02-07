@@ -1,199 +1,104 @@
 {
   "kind": "build_request",
-  "title": "Admin panel UI polish: settings tabs container, dropdown readability, KPI display cards, confirmation dialog style, header avatar, and footer button placement",
+  "title": "Add MT Loan settings + password-gated entry and keep User Panel fully hidden (no design changes)",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Enlarge the main white content card under the Settings tabs (increase effective width on mobile/desktop and increase vertical spacing), and visually group the Settings tab buttons inside a clearer rounded, bordered container so the tabs feel placed “inside the box”. Apply this to the Settings view rendered by AdminLayoutShell + SystemSettingsSection.",
+      "text": "Add a new Settings card/section in the currently empty top area of the Settings screen that contains: (1) a Name input, (2) a Password input, and (3) a Save button. Persist the saved Name+Password locally so they remain available after refresh.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-5",
-          "recent-6",
-          "recent-12"
+          "msg-4",
+          "msg-8",
+          "msg-11"
         ],
         "quotes": [
-          "লেবেল লেআউট ব্র্যান্ডিং শেয়ারিং ব্যাকআপ এগুলা নিচে ... বক্সটা একটু বড় করে",
-          "১/উপরে থাকা ট্যাব সেকশনের নিচে যে বড় সাদা কার্ড আছে সেটা? ২/উচ্চতা বাড়ানো, প্রস্থ বাড়ানো",
-          "\"বিল্ড কর\""
+          "Settings Card / Section থাকবে যার ভেতরে থাকবে:\nনাম সেট করার ইনপুট\nপাসওয়ার্ড সেট করার ইনপুট\nSave বাটন",
+          "হ্যাঁ বিট কর আগের যেগুলা বাকি আছে সবগুলা একসাথে কর ডিজাইন পরিবর্তন করো না কোন কিছু ডিজাইন পরিবর্তন করো না"
         ]
       },
       "acceptanceCriteria": [
-        "On the System Settings screen, the white content card is noticeably wider (reduced side margins) and taller (more internal padding/spacing), especially on mobile.",
-        "The tabs (Labels/Layout/Branding/Sharing/Backup) are contained within a rounded bordered container that looks intentional; active/inactive states remain clear.",
-        "No content is clipped/overlapped by the fixed header or fixed footer on common mobile sizes."
+        "Settings screen shows an additional card/section at the top empty area with Name, Password, and Save controls.",
+        "Clicking Save persists the configured Name and Password (survives page refresh).",
+        "No other Settings sections/tabs are removed or visually restyled beyond inserting this new card into the existing empty area."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Fix Select/dropdown readability in Settings so that when the dropdown opens, option text is not blurry/cut off and the dropdown panel positions and stacks correctly above surrounding cards. Ensure consistent font size, line height, and adequate padding for SelectTrigger/SelectContent in SystemSettingsSection (and any similar Select usage in admin settings).",
+      "text": "Implement MT Loan password gating: when the MT-LOAN button is clicked (existing header quick action), show a password prompt modal. If the entered password does not match the admin-saved MT Loan password, block access and show an error message. If it matches, mark the session as authorized for MT Loan and auto-create a user identity using the admin-saved Name (store locally); do not expose the User Panel UI yet (integration/navigation will be done later).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-2",
-          "recent-8",
-          "recent-12"
+          "msg-2",
+          "msg-8",
+          "msg-11"
         ],
         "quotes": [
-          "এখানে ক্লিক করলে আসলে কি লেখা আসছে",
-          "ক্লিক করলে ভিতরে কি লেখা আছে বোঝা যায় না",
-          "\"বিল্ড কর\""
+          "Mt loan বাটনে যদি ক্লিক করে তাহলে পাসওয়ার্ড বক্স ওপেন হবে",
+          "পাসওয়ার্ড দিয়ে ঢুকতে পারবে অটোমেটিক তার নামে আইডি ক্রিয়েট হয়ে যাবে",
+          "এখন আপাতত তুমি সেটিংসে এটা অ্যাড করে পাসওয়ার্ড এর সিস্টেম টা করে রাখ বাদবাকি কাজ পরে করব"
         ]
       },
       "acceptanceCriteria": [
-        "Opening a dropdown shows all options fully (no clipping), with readable contrast and font sizing.",
-        "Dropdown content overlays above nearby cards/containers correctly (no being hidden behind other elements).",
-        "The selected value inside the trigger remains readable on both light and gradient backgrounds."
+        "Clicking the existing MT-LOAN UI control opens a password prompt modal (not a new page).",
+        "Wrong password: no authorization is granted and the UI shows an error feedback.",
+        "Correct password: an 'authorized' flag for MT Loan is persisted locally for the current session (or until logout), and a user identity record is created locally using the configured Name.",
+        "No User Panel screens/features become visible as a result of successful password entry (only the authorization + identity creation is prepared)."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Improve the visibility/contrast of the \"Worker & Rate Settings\" section title and restyle all input boxes in that section to match the lighter, cleaner input style used elsewhere (consistent background shade, border, focus ring). Apply to WorkerRateSettingsSection inputs (new worker name, rate inputs) and any Settings inputs that currently look washed out.",
+      "text": "Create/keep a User Panel layout skeleton in the codebase, but ensure the entire User Panel is fully hidden/blocked from users for now. Include a logout button placeholder/structure in the hidden User Panel layout so it is ready for later activation.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-5",
-          "recent-6",
-          "recent-12"
+          "msg-9",
+          "msg-11"
         ],
         "quotes": [
-          "২/কর্মী ও রেট সেটিংস একটা টাইটেলটা দেখা যাচ্ছে না ... ইনপুটের বক্স আছে ... ওগুলার মত একটু হালকা সেডা দিয়ে",
-          "১/উপরে থাকা ট্যাব সেকশনের নিচে ... ৩/...",
-          "\"বিল্ড কর\""
+          "ইউজার প্যানেলে এখন পুরো প্যানেলটি হাইড/ব্লক রাখা হবে, শুধু লেআউট স্ট্রাকচার তৈরি রাখলেই হবে?",
+          "লগ আউট বাটন নেই গঠনটা দিয়ে দিও ব্লক করে ফেল"
         ]
       },
       "acceptanceCriteria": [
-        "The \"কর্মী ও রেট সেটিংস\" title has clear contrast against its header background and is readable on mobile.",
-        "All inputs in WorkerRateSettingsSection have a consistent light background shade, consistent border thickness, and consistent focus state.",
-        "Disabled/locked inputs remain visually distinct but still readable."
+        "User Panel route/view remains inaccessible or fully blocked (no interactive user panel content visible to end users).",
+        "A User Panel layout structure exists in the code (components/layout) including a logout button placeholder in the structure.",
+        "The block/hide behavior is enforced consistently (refreshing the page does not reveal the User Panel)."
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Add an admin header profile avatar to the right side of the AdminLayoutShell header. The avatar should display a stored profile photo when available (reuse existing profile photo storage approach); otherwise show a default placeholder avatar image. Ensure it fits in the header without breaking title/back button layout.",
+      "text": "Do not change any existing UI design or styling while implementing REQ-1 to REQ-3. Only add the new Settings card and the password prompt modal using existing UI primitives and existing styling conventions so the rest of the app remains visually unchanged.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-6",
-          "recent-12"
+          "msg-11"
         ],
         "quotes": [
-          "৩/admun প্যানেলের হেডারে প্রোফাইল পিক এড করবে",
-          "\"বিল্ড কর\""
+          "ডিজাইন পরিবর্তন করো না কোন কিছু ডিজাইন পরিবর্তন করো না অনেক কিছু পরিবর্তন হয়ে যায় তুমি"
         ]
       },
       "acceptanceCriteria": [
-        "Admin header shows a circular avatar on the right side on all admin screens using AdminLayoutShell.",
-        "If a profile photo exists for the current user/admin identity, it is displayed; otherwise a placeholder avatar is shown.",
-        "Header layout remains stable: title truncates gracefully and the avatar does not overlap buttons/text."
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Reposition/restyle the bottom fixed action buttons (MT-LOAN / Support / Calculator) so they appear visually clean “above/on top of” the content card without obscuring content. Ensure adequate bottom spacing in scrollable content, and adjust footer container styling (rounded floating bar look, consistent shadow/border) if needed.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "recent-6",
-          "recent-12"
-        ],
-        "quotes": [
-          "৪/নিচে প্রটারে বাটন গুলার ... কার্ড টার উপরে বাটন গুলো সুন্দর দেখা যায়",
-          "\"বিল্ড কর\""
-        ]
-      },
-      "acceptanceCriteria": [
-        "The footer does not cover important content at the bottom of pages; last form controls remain accessible without being hidden.",
-        "Footer buttons look intentionally placed (consistent spacing, rounded container, readable labels) and do not clash with underlying card borders.",
-        "Behavior remains fixed/sticky at bottom during scroll."
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Redesign the top 3 admin money summary cards so the numeric readout does not show an ugly white patch behind the text. Replace the current inner white/opaque block style with a cleaner “display/screen” readout look (high contrast, no harsh white rectangle, consistent across all three cards).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "recent-7",
-          "recent-12"
-        ],
-        "quotes": [
-          "প্যানেলের উপরে যে টাকা দেখানোর তিনটা কার্ড আছে ... লেখার মাঝখানে সাদা আছে দেখতে খারাপ দেখা যায় ... ডিসপ্লের মত থাকবে",
-          "\"বিল্ড কর\""
-        ]
-      },
-      "acceptanceCriteria": [
-        "In AdminSummaryCards, the number area no longer appears as a stark white patch; it reads like a cohesive display element.",
-        "Text remains highly readable in all three cards (Due/Work/Taken) on mobile.",
-        "Borders/radius/shadow remain consistent with the dashboard style constants where applicable."
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Update confirmation dialog UI to a round-shaped, colorful (Bangladesh-style vibrant) look while maintaining readability. Apply to the shared ConfirmDialog component so admin confirmations (e.g., delete worker, logout confirm usage where applicable) have improved visual appeal and clear button hierarchy.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "recent-9",
-          "recent-10",
-          "recent-12"
-        ],
-        "quotes": [
-          "কনফার্মেশন যে মেসেজটা আছে দেখা যায় ... বিডি কালারফুল থাকবে",
-          "রাহুল বলিনি বলছি রাউন্ড শেপ",
-          "\"বিল্ড কর\""
-        ]
-      },
-      "acceptanceCriteria": [
-        "ConfirmDialog has noticeably rounder corners and a more colorful, polished header/body styling while keeping text readable.",
-        "Primary/confirm and cancel buttons are clearly distinguished and remain at least 44px tall for touch.",
-        "Dialog content is centered and not clipped on mobile; overlay stacking remains correct."
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Add the generated default avatar placeholder image as a static asset and wire it into the admin header avatar fallback (do not serve it from the backend).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "recent-6",
-          "recent-12"
-        ],
-        "quotes": [
-          "৩/admun প্যানেলের হেডারে প্রোফাইল পিক এড করবে",
-          "\"বিল্ড কর\""
-        ]
-      },
-      "acceptanceCriteria": [
-        "The placeholder avatar file exists under frontend/public/assets/generated and is referenced directly by the frontend for fallback rendering.",
-        "No backend endpoints are added for serving images."
+        "Existing screens (Admin dashboard, Settings tabs, headers/footers, existing buttons) retain their current layout and styling.",
+        "Any new UI (Settings card and password prompt) uses existing UI components and does not introduce global theme/color/token changes.",
+        "No unrelated copy/text is changed as part of this work."
       ]
     }
   ],
   "constraints": [
     "Frontend immutable paths must not be edited: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui/*.",
-    "Keep the backend single-actor architecture unchanged; UI polish should not require backend changes."
+    "Backend must remain single-actor (all Motoko logic in backend/main.mo); only add migration.mo if state upgrades are required.",
+    "Do not change existing design/styling outside of inserting the requested new Settings card and adding the password prompt modal UI."
   ],
   "nonGoals": [
-    "Implementing MT-LOAN, Support chat, or Calculator features beyond existing placeholder/toast behavior.",
-    "Adding third-party authentication providers or external databases/services.",
-    "Changing core storage schema unless strictly required for the visual fixes above."
+    "Implementing the full MT Loan feature area (screens, calculations, or workflows).",
+    "Making the User Panel visible or fully functional now (only skeleton + blocked state).",
+    "Adding third-party authentication beyond Internet Identity.",
+    "Introducing any external database or non-local persistence mechanism beyond existing app patterns."
   ],
   "imageRequirements": {
-    "required": [
-      "Default round avatar placeholder illustration (admin-avatar-placeholder.dim_128x128.png)"
-    ],
+    "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

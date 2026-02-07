@@ -6,7 +6,7 @@ import { ScrollArea } from '../../components/ui/scroll-area';
 import { getSupportThreads, getUserThread, addSupportMessage, SupportThread } from '../../lib/storage/supportMessagingStorage';
 import { useSession } from '../../state/session/useSession';
 import { notify } from '../../components/feedback/notify';
-import { ArrowLeft, MessageCircle } from 'lucide-react';
+import { ArrowLeft, MessageCircle, DollarSign, Calculator } from 'lucide-react';
 import DashboardFooter from '../../components/layout/DashboardFooter';
 
 interface SupportViewProps {
@@ -48,6 +48,14 @@ export default function SupportView({ onBack }: SupportViewProps) {
     setMessage('');
     loadThreads();
     notify.success('মেসেজ পাঠানো হয়েছে');
+  };
+
+  const handleMTLoanClick = () => {
+    notify.info('MT-LOAN ফিচার শীঘ্রই আসছে');
+  };
+
+  const handleCalculatorClick = () => {
+    notify.info('ক্যালকুলেটর শীঘ্রই আসছে');
   };
 
   if (isAdmin && !selectedThread) {
@@ -105,10 +113,20 @@ export default function SupportView({ onBack }: SupportViewProps) {
         {/* Fixed Footer */}
         <div className="fixed bottom-0 left-0 right-0 z-20">
           <DashboardFooter 
+            leftAction={{
+              label: 'MT-LOAN',
+              onClick: handleMTLoanClick,
+              icon: DollarSign,
+            }}
             centerAction={{
               label: 'সাপোর্ট',
               onClick: () => {},
               icon: MessageCircle,
+            }}
+            rightAction={{
+              label: 'ক্যালকুলেটর',
+              onClick: handleCalculatorClick,
+              icon: Calculator,
             }}
           />
         </div>
@@ -208,10 +226,20 @@ export default function SupportView({ onBack }: SupportViewProps) {
       {/* Fixed Footer */}
       <div className="fixed bottom-0 left-0 right-0 z-20">
         <DashboardFooter 
+          leftAction={{
+            label: 'MT-LOAN',
+            onClick: handleMTLoanClick,
+            icon: DollarSign,
+          }}
           centerAction={{
             label: 'সাপোর্ট',
             onClick: () => {},
             icon: MessageCircle,
+          }}
+          rightAction={{
+            label: 'ক্যালকুলেটর',
+            onClick: handleCalculatorClick,
+            icon: Calculator,
           }}
         />
       </div>

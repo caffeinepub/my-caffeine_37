@@ -1,65 +1,95 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-07T21:08:26.931Z",
-  "summary": "Most requested UI polish items are implemented (AdminLayoutShell spacing + footer restyle, KPI card readout redesign, ConfirmDialog restyle, WorkerRateSettings title/input styling, and header avatar component). However, the diff summary does not provide sufficient evidence that the Settings tabs container/card widening and Select dropdown readability fixes are actually applied within SystemSettingsSection, and the required placeholder avatar PNG asset is not shown as added under frontend/public/assets/generated.",
+  "generatedAt": "2026-02-07T22:23:08.316Z",
+  "summary": "MT Loan password prompt modal + local storage utilities and a hidden User Panel skeleton were added, and MT-LOAN buttons now open the prompt. However, the diff also includes broad, unrelated UI/styling and auth/session/storage changes that violate the “no design changes” constraint, and the new Settings card UI itself is not clearly evidenced in the truncated diff.",
   "missing_requirements": [
     {
       "id": "REQ-1",
-      "requirement": "Enlarge the main white content card under the Settings tabs and group the Settings tab buttons inside a clearer rounded, bordered container in the Settings view (AdminLayoutShell + SystemSettingsSection).",
-      "reason": "AdminLayoutShell content container is widened/padded, but the diff summary for SystemSettingsSection is truncated and shows no explicit changes to TabsList/TabsTrigger container styling or a dedicated rounded/bordered tabs container. Therefore there is no clear evidence the tabs are visually grouped “inside the box” as required.",
+      "requirement": "Add a new Settings card/section in the currently empty top area of the Settings screen with Name input, Password input, and Save button; persist after refresh.",
+      "reason": "The diff shows MT Loan settings state and a save handler wired to local storage, but the actual Settings UI card/section placement (top empty area) with the required controls is not present in the provided (truncated) file content, so implementation cannot be confirmed from evidence.",
       "evidence": [
-        "frontend/src/features/admin/components/AdminLayoutShell.tsx",
         "frontend/src/features/admin/sections/SystemSettingsSection.tsx (truncated)"
       ]
     },
     {
-      "id": "REQ-2",
-      "requirement": "Fix Select/dropdown readability in Settings (no blurry/cut-off options; correct overlay/stacking; consistent padding/font/line-height for SelectTrigger/SelectContent) in SystemSettingsSection and similar admin settings selects.",
-      "reason": "CSS utility classes for admin select styling were added, but the diff summary does not show SystemSettingsSection (or other settings selects) actually using these classes on SelectTrigger/SelectContent. With SystemSettingsSection truncated, there isn’t enough evidence the dropdown readability/stacking issue is fixed in the Settings UI itself.",
+      "id": "REQ-3",
+      "requirement": "Create/keep a User Panel layout skeleton in the codebase (components/layout) and keep the User Panel route/view fully hidden/blocked; include a logout button placeholder in the structure.",
+      "reason": "A skeleton component exists but it is not located under components/layout as requested, and the diff provides no evidence that any User Panel route/view is consistently blocked at the routing/navigation level (only that this component returns null).",
       "evidence": [
-        "frontend/src/index.css (truncated)",
-        "frontend/src/features/admin/sections/SystemSettingsSection.tsx (truncated)"
+        "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx"
       ]
     },
     {
-      "id": "REQ-8",
-      "requirement": "Add the generated default avatar placeholder image as a static asset under frontend/public/assets/generated and reference it for the admin header avatar fallback (no backend serving).",
-      "reason": "AdminHeaderAvatar references '/assets/generated/admin-avatar-placeholder.dim_128x128.png', but the diff summary does not show the image file being added under frontend/public/assets/generated.",
+      "id": "REQ-4",
+      "requirement": "Do not change any existing UI design/styling outside inserting the new Settings card and adding the password prompt modal UI; no unrelated copy/text changes.",
+      "reason": "Multiple files appear to include unrelated styling/UI changes (login/register themes, gradients, other UI changes), which violates the constraint that only the Settings card and password prompt UI should be added without altering existing design elsewhere.",
       "evidence": [
-        "frontend/src/features/admin/components/AdminHeaderAvatar.tsx"
+        "frontend-file-summaries.txt (LoginView.tsx styling changes)",
+        "frontend-file-summaries.txt (RegisterView.tsx styling changes)",
+        "frontend/src/components/layout/AppShell.tsx (truncated)",
+        "frontend-file-summaries.txt (various other feature styling/behavior changes listed)"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Use branding logo (branding.logoDataUrl) as an additional fallback for the admin header avatar when no profile photo exists.",
-      "reason": "REQ-4/REQ-8 specify showing stored profile photo when available, otherwise a default placeholder image. Falling back to the branding logo is not requested.",
+      "description": "Added/changed login and registration screen styling and flows beyond MT Loan gating (e.g., bright gradients, larger inputs/buttons, confirmation dialog changes).",
+      "reason": "Not requested; explicitly disallowed by REQ-4 (no unrelated design/styling/copy changes).",
       "evidence": [
-        "frontend/src/features/admin/components/AdminHeaderAvatar.tsx"
+        "frontend-file-summaries.txt (frontend/src/features/auth/LoginView.tsx)",
+        "frontend-file-summaries.txt (frontend/src/features/auth/RegisterView.tsx)"
       ]
     },
     {
-      "description": "Added admin-specific profile photo storage helpers/keys (ADMIN_PROFILE_PHOTO_KEY, getAdminProfilePhoto, setAdminProfilePhoto).",
-      "reason": "The request only mentions reusing the existing profile photo storage approach and adding a placeholder asset; it does not request adding a separate admin profile-photo storage key/API.",
+      "description": "Session/auth architecture changes (SessionProvider hydration, admin credential validation, ensureUserIds integration, blocked user flow compatibility).",
+      "reason": "Not requested; BuildRequest focuses only on MT Loan settings, password modal gating, and hidden User Panel skeleton.",
       "evidence": [
-        "frontend/src/lib/storage/userProfileStorage.ts"
+        "frontend-file-summaries.txt (frontend/src/state/session/SessionProvider.tsx)",
+        "frontend-file-summaries.txt (frontend/src/App.tsx)"
+      ]
+    },
+    {
+      "description": "Enhanced safeStorage utilities with event emission and subscription system for real-time UI synchronization.",
+      "reason": "Not requested for MT Loan settings/password gating; constitutes additional unrequested infrastructure work.",
+      "evidence": [
+        "frontend-file-summaries.txt (frontend/src/lib/storage/safeStorage.ts)"
+      ]
+    },
+    {
+      "description": "Added “Calculator feature coming soon!” and support alert placeholder behaviors in the main AppShell header actions.",
+      "reason": "Not requested; BuildRequest only mentions MT-LOAN password prompt modal behavior.",
+      "evidence": [
+        "frontend/src/components/layout/AppShell.tsx (truncated)"
+      ]
+    },
+    {
+      "description": "Multiple unrelated admin section behavior/styling changes (Production/Work/Nasta/PaymentLoan sections, approvals UI updates, etc.).",
+      "reason": "Not requested and conflicts with REQ-4’s constraint against unrelated UI/design changes.",
+      "evidence": [
+        "frontend-file-summaries.txt (ProductionSection.tsx, WorkSection.tsx, NastaSection.tsx, PaymentLoanSection.tsx, ApprovalsSection.tsx, UserDashboard.tsx)"
+      ]
+    },
+    {
+      "description": "MT-LOAN prompt UI introduces new gradient-heavy styling and custom classes (rounded-3xl, bg gradients, etc.).",
+      "reason": "REQ-4 requires using existing UI primitives/conventions without design changes beyond adding the modal; this appears to introduce new styling rather than matching existing unchanged design (based on the modal’s explicit classnames).",
+      "evidence": [
+        "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx (truncated)"
       ]
     }
   ],
-  "confidence": 0.74,
+  "confidence": 0.68,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/dashboard/dashboardBorders.ts",
-    "frontend/src/components/feedback/ConfirmDialog.tsx",
-    "frontend/src/components/layout/DashboardFooter.tsx",
-    "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/features/admin/AdminPanel.tsx",
     "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-    "frontend/src/features/admin/components/AdminSummaryCards.tsx",
     "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-    "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
-    "frontend/src/index.css",
-    "frontend/src/lib/storage/userProfileStorage.ts",
+    "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx",
+    "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx",
+    "frontend/src/lib/storage/mtLoanAuthStorage.ts",
+    "frontend/src/lib/storage/mtLoanIdentityStorage.ts",
+    "frontend/src/lib/storage/mtLoanSettingsStorage.ts",
     "project_state.json"
   ]
 }

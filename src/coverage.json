@@ -1,124 +1,71 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-07T21:08:26.936Z",
+  "generatedAt": "2026-02-07T22:23:08.319Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 8,
-    "implemented": 8,
+    "total": 4,
+    "implemented": 4,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Enlarge the main white content card under the Settings tabs (increase effective width on mobile/desktop and increase vertical spacing), and visually group the Settings tab buttons inside a clearer rounded, bordered container so the tabs feel placed “inside the box”. Apply this to the Settings view rendered by AdminLayoutShell + SystemSettingsSection.",
+        "summary": "Add a new Settings card/section in the currently empty top area of the Settings screen that contains: (1) a Name input, (2) a Password input, and (3) a Save button. Persist the saved Name+Password locally so they remain available after refresh.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-          "frontend/src/index.css"
+          "frontend/src/lib/storage/mtLoanSettingsStorage.ts",
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-          "frontend/src/index.css"
+          "frontend/src/lib/storage/mtLoanSettingsStorage.ts",
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Fix Select/dropdown readability in Settings so that when the dropdown opens, option text is not blurry/cut off and the dropdown panel positions and stacks correctly above surrounding cards. Ensure consistent font size, line height, and adequate padding for SelectTrigger/SelectContent in SystemSettingsSection (and any similar Select usage in admin settings).",
+        "summary": "Implement MT Loan password gating: when the MT-LOAN button is clicked (existing header quick action), show a password prompt modal. If the entered password does not match the admin-saved MT Loan password, block access and show an error message. If it matches, mark the session as authorized for MT Loan and auto-create a user identity using the admin-saved Name (store locally); do not expose the User Panel UI yet (integration/navigation will be done later).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-          "frontend/src/index.css"
+          "frontend/src/lib/storage/mtLoanAuthStorage.ts",
+          "frontend/src/lib/storage/mtLoanIdentityStorage.ts",
+          "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx",
+          "frontend/src/features/admin/AdminPanel.tsx",
+          "frontend/src/components/layout/AppShell.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-          "frontend/src/index.css"
+          "frontend/src/lib/storage/mtLoanAuthStorage.ts",
+          "frontend/src/lib/storage/mtLoanIdentityStorage.ts",
+          "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx",
+          "frontend/src/features/admin/AdminPanel.tsx",
+          "frontend/src/components/layout/AppShell.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Improve the visibility/contrast of the \"Worker & Rate Settings\" section title and restyle all input boxes in that section to match the lighter, cleaner input style used elsewhere (consistent background shade, border, focus ring). Apply to WorkerRateSettingsSection inputs (new worker name, rate inputs) and any Settings inputs that currently look washed out.",
+        "summary": "Create/keep a User Panel layout skeleton in the codebase, but ensure the entire User Panel is fully hidden/blocked from users for now. Include a logout button placeholder/structure in the hidden User Panel layout so it is ready for later activation.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
-          "frontend/src/index.css"
+          "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
-          "frontend/src/index.css"
+          "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx"
         ]
       },
       {
         "id": "REQ-4",
-        "summary": "Add an admin header profile avatar to the right side of the AdminLayoutShell header. The avatar should display a stored profile photo when available (reuse existing profile photo storage approach); otherwise show a default placeholder avatar image. Ensure it fits in the header without breaking title/back button layout.",
+        "summary": "Do not change any existing UI design or styling while implementing REQ-1 to REQ-3. Only add the new Settings card and the password prompt modal using existing UI primitives and existing styling conventions so the rest of the app remains visually unchanged.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
-          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-          "frontend/src/lib/storage/userProfileStorage.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
-          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-          "frontend/src/lib/storage/userProfileStorage.ts"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Reposition/restyle the bottom fixed action buttons (MT-LOAN / Support / Calculator) so they appear visually clean “above/on top of” the content card without obscuring content. Ensure adequate bottom spacing in scrollable content, and adjust footer container styling (rounded floating bar look, consistent shadow/border) if needed.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/layout/DashboardFooter.tsx",
-          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
           "frontend/src/features/admin/AdminPanel.tsx",
-          "frontend/src/index.css"
+          "frontend/src/components/layout/AppShell.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/layout/DashboardFooter.tsx",
-          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-          "frontend/src/index.css"
-        ]
-      },
-      {
-        "id": "REQ-6",
-        "summary": "Redesign the top 3 admin money summary cards so the numeric readout does not show an ugly white patch behind the text. Replace the current inner white/opaque block style with a cleaner “display/screen” readout look (high contrast, no harsh white rectangle, consistent across all three cards).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/admin/components/AdminSummaryCards.tsx",
-          "frontend/src/components/dashboard/dashboardBorders.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/admin/components/AdminSummaryCards.tsx",
-          "frontend/src/components/dashboard/dashboardBorders.ts"
-        ]
-      },
-      {
-        "id": "REQ-7",
-        "summary": "Update confirmation dialog UI to a round-shaped, colorful (Bangladesh-style vibrant) look while maintaining readability. Apply to the shared ConfirmDialog component so admin confirmations (e.g., delete worker, logout confirm usage where applicable) have improved visual appeal and clear button hierarchy.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/feedback/ConfirmDialog.tsx",
-          "frontend/src/index.css"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/feedback/ConfirmDialog.tsx",
-          "frontend/src/index.css"
-        ]
-      },
-      {
-        "id": "REQ-8",
-        "summary": "Add the generated default avatar placeholder image as a static asset and wire it into the admin header avatar fallback (do not serve it from the backend).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/public/assets/generated/admin-avatar-placeholder.dim_128x128.png",
-          "frontend/src/features/admin/components/AdminHeaderAvatar.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/public/assets/generated/admin-avatar-placeholder.dim_128x128.png",
-          "frontend/src/features/admin/components/AdminHeaderAvatar.tsx"
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "frontend/src/features/admin/AdminPanel.tsx",
+          "frontend/src/components/layout/AppShell.tsx"
         ]
       }
     ]
@@ -128,17 +75,15 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/admin-avatar-placeholder.dim_128x128.png",
-    "frontend/src/components/dashboard/dashboardBorders.ts",
-    "frontend/src/components/feedback/ConfirmDialog.tsx",
-    "frontend/src/components/layout/DashboardFooter.tsx",
-    "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/features/admin/AdminPanel.tsx",
     "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-    "frontend/src/features/admin/components/AdminSummaryCards.tsx",
     "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-    "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
-    "frontend/src/index.css",
-    "frontend/src/lib/storage/userProfileStorage.ts",
+    "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx",
+    "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx",
+    "frontend/src/lib/storage/mtLoanAuthStorage.ts",
+    "frontend/src/lib/storage/mtLoanIdentityStorage.ts",
+    "frontend/src/lib/storage/mtLoanSettingsStorage.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

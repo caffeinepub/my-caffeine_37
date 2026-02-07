@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionProvider } from './state/session/SessionProvider';
 import { useSession } from './state/session/useSession';
 import LoginView from './features/auth/LoginView';
+import RegisterView from './features/auth/RegisterView';
 import AdminPanel from './features/admin/AdminPanel';
 import UserDashboard from './features/user/UserDashboard';
 import BlockedAccountView from './features/auth/BlockedAccountView';
@@ -25,6 +26,7 @@ function AppContent() {
   const { identity } = useInternetIdentity();
   const [isBlocked, setIsBlocked] = useState(false);
   const [checkingBlock, setCheckingBlock] = useState(true);
+  const [showRegister, setShowRegister] = useState(false);
 
   useEffect(() => {
     async function checkBlockStatus() {
@@ -57,7 +59,10 @@ function AppContent() {
   }
 
   if (!session) {
-    return <LoginView />;
+    if (showRegister) {
+      return <RegisterView onBack={() => setShowRegister(false)} />;
+    }
+    return <LoginView onSwitchToRegister={() => setShowRegister(true)} />;
   }
 
   if (session.role === 'user' && isBlocked) {

@@ -1,107 +1,153 @@
-import { ReactNode, useState } from 'react';
-import { useSession } from '../../state/session/useSession';
-import { Button } from '../ui/button';
-import { LogOut, Calculator, DollarSign } from 'lucide-react';
-import { ConfirmDialog } from '../feedback/ConfirmDialog';
-import { notify } from '../feedback/notify';
+import { useState, useEffect } from 'react';
+import { useInternetIdentity } from '../../hooks/useInternetIdentity';
+import { useQueryClient } from '@tanstack/react-query';
+import { LogOut, Calculator } from 'lucide-react';
+import { useBranding } from '../../hooks/useBranding';
+import { useDashboardOverrides } from '../../hooks/useDashboardOverrides';
+import MtLoanPasswordPrompt from '../../features/mt-loan/MtLoanPasswordPrompt';
 
 interface AppShellProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export default function AppShell({ children }: AppShellProps) {
-  const { logout } = useSession();
-  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const { clear, identity } = useInternetIdentity();
+  const queryClient = useQueryClient();
+  const { branding } = useBranding();
+  const { getLabel } = useDashboardOverrides();
+  const [showMtLoanPrompt, setShowMtLoanPrompt] = useState(false);
 
-  const handleLogoutClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setShowLogoutDialog(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleLogout = async () => {
+    const confirmLogout = window.confirm(
+      getLabel('logoutConfirmText', 'Are you sure you want to logout?') || 'Are you sure you want to logout?'
+    );
+    if (confirmLogout) {
+      await clear();
+      queryClient.clear();
+    }
   };
 
-  const handleLogoutConfirm = () => {
-    logout();
-    setShowLogoutDialog(false);
-  };
-
-  const handleMTLoanClick = () => {
-    notify.info('MT-LOAN ফিচার শীঘ্রই আসছে');
+  const handleMtLoanClick = () => {
+    setShowMtLoanPrompt(true);
   };
 
   const handleCalculatorClick = () => {
-    notify.info('ক্যালকুলেটর শীঘ্রই আসছে');
+    // Placeholder for calculator functionality
+    alert('Calculator feature coming soon!');
   };
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-teal-50">
-        <header className="gradient-primary text-white shadow-lg sticky top-0 z-40 border-b-2 border-white/20 backdrop-blur-sm">
-          <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <img
-                src="/assets/generated/smart-hisab-logo.dim_512x512.png"
-                alt="Smart Hisab Pro"
-                className="w-10 h-10 rounded-lg shadow-md"
-              />
-              <div>
-                <h1 className="text-lg font-bold">স্মার্ট হিসাব প্রো</h1>
-                <p className="text-[10px] text-white/80">Admin Panel</p>
-              </div>
-            </div>
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        {/* Header */}
+        <header
+          className={`sticky top-0 z-50 transition-all duration-300 ${
+            isScrolled
+              ? 'bg-white/80 backdrop-blur-md border-b-2 border-blue-200 shadow-lg'
+              : 'bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 border-b-2 border-blue-400'
+          }`}
+        >
+          <div className="max-w-7xl mx-auto px-3 py-2 flex items-center justify-between">
+            {/* Logo and Title */}
             <div className="flex items-center gap-2">
-              <Button
-                onClick={handleMTLoanClick}
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-white/10 touch-manipulation"
+              {branding.logoDataUrl && (
+                <img
+                  src={branding.logoDataUrl}
+                  alt="Logo"
+                  className="w-8 h-8 object-contain rounded-full"
+                />
+              )}
+              <h1
+                className={`text-base font-bold transition-colors ${
+                  isScrolled
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'
+                    : 'text-white'
+                }`}
               >
-                <DollarSign className="w-4 h-4 mr-1" />
-                <span className="text-xs hidden sm:inline">MT-LOAN</span>
-              </Button>
-              <Button
+                {branding.companyName}
+              </h1>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleMtLoanClick}
+                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all touch-manipulation ${
+                  isScrolled
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                MT-LOAN
+              </button>
+              <button
+                onClick={() => alert('Support feature coming soon!')}
+                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all touch-manipulation ${
+                  isScrolled
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                {getLabel('supportButtonLabel', 'সাপোর্ট') || 'সাপোর্ট'}
+              </button>
+              <button
                 onClick={handleCalculatorClick}
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-white/10 touch-manipulation"
+                className={`p-2 rounded-lg transition-all touch-manipulation ${
+                  isScrolled
+                    ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:from-teal-600 hover:to-cyan-600'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
               >
                 <Calculator className="w-4 h-4" />
-              </Button>
-              <Button
-                onClick={handleLogoutClick}
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-white/10 touch-manipulation"
-              >
-                <LogOut className="w-4 h-4 mr-1" />
-                <span className="text-xs">Logout</span>
-              </Button>
+              </button>
+              {identity && (
+                <button
+                  onClick={handleLogout}
+                  className={`p-2 rounded-lg transition-all touch-manipulation ${
+                    isScrolled
+                      ? 'bg-red-500 text-white hover:bg-red-600'
+                      : 'bg-white/20 text-white hover:bg-white/30'
+                  }`}
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
         </header>
-        <main>{children}</main>
-        <footer className="gradient-slate text-white/80 py-4 mt-8 mb-16">
-          <div className="container mx-auto px-4 text-center text-xs">
+
+        {/* Main Content */}
+        <main className="flex-1">{children}</main>
+
+        {/* Footer */}
+        <footer className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-3 text-center text-xs border-t-2 border-blue-400">
+          <p>
             © 2026. Built with ❤️ using{' '}
             <a
               href="https://caffeine.ai"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-cyan-300 hover:text-cyan-200"
+              className="underline hover:text-blue-200 transition-colors"
             >
               caffeine.ai
             </a>
-          </div>
+          </p>
         </footer>
       </div>
-      <ConfirmDialog
-        open={showLogoutDialog}
-        onOpenChange={setShowLogoutDialog}
-        title="Confirm Logout"
-        description="Are you sure you want to log out?"
-        onConfirm={handleLogoutConfirm}
-        confirmText="Yes, Log out"
-        cancelText="Cancel"
-        variant="default"
+
+      <MtLoanPasswordPrompt
+        open={showMtLoanPrompt}
+        onOpenChange={setShowMtLoanPrompt}
       />
     </>
   );

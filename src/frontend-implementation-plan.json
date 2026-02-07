@@ -1,192 +1,105 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Admin panel UI polish for settings layout, dropdowns, KPI cards, confirm dialog, header avatar, and footer placement",
+  "title": "MT Loan settings + password-gated entry with hidden User Panel skeleton (no design changes)",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Make the Settings view content area wider/taller and visually group Settings tabs inside a clearer rounded bordered container within AdminLayoutShell + SystemSettingsSection.",
+      "summary": "Add MT Loan Name/Password settings card to Settings and persist locally across refresh.",
       "acceptanceCriteria": [
-        "On the System Settings screen, the white content card is noticeably wider (reduced side margins) and taller (more internal padding/spacing), especially on mobile.",
-        "The tabs (Labels/Layout/Branding/Sharing/Backup) are contained within a rounded bordered container that looks intentional; active/inactive states remain clear.",
-        "No content is clipped/overlapped by the fixed header or fixed footer on common mobile sizes."
+        "Settings screen shows an additional card/section at the top empty area with Name, Password, and Save controls.",
+        "Clicking Save persists the configured Name and Password (survives page refresh).",
+        "No other Settings sections/tabs are removed or visually restyled beyond inserting this new card into the existing empty area."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-          "operation": "modify",
-          "description": "Adjust the Settings (and other admin) content container spacing: reduce side padding on small screens, increase inner padding, and tune scroll-area top/bottom padding so the main white content card appears larger and never collides with the fixed header/footer."
+          "path": "frontend/src/lib/storage/mtLoanSettingsStorage.ts",
+          "operation": "create",
+          "description": "Create local persistence helpers for MT Loan admin-saved Name+Password using existing safe storage patterns (load/save/validate basics)."
         },
         {
           "path": "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
           "operation": "modify",
-          "description": "Restyle the Tabs header area to sit inside a clearer rounded, bordered container (more intentional grouping) and increase vertical spacing/padding in Settings tab contents so the primary white card feels larger. Verify the component's usage instructions before implementing (shadcn-ui Tabs/Card/ScrollArea)."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Add/adjust a small set of global utility classes (only where needed) to support consistent spacing for admin settings containers without editing immutable shadcn ui component files."
+          "description": "Insert a new top Settings card/section in the currently empty top area that uses existing shadcn-ui primitives (Card/Input/Label/Button) to edit MT Loan Name+Password and Save; wire it to mtLoanSettingsStorage for load-on-mount and save-on-click; show save success/error feedback via existing notify. Use the existing styling conventions in this file; do not restyle existing tabs/sections. Use the shadcn-ui component library already in the project; verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Fix Settings Select/dropdown readability and overlay stacking by standardizing trigger/content typography, padding, and z-index behavior.",
+      "summary": "Password-gate MT Loan button with a modal prompt; on success persist session authorization and create a local identity record from saved Name without exposing User Panel.",
       "acceptanceCriteria": [
-        "Opening a dropdown shows all options fully (no clipping), with readable contrast and font sizing.",
-        "Dropdown content overlays above nearby cards/containers correctly (no being hidden behind other elements).",
-        "The selected value inside the trigger remains readable on both light and gradient backgrounds."
+        "Clicking the existing MT-LOAN UI control opens a password prompt modal (not a new page).",
+        "Wrong password: no authorization is granted and the UI shows an error feedback.",
+        "Correct password: an 'authorized' flag for MT Loan is persisted locally for the current session (or until logout), and a user identity record is created locally using the configured Name.",
+        "No User Panel screens/features become visible as a result of successful password entry (only the authorization + identity creation is prepared)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-          "operation": "modify",
-          "description": "Update SelectTrigger/SelectContent usages to apply consistent font size/line height/padding and stronger z-index/overlay styling; ensure option rows are not clipped and the trigger value remains readable. Verify the component's usage instructions before implementing (shadcn-ui Select)."
+          "path": "frontend/src/lib/storage/mtLoanAuthStorage.ts",
+          "operation": "create",
+          "description": "Create helpers to persist MT Loan authorization for the current session (sessionStorage-based set/get/clear with defensive try/catch), ensuring it does not grant access when absent."
         },
         {
-          "path": "frontend/src/index.css",
+          "path": "frontend/src/lib/storage/mtLoanIdentityStorage.ts",
+          "operation": "create",
+          "description": "Create helpers to create/read/clear a local MT Loan user identity record (localStorage), populated from the admin-saved MT Loan Name upon successful password entry."
+        },
+        {
+          "path": "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx",
+          "operation": "create",
+          "description": "Create a reusable password prompt modal component that uses existing UI primitives (e.g., shadcn-ui AlertDialog/Dialog + Input/Button) to collect a password, validate it against mtLoanSettingsStorage, show inline error feedback on mismatch, and on success set mtLoanAuthStorage + mtLoanIdentityStorage then close without navigating. Use the shadcn-ui component library already in the project; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/admin/AdminPanel.tsx",
           "operation": "modify",
-          "description": "Add targeted CSS overrides for admin settings dropdown overlays (e.g., ensure Radix portal content stacks above fixed header/footer and card borders) without modifying frontend/src/components/ui/*."
+          "description": "Replace the current MT-LOAN click behavior (notify-only) so it opens MtLoanPasswordPrompt modal; ensure all existing MT-LOAN triggers in this file (dashboard footer and AdminLayoutShell left button) route through the same gating behavior. Do not navigate to any User Panel/UI after success. Use the shadcn-ui component library already in the project; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "modify",
+          "description": "Replace the current MT-LOAN click behavior (notify-only) so it opens the same MtLoanPasswordPrompt modal when AppShell is used, matching the existing header quick action requirement; do not introduce new pages/routes. Use the shadcn-ui component library already in the project; verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Increase contrast of the Worker & Rate Settings title and restyle inputs in WorkerRateSettingsSection to match the cleaner input style used elsewhere, including disabled/locked readability.",
+      "summary": "Create a User Panel layout skeleton but keep it fully blocked/hidden; include a logout button placeholder in the layout.",
       "acceptanceCriteria": [
-        "The \"কর্মী ও রেট সেটিংস\" title has clear contrast against its header background and is readable on mobile.",
-        "All inputs in WorkerRateSettingsSection have a consistent light background shade, consistent border thickness, and consistent focus state.",
-        "Disabled/locked inputs remain visually distinct but still readable."
+        "User Panel route/view remains inaccessible or fully blocked (no interactive user panel content visible to end users).",
+        "A User Panel layout structure exists in the code (components/layout) including a logout button placeholder in the structure.",
+        "The block/hide behavior is enforced consistently (refreshing the page does not reveal the User Panel)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
-          "operation": "modify",
-          "description": "Restyle the CardHeader/CardTitle contrast and apply consistent Input classNames (background, border, focus ring) for new worker name and rate inputs; ensure locked/disabled state remains readable and visually distinct. Verify the component's usage instructions before implementing (shadcn-ui Card/Input/Table/Checkbox)."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Add reusable admin input styling utilities (light background, border, focus ring) to keep WorkerRateSettingsSection and similar settings inputs consistent without editing immutable UI component sources."
+          "path": "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx",
+          "operation": "create",
+          "description": "Add a User Panel layout skeleton component containing the future structure and a logout button placeholder/slot, but ensure it renders a blocked/hidden state by default (e.g., returns null or a non-interactive placeholder) and is not wired into navigation yet so users cannot access it (including after refresh). Use existing UI primitives only; do not introduce new global styling. Use the shadcn-ui component library already in the project; verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Add a right-aligned circular profile avatar in AdminLayoutShell header using stored profile photo when available, otherwise a placeholder.",
+      "summary": "Preserve existing UI design/styling while adding only the new Settings card and password prompt modal using existing primitives.",
       "acceptanceCriteria": [
-        "Admin header shows a circular avatar on the right side on all admin screens using AdminLayoutShell.",
-        "If a profile photo exists for the current user/admin identity, it is displayed; otherwise a placeholder avatar is shown.",
-        "Header layout remains stable: title truncates gracefully and the avatar does not overlap buttons/text."
+        "Existing screens (Admin dashboard, Settings tabs, headers/footers, existing buttons) retain their current layout and styling.",
+        "Any new UI (Settings card and password prompt) uses existing UI components and does not introduce global theme/color/token changes.",
+        "No unrelated copy/text is changed as part of this work."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
-          "operation": "create",
-          "description": "Create a small header avatar component that reads the current session identity (user vs admin), loads the stored profile photo via the existing localStorage approach, and falls back to the generated placeholder image. Verify the component's usage instructions before implementing (shadcn-ui styling conventions where applicable)."
-        },
-        {
-          "path": "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "path": "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
           "operation": "modify",
-          "description": "Wire the new AdminHeaderAvatar into the fixed header right side for all AdminLayoutShell screens, ensuring proper spacing with optional headerActions and stable truncation of the title/back button row."
-        },
-        {
-          "path": "frontend/src/lib/storage/userProfileStorage.ts",
-          "operation": "modify",
-          "description": "Extend the existing profile photo getter usage pattern to support a consistent key for admin (fallback identity) while keeping the same storage approach (localStorage data URL), without introducing backend image serving."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Reposition/restyle fixed bottom action buttons as a clean floating bar above content and ensure scrollable content has adequate bottom spacing.",
-      "acceptanceCriteria": [
-        "The footer does not cover important content at the bottom of pages; last form controls remain accessible without being hidden.",
-        "Footer buttons look intentionally placed (consistent spacing, rounded container, readable labels) and do not clash with underlying card borders.",
-        "Behavior remains fixed/sticky at bottom during scroll."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/layout/DashboardFooter.tsx",
-          "operation": "modify",
-          "description": "Restyle the footer as a rounded, floating action bar (remove internal fixed positioning, add outer rounded container, consistent border/shadow, and safe-area padding) so it can be positioned cleanly by parent shells."
-        },
-        {
-          "path": "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-          "operation": "modify",
-          "description": "Adjust the fixed footer wrapper to position the floating bar above content (with margins) and update the scroll container bottom padding so the last content is never obscured by the floating footer."
+          "description": "Limit changes strictly to inserting the new MT Loan settings card in the top empty area and wiring to storage; avoid modifying existing tab markup, classNames, or copy outside the new card."
         },
         {
           "path": "frontend/src/features/admin/AdminPanel.tsx",
           "operation": "modify",
-          "description": "Update dashboard view footer usage to match the new floating DashboardFooter (parent owns fixed positioning) and tune dashboard scroll bottom padding to maintain access to the last tiles/cards."
+          "description": "Limit changes strictly to swapping MT-LOAN click behavior to open the password prompt modal and adding the modal render; do not alter existing layout/styling or text."
         },
         {
-          "path": "frontend/src/index.css",
+          "path": "frontend/src/components/layout/AppShell.tsx",
           "operation": "modify",
-          "description": "Add a small global utility (if needed) for consistent 'floating footer bar' spacing and safe-area bottom padding so multiple admin views behave consistently."
-        }
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "summary": "Restyle AdminSummaryCards numeric readout to remove the stark white patch and use a cohesive high-contrast display/screen look across all 3 cards.",
-      "acceptanceCriteria": [
-        "In AdminSummaryCards, the number area no longer appears as a stark white patch; it reads like a cohesive display element.",
-        "Text remains highly readable in all three cards (Due/Work/Taken) on mobile.",
-        "Borders/radius/shadow remain consistent with the dashboard style constants where applicable."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/features/admin/components/AdminSummaryCards.tsx",
-          "operation": "modify",
-          "description": "Replace the inner 'bg-white/90' number block styling with a cleaner display/screen readout (cohesive translucent/darkened panel, subtle border, optional backdrop blur, consistent typography) across Due/Work/Taken while preserving existing dashboardBorders constants."
-        },
-        {
-          "path": "frontend/src/components/dashboard/dashboardBorders.ts",
-          "operation": "modify",
-          "description": "If needed, extend/update shared KPI inner styling constants to support the new display-like readout styling consistently across KPI cards."
-        }
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "summary": "Update shared ConfirmDialog styling to a rounder, vibrant colorful look with clear button hierarchy and correct mobile stacking.",
-      "acceptanceCriteria": [
-        "ConfirmDialog has noticeably rounder corners and a more colorful, polished header/body styling while keeping text readable.",
-        "Primary/confirm and cancel buttons are clearly distinguished and remain at least 44px tall for touch.",
-        "Dialog content is centered and not clipped on mobile; overlay stacking remains correct."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/feedback/ConfirmDialog.tsx",
-          "operation": "modify",
-          "description": "Restyle AlertDialogContent/Header/Footer to a round-shaped, vibrant theme (Bangladesh-style colorful accents), improve spacing/typography, and ensure overlay/z-index behavior is correct on mobile. Verify the component's usage instructions before implementing (shadcn-ui AlertDialog)."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Add minimal global styles (if needed) to ensure dialog overlay/content stacks above fixed headers/footers and remains readable on small screens without modifying frontend/src/components/ui/*."
-        }
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "summary": "Add generated default avatar placeholder asset and wire it into the admin header avatar fallback as a static frontend asset.",
-      "acceptanceCriteria": [
-        "The placeholder avatar file exists under frontend/public/assets/generated and is referenced directly by the frontend for fallback rendering.",
-        "No backend endpoints are added for serving images."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/public/assets/generated/admin-avatar-placeholder.dim_128x128.png",
-          "operation": "create",
-          "description": "Add the generated placeholder avatar image asset at the exact path frontend/public/assets/generated/admin-avatar-placeholder.dim_128x128.png for static serving by the frontend build."
-        },
-        {
-          "path": "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
-          "operation": "modify",
-          "description": "Reference frontend/public/assets/generated/admin-avatar-placeholder.dim_128x128.png as the fallback image when no stored profile photo exists. Verify the component's usage instructions before implementing."
+          "description": "Limit changes strictly to swapping MT-LOAN click behavior to open the password prompt modal and adding the modal render; do not alter existing header/footer styling or text."
         }
       ]
     }
