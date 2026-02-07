@@ -1,159 +1,101 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Restore dashboard readability and admin UI color differentiation",
+  "title": "Admin Production double/single inputs & User Dashboard mobile typography fixes",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Increase User Dashboard KPI card typography and vertical sizing to match the provided screenshot.",
+      "summary": "Revise Admin > Production form to capture separate Double/Single quantities and rates with quantities row above rates row, including numeric/non-negative validation.",
       "acceptanceCriteria": [
-        "In the user dashboard KPI area (the 1 full-width card + 2 half-width cards), the title text is visibly larger than the current implementation and matches the relative sizing shown in Screenshot_2026-02-07-05-52-41-812_com.android.chrome.jpg.",
-        "The KPI amount text remains prominent and does not overflow or wrap on typical mobile widths.",
-        "No KPI card content is clipped; spacing between KPI cards remains consistent."
+        "Admin > Production form shows two numeric inputs for quantities (Double, Single).",
+        "Directly under the quantity inputs, the form shows two numeric inputs for rates (Double rate, Single rate).",
+        "Form validation prevents submit when any required field is missing or invalid (non-numeric/negative)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/user/components/UserKpiSummary.tsx",
+          "path": "frontend/src/features/admin/sections/ProductionSection.tsx",
           "operation": "modify",
-          "description": "Increase KPI title font sizes (full-width + half-width cards), adjust amount typography to remain prominent on mobile, and slightly increase vertical spacing (e.g., title/amount separation) to align with the screenshot."
-        },
-        {
-          "path": "frontend/src/components/dashboard/dashboardBorders.ts",
-          "operation": "modify",
-          "description": "Slightly increase KPI card padding/inner padding constants used by the KPI section (kpiCardPadding/kpiInnerPadding and related spacing helpers) so the three KPI cards render visually larger without clipping."
-        },
-        {
-          "path": "frontend/src/features/user/UserDashboard.tsx",
-          "operation": "modify",
-          "description": "Verify KPI container spacing (kpiGroup* wrappers and surrounding margins) remains consistent after KPI card sizing updates, ensuring no clipping/overflow on mobile."
+          "description": "Update the Production form UI to use 4 numeric inputs (quantityDouble, quantitySingle, rateDouble, rateSingle) arranged as requested (quantities first row, rates second row). Add client-side validation for required, numeric, and non-negative values; update any modified user-facing strings to English. Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Make the four User Dashboard action tiles ~10% smaller while improving label readability to better match the KPI section.",
+      "summary": "Update Admin > Production totals, local persisted history shape, history table display, and delete reversal to use Double/Single quantities and rates.",
       "acceptanceCriteria": [
-        "The four user dashboard action tiles are ~10% smaller compared to current (via padding/icon/text adjustments), while still readable on mobile.",
-        "Tile labels are larger than the current 'text-[9px]' feel and closer to the screenshot’s legibility, without causing label wrapping for the default labels.",
-        "Tiles keep a consistent grid layout (2x2) with even spacing and no overlap."
+        "Submitting a production entry stores a history object that includes quantityDouble, quantitySingle, rateDouble, rateSingle, and computed total.",
+        "The worker account bill updates by the computed total for each selected worker, consistent with existing accounting behavior.",
+        "The Admin Production history table is updated to display the new Double/Single quantities and rates, and shows the computed total.",
+        "Deleting a production entry reverses the correct computed total from worker accounts and removes the history entry."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/dashboard/ActionTile.tsx",
+          "path": "frontend/src/features/admin/sections/ProductionSection.tsx",
           "operation": "modify",
-          "description": "Tune the 'small' size variant to reduce overall tile footprint (~10%) via padding/icon sizing/aspect ratio while increasing label typography from the current tiny size (avoid the 'text-[9px]' feel). Ensure labels remain single-line for default Bengali labels where possible."
-        },
-        {
-          "path": "frontend/src/features/user/UserDashboard.tsx",
-          "operation": "modify",
-          "description": "Adjust the action-tile grid spacing (gap/padding wrapper) if needed to keep a stable 2x2 layout after ActionTile 'small' sizing updates, ensuring no overlap or wrapping regressions."
+          "description": "Adjust the ProductionEntry type and persistence in localStorage (productionHistory) to include the 4 new fields plus computed total, and compute total = (quantityDouble*rateDouble)+(quantitySingle*rateSingle). Update history table columns to show Double/Single qty + rates + total, and ensure delete reverses the computed total. Include a safe read/normalization path for any legacy entries so the UI does not crash. Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Restore larger, consistent user/friend-facing typography across user panel views to match the updated dashboard readability.",
+      "summary": "Revise User > Production History to show all workers and their Double/Single totals derived from Admin Production history (not legacy histories.boardWork and not only the logged-in user).",
       "acceptanceCriteria": [
-        "User-facing text in user-related sections (where the app shows user/friend information) is increased from the current small sizing and is visually consistent with the updated dashboard typography.",
-        "No text truncation/regression is introduced in mobile layout for these sections after font-size increases."
+        "User > Production History displays all worker names (not only the logged-in user).",
+        "For each worker, the view shows Double and Single quantities (and corresponding totals or earnings) computed from stored production history entries.",
+        "If there is no production history for a worker, the UI clearly indicates 0 / no records for that worker without errors.",
+        "The view renders without relying on the legacy `histories.boardWork` shape for production data."
       ],
       "file_operations": [
         {
+          "path": "frontend/src/features/user/production/productionAggregates.ts",
+          "operation": "create",
+          "description": "Add a small aggregation helper that reads normalized productionHistory entries and computes per-worker totals for Double/Single quantities and earnings (and overall total) for display. Verify the component's usage instructions before implementing."
+        },
+        {
           "path": "frontend/src/features/user/production/ProductionHistoryView.tsx",
           "operation": "modify",
-          "description": "Increase small secondary text sizes (e.g., worker-name lists and supporting labels) to improve readability on mobile while preserving layout."
-        },
-        {
-          "path": "frontend/src/features/user/work/WorkHistoryView.tsx",
-          "operation": "modify",
-          "description": "Increase small text sizes used in list rows/labels so the view matches the updated dashboard typography without causing overflow."
-        },
-        {
-          "path": "frontend/src/features/user/payment/PaymentHistoryView.tsx",
-          "operation": "modify",
-          "description": "Increase note/secondary text sizing (currently very small) and ensure long notes still wrap safely on mobile."
-        },
-        {
-          "path": "frontend/src/features/user/payment/NastaHistoryView.tsx",
-          "operation": "modify",
-          "description": "Increase note/secondary text sizing and ensure long text remains readable and does not break card layout on mobile."
-        },
-        {
-          "path": "frontend/src/features/support/SupportView.tsx",
-          "operation": "modify",
-          "description": "Increase user/thread list and message typography where it is currently small so user-related text remains consistent with the updated dashboard section sizing."
-        },
-        {
-          "path": "frontend/src/features/user/profile/ProfileSettingsView.tsx",
-          "operation": "modify",
-          "description": "Audit and increase any small user profile/settings text sizing to align with the improved dashboard typography while preventing truncation on mobile."
+          "description": "Replace legacy histories.boardWork usage with productionHistory + workers list data, render a list of all workers, and display per-worker Double/Single quantities and earnings computed via the new aggregation helper. Ensure workers with no records display 0 / no records clearly, and update any modified user-facing strings to English. Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Add distinct, accessible colors to Admin System Settings tabs so each tab is clearly differentiable.",
+      "summary": "Increase User Dashboard tile title font sizes for Production, Snacks, Payment/Loan, and Work while preventing clipping/overlap on mobile widths.",
       "acceptanceCriteria": [
-        "In System Settings, each tab trigger has a distinct color identity (background and/or text/border) that clearly differentiates it from the other tabs.",
-        "The active tab state remains clearly visible and accessible (sufficient contrast) for each tab color.",
-        "Tab layout remains usable on mobile (no overlap; labels remain readable)."
+        "The labels on the four main user dashboard tiles are rendered with a larger font size than the current ‘small’ variant.",
+        "No label text is clipped or overlaps icons on common mobile widths (e.g., 360px)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "path": "frontend/src/components/dashboard/ActionTile.tsx",
           "operation": "modify",
-          "description": "Apply per-tab distinct styling via TabsTrigger className (background/text/border) with a clear active state (e.g., data-[state=active]) for Branding/Labels/Notice/Admin/Section. Keep triggers readable on mobile by tuning padding/text size and adding spacing between triggers (e.g., TabsList gap) as needed. Verify the component's usage instructions before implementing."
+          "description": "Adjust the 'small' size variant to render a larger label font size (and, if needed, icon size/aspect ratio/gaps) so the four dashboard tiles remain readable without clipping/overlap on ~360px widths. Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-5",
-      "summary": "Apply cohesive, non-gray styling to Admin primary action buttons in Settings and Rate sections and ensure other admin sections’ primary actions are colored.",
+      "summary": "Improve User Panel typography and mobile layout to prevent bottom cut-off behind fixed footer and reduce excess spacing while keeping readability.",
       "acceptanceCriteria": [
-        "In System Settings, the Save buttons for Branding/Labels/Notice/Admin Credentials are visually styled with clear color (not default/gray).",
-        "In Worker Rate Settings, the primary 'Add' button is visually styled with clear color (not default/gray).",
-        "At least one primary action button in each admin section that includes a Save/Submit/Add action uses a colored style that is consistent and readable on light backgrounds."
+        "User dashboard text (header meta labels, KPI section, and main content) is increased to a readable size relative to current rendering.",
+        "On mobile-sized viewports, the bottom content is not hidden behind the fixed footer; users can scroll to see all content.",
+        "No main content overflows outside the DashboardFrame container; the UI remains fully usable without elements being cut off."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "path": "frontend/src/components/layout/DashboardFrame.tsx",
           "operation": "modify",
-          "description": "Style each primary action Button (Save/Submit) in Branding/Labels/Notice/Admin Credentials with attractive, distinct non-gray colors (prefer gradients aligned to the existing theme). Do not modify shadcn ui sources; only use className/props on Button. Verify the component's usage instructions before implementing."
+          "description": "Update the frame sizing to better match mobile viewport behavior (e.g., use a dynamic viewport-height approach) and prevent content being cut off when combined with fixed footer + scrollable content. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
+          "path": "frontend/src/features/user/UserDashboard.tsx",
           "operation": "modify",
-          "description": "Style the primary 'যোগ করুন' (Add) Button with a cohesive non-gray gradient/color treatment consistent with the app theme. Do not modify shadcn ui sources; only use className/props on Button. Verify the component's usage instructions before implementing."
+          "description": "Tune user dashboard typography (increase overly-small header meta label sizes and other key text), reduce excessive vertical spacing/padding, and adjust the scroll container bottom padding so content is not hidden behind the fixed DashboardFooter (including safe-area considerations). Keep any modified user-facing strings in English. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/features/admin/sections/ProductionSection.tsx",
+          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Audit primary submit/add actions and ensure at least one primary action button is clearly colored and consistent (do not change behavior). Do not modify shadcn ui sources; use className/props only. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/WorkSection.tsx",
-          "operation": "modify",
-          "description": "Audit primary submit/add actions and ensure at least one primary action button is clearly colored and consistent (do not change behavior). Do not modify shadcn ui sources; use className/props only. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/NastaSection.tsx",
-          "operation": "modify",
-          "description": "Audit primary submit/add actions and ensure at least one primary action button is clearly colored and consistent (do not change behavior). Do not modify shadcn ui sources; use className/props only. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
-          "operation": "modify",
-          "description": "Audit primary submit/add actions and ensure at least one primary action button is clearly colored and consistent (do not change behavior). Do not modify shadcn ui sources; use className/props only. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/CompanyReportSection.tsx",
-          "operation": "modify",
-          "description": "Audit primary submit/add actions and ensure at least one primary action button is clearly colored and consistent (do not change behavior). Do not modify shadcn ui sources; use className/props only. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/ApprovalsSection.tsx",
-          "operation": "modify",
-          "description": "Audit approve/reject and other primary action buttons to ensure they have a clear colored style consistent with the admin theme (while preserving destructive/secondary semantics). Do not modify shadcn ui sources; use className/props only. Verify the component's usage instructions before implementing."
+          "description": "Add/adjust a small global utility (or extend existing dashboard utilities) to support safe-area bottom padding for fixed-footer layouts so scrolling content isn't obscured on mobile devices. Verify the component's usage instructions before implementing."
         }
       ]
     }

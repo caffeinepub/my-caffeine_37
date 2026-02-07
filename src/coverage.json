@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-07T00:19:19.881Z",
+  "generatedAt": "2026-02-07T00:55:39.922Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -12,81 +12,63 @@
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the User Dashboard KPI cards to match the provided screenshot by increasing the KPI title/body font sizes and slightly increasing KPI card vertical sizing (padding/spacing) so the three KPI cards are visually larger and easier to read.",
+        "summary": "Update the Admin Panel \u001eProduction\u001f section form to capture separate work quantities for Double and Single, and separate rates for Double and Single (4 inputs total: quantityDouble, quantitySingle, rateDouble, rateSingle), matching the user-requested layout: quantities first, then rates below.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/user/components/UserKpiSummary.tsx",
-          "frontend/src/components/dashboard/dashboardBorders.ts",
-          "frontend/src/features/user/UserDashboard.tsx"
+          "frontend/src/features/admin/sections/ProductionSection.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/user/components/UserKpiSummary.tsx",
-          "frontend/src/components/dashboard/dashboardBorders.ts"
+          "frontend/src/features/admin/sections/ProductionSection.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Reduce the User Dashboard action-tile (4 tiles: Production/Work/Nasta/Payment-Loan) button size by approximately 10% while keeping the tile labels readable, and adjust tile typography so it is not overly small compared to the KPI section.",
+        "summary": "Update Admin Panel \u001eProduction\u001f calculations and persisted history so totals are computed from the new fields: total = (quantityDouble * rateDouble) + (quantitySingle * rateSingle), and the stored history record includes these four fields plus computed totals.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/dashboard/ActionTile.tsx",
-          "frontend/src/features/user/UserDashboard.tsx"
+          "frontend/src/features/admin/sections/ProductionSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/features/admin/sections/ProductionSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Update the User Panel \u001eProduction History\u001f view to show a list of all employees (workers) and display each worker\u0019s Double and Single information derived from the Admin Production history data, instead of only filtering to the logged-in user.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/features/user/production/productionAggregates.ts",
+          "frontend/src/features/user/production/ProductionHistoryView.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/features/user/production/productionAggregates.ts",
+          "frontend/src/features/user/production/ProductionHistoryView.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Increase the font size of the four User Dashboard section tiles (Production, Snacks, Payment/Loan, Work) so the section titles are visibly larger and easier to read on mobile.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/dashboard/ActionTile.tsx"
         ],
         "matchedFiles": [
           "frontend/src/components/dashboard/ActionTile.tsx"
         ]
       },
       {
-        "id": "REQ-3",
-        "summary": "Increase 'user/friend' related text sizes across the user panel views so they are consistent with the larger dashboard section typography (restore readability similar to the previous section styling).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/user/production/ProductionHistoryView.tsx",
-          "frontend/src/features/user/work/WorkHistoryView.tsx",
-          "frontend/src/features/user/payment/PaymentHistoryView.tsx",
-          "frontend/src/features/user/payment/NastaHistoryView.tsx",
-          "frontend/src/features/support/SupportView.tsx",
-          "frontend/src/features/user/profile/ProfileSettingsView.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/user/production/ProductionHistoryView.tsx",
-          "frontend/src/features/user/work/WorkHistoryView.tsx",
-          "frontend/src/features/user/payment/PaymentHistoryView.tsx",
-          "frontend/src/features/user/payment/NastaHistoryView.tsx",
-          "frontend/src/features/support/SupportView.tsx",
-          "frontend/src/features/user/profile/ProfileSettingsView.tsx"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "In the Admin panel, apply clear, distinct colors to the System Settings tabs (Branding, Label Edit, Notice, Admin, Section) so each tab/section is visually distinguishable (not appearing merged), matching the intent of the provided screenshot.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx"
-        ]
-      },
-      {
         "id": "REQ-5",
-        "summary": "Add attractive, non-gray colors to Admin panel primary action buttons (Save/Submit/Add) in Settings and Rate sections, and audit other admin sections to ensure their primary action buttons are not colorless; choose cohesive colors that match the existing gradients/theme.",
+        "summary": "Fix User Panel typography and mobile layout so content fits within the phone viewport without being cut off at the bottom: reduce excessive spacing/padding in the User Dashboard layout while keeping readability, and ensure scroll + fixed footer behavior does not hide content.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-          "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
-          "frontend/src/features/admin/sections/ProductionSection.tsx",
-          "frontend/src/features/admin/sections/WorkSection.tsx",
-          "frontend/src/features/admin/sections/NastaSection.tsx",
-          "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
-          "frontend/src/features/admin/sections/CompanyReportSection.tsx",
-          "frontend/src/features/admin/sections/ApprovalsSection.tsx"
+          "frontend/src/components/layout/DashboardFrame.tsx",
+          "frontend/src/features/user/UserDashboard.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-          "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
-          "frontend/src/features/admin/sections/NastaSection.tsx",
-          "frontend/src/features/admin/sections/PaymentLoanSection.tsx"
+          "frontend/src/components/layout/DashboardFrame.tsx",
+          "frontend/src/features/user/UserDashboard.tsx",
+          "frontend/src/index.css"
         ]
       }
     ]
@@ -94,20 +76,15 @@
   "changedFiles": [
     "build-request.json",
     "feature_evidence.json",
+    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/components/dashboard/ActionTile.tsx",
-    "frontend/src/components/dashboard/dashboardBorders.ts",
-    "frontend/src/features/admin/sections/NastaSection.tsx",
-    "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
-    "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-    "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
-    "frontend/src/features/support/SupportView.tsx",
-    "frontend/src/features/user/components/UserKpiSummary.tsx",
-    "frontend/src/features/user/payment/NastaHistoryView.tsx",
-    "frontend/src/features/user/payment/PaymentHistoryView.tsx",
+    "frontend/src/components/layout/DashboardFrame.tsx",
+    "frontend/src/features/admin/sections/ProductionSection.tsx",
+    "frontend/src/features/user/UserDashboard.tsx",
     "frontend/src/features/user/production/ProductionHistoryView.tsx",
-    "frontend/src/features/user/profile/ProfileSettingsView.tsx",
-    "frontend/src/features/user/work/WorkHistoryView.tsx",
+    "frontend/src/features/user/production/productionAggregates.ts",
+    "frontend/src/index.css",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

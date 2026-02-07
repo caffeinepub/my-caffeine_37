@@ -25,9 +25,9 @@ export default function ActionTile({ icon, label, onClick, bgGradient, size = 'a
     },
     small: {
       container: 'rounded-xl p-1.5 border-2 border-black w-full min-w-0',
-      icon: 'w-5 h-5',
-      text: 'text-[10px]',
-      gap: 'gap-0.5',
+      icon: 'w-6 h-6',
+      text: 'text-xs',
+      gap: 'gap-1',
     },
   };
 

@@ -1,48 +1,49 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "UI/UX update request: adjust user panel card typography/sizing, reduce card button sizes, and apply distinct colors to admin panel save/submit buttons and section tabs for clearer separation.",
+  "summary": "App UI/UX and admin/user panel enhancements: increase section title and user panel font sizes, improve mobile screen fit, extend Admin Production form with double/single quantity and rate inputs, and update User Production History to display all employees with double/single info.",
   "architectural_notes": [],
   "known_issues": [
-    "User reports UI regression: user panel card titles/text and user/friend text became too small; admin save/submit buttons have no color; admin sections/tabs look merged without distinct colors."
+    "Deployment error occurred during production deployment (needs investigation/resolution).",
+    "Mobile UI overflow: user panel content extends beyond screen (bottom gets cut off)."
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-update-the-user-dashboard-kpi-cards-to-match-the-provided-screenshot-by-increasing-the-kpi-title-body-font-sizes-and-slightly-increasing-kpi-card-vertical-sizing-padding-spacing-so-the-three-kpi-cards-are-visually-larger-and-easier-to-read",
-      "title": "Update the User Dashboard KPI cards to match the provided screenshot by increasing the KPI title/body font sizes and slightly increasing KPI card vertical sizing (padding/spacing) so the three KPI cards are visually larger and easier to read.",
+      "id": "feature-update-the-admin-panel-production-section-form-to-capture-separate-work-quantities-for-double-and-single-and-separate-rates-for-double-and-single-4-inputs-total-quantitydouble-quantitysingle-ratedouble-ratesingle-matching-the-user-requested-layout-quantities-first-then-rates-below",
+      "title": "Update the Admin Panel \u001eProduction\u001f section form to capture separate work quantities for Double and Single, and separate rates for Double and Single (4 inputs total: quantityDouble, quantitySingle, rateDouble, rateSingle), matching the user-requested layout: quantities first, then rates below.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-reduce-the-user-dashboard-action-tile-4-tiles-production-work-nasta-payment-loan-button-size-by-approximately-10-while-keeping-the-tile-labels-readable-and-adjust-tile-typography-so-it-is-not-overly-small-compared-to-the-kpi-section",
-      "title": "Reduce the User Dashboard action-tile (4 tiles: Production/Work/Nasta/Payment-Loan) button size by approximately 10% while keeping the tile labels readable, and adjust tile typography so it is not overly small compared to the KPI section.",
+      "id": "feature-update-admin-panel-production-calculations-and-persisted-history-so-totals-are-computed-from-the-new-fields-total-quantitydouble-ratedouble-quantitysingle-ratesingle-and-the-stored-history-record-includes-these-four-fields-plus-computed-totals",
+      "title": "Update Admin Panel \u001eProduction\u001f calculations and persisted history so totals are computed from the new fields: total = (quantityDouble * rateDouble) + (quantitySingle * rateSingle), and the stored history record includes these four fields plus computed totals.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-increase-user-friend-related-text-sizes-across-the-user-panel-views-so-they-are-consistent-with-the-larger-dashboard-section-typography-restore-readability-similar-to-the-previous-section-styling",
-      "title": "Increase 'user/friend' related text sizes across the user panel views so they are consistent with the larger dashboard section typography (restore readability similar to the previous section styling).",
+      "id": "feature-update-the-user-panel-production-history-view-to-show-a-list-of-all-employees-workers-and-display-each-worker-s-double-and-single-information-derived-from-the-admin-production-history-data-instead-of-only-filtering-to-the-logged-in-user",
+      "title": "Update the User Panel \u001eProduction History\u001f view to show a list of all employees (workers) and display each worker\u0019s Double and Single information derived from the Admin Production history data, instead of only filtering to the logged-in user.",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-in-the-admin-panel-apply-clear-distinct-colors-to-the-system-settings-tabs-branding-label-edit-notice-admin-section-so-each-tab-section-is-visually-distinguishable-not-appearing-merged-matching-the-intent-of-the-provided-screenshot",
-      "title": "In the Admin panel, apply clear, distinct colors to the System Settings tabs (Branding, Label Edit, Notice, Admin, Section) so each tab/section is visually distinguishable (not appearing merged), matching the intent of the provided screenshot.",
+      "id": "feature-increase-the-font-size-of-the-four-user-dashboard-section-tiles-production-snacks-payment-loan-work-so-the-section-titles-are-visibly-larger-and-easier-to-read-on-mobile",
+      "title": "Increase the font size of the four User Dashboard section tiles (Production, Snacks, Payment/Loan, Work) so the section titles are visibly larger and easier to read on mobile.",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-attractive-non-gray-colors-to-admin-panel-primary-action-buttons-save-submit-add-in-settings-and-rate-sections-and-audit-other-admin-sections-to-ensure-their-primary-action-buttons-are-not-colorless-choose-cohesive-colors-that-match-the-existing-gradients-theme",
-      "title": "Add attractive, non-gray colors to Admin panel primary action buttons (Save/Submit/Add) in Settings and Rate sections, and audit other admin sections to ensure their primary action buttons are not colorless; choose cohesive colors that match the existing gradients/theme.",
+      "id": "feature-fix-user-panel-typography-and-mobile-layout-so-content-fits-within-the-phone-viewport-without-being-cut-off-at-the-bottom-reduce-excessive-spacing-padding-in-the-user-dashboard-layout-while-keeping-readability-and-ensure-scroll-fixed-footer-behavior-does-not-hide-content",
+      "title": "Fix User Panel typography and mobile layout so content fits within the phone viewport without being cut off at the bottom: reduce excessive spacing/padding in the User Dashboard layout while keeping readability, and ensure scroll + fixed footer behavior does not hide content.",
       "reqIds": [
         "REQ-5"
       ],
@@ -52,30 +53,42 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Match user panel card title/body text sizes to the provided screenshot; make user/friend-related text larger like the previous section.",
+      "summary": "Increase title font size for four section cards (Production, Snacks, Payment, Loan)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Resize user panel cards: make the top three cards slightly bigger and reduce the four card buttons by ~10%.",
+      "summary": "Fix User Panel typography: fonts became too small across user panel; increase to appropriate sizes",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Admin panel: add visually distinct colors to save/submit buttons across sections (settings, rate, and others as needed), choosing suitable colors.",
+      "summary": "Improve User Panel mobile layout to fit within screen (reduce excess spacing/padding so content doesn’t overflow/cut off at bottom)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Admin panel: give each tab/section (Branding, Label Edit, Notice, Admin, Section) a different color so they are clearly distinguishable.",
+      "summary": "Admin Panel > Production: add inputs for Work Quantity: Double and Single",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Admin Panel > Production: add inputs for Work Rate: Double rate and Single rate (two additional boxes under quantity)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "User Panel > Production History: show list of all employees and display Double/Single info similar to provided screenshot behavior",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "Restore user dashboard card sizing/typography and add distinct admin settings colors",
+  "projectName": "Update Admin Production form (double/single quantity & rate) and fix User Dashboard typography/mobile fit",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }
