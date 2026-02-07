@@ -3,6 +3,7 @@ import { Session, SessionContextValue, LoginResult, UpdateProfileParams, Approve
 import { safeGetArray, safeSetItem } from '../../lib/storage/safeStorage';
 import { ensureUserIds } from '../../lib/storage/userIdStorage';
 import { validateAdminCredentials } from '../../lib/storage/adminCredentialsStorage';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const SessionContext = createContext<SessionContextValue | null>(null);
 
@@ -15,6 +16,7 @@ const SESSION_KEY = 'user_session';
 export function SessionProvider({ children }: SessionProviderProps) {
   const [session, setSession] = useState<Session | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     // Restore session from localStorage
@@ -74,6 +76,8 @@ export function SessionProvider({ children }: SessionProviderProps) {
   const logout = () => {
     setSession(null);
     localStorage.removeItem(SESSION_KEY);
+    // Clear all cached queries on logout
+    queryClient.clear();
   };
 
   const updateUserProfile = async (params: UpdateProfileParams): Promise<LoginResult> => {

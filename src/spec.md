@@ -1,17 +1,15 @@
 # Specification
 
 ## Summary
-**Goal:** Align accounting behavior and reporting between Admin/User panels while improving Admin UX (confirmations, header actions/styling, and mobile-safe bottom navigation).
+**Goal:** Polish the admin panel UI for better readability and layout on mobile/desktop, focusing on Settings screens, dropdowns, KPI summary cards, confirmation dialogs, header avatar, and the fixed footer action buttons.
 
 **Planned changes:**
-- Make Admin Production report-only: keep saving/deleting production history entries but stop any balance/account updates from Production actions.
-- Make User Production report match Admin Production exactly (same report format, fields, aggregation, and underlying history source), remaining report-only.
-- Fix Work Management accounting: remove any rate input, use each selected worker’s saved rate to compute per-worker amounts and a grand total, store these in WorkHistory, and credit each selected worker’s earnings (bill); reverse on delete.
-- Ensure deductions (Nasta, Payment/Loan) continue to reduce net balance by increasing cost so remaining equals bill minus cost.
-- Add confirmation popups on submit for Admin Nasta Management and Admin Payment & Loan Management (single-confirm flow and prevent double-submits).
-- In System Settings, give the four tabs (Label, Total, Layout, Branding) distinct button colors while keeping active state clear.
-- Add Admin header quick actions: “MT-LOAN” button (left of Support/Chat) and a Calculator button (right of Support/Chat), both wired to placeholder click actions.
-- Improve Admin header styling with clearer separation (subtle border and/or backdrop blur) and consistent shadow without sticky scroll layout shift.
-- Adjust bottom navigation/footer to be safe-area aware on mobile with a styled container/bar so app controls don’t clash with the phone’s system navigation.
+- Enlarge the main white content card in the System Settings view (wider on mobile/desktop, more internal padding/vertical spacing) and place the Settings tabs inside a clearer rounded, bordered container.
+- Fix Select/dropdown readability and layering in admin Settings (no blurred/cut text, consistent padding/line-height, correct overlay stacking/positioning).
+- Improve contrast of the “Worker & Rate Settings” title and restyle inputs in that section to match the cleaner light input style used elsewhere (consistent background/border/focus ring).
+- Add a right-side circular profile avatar to the AdminLayoutShell header, showing the stored profile photo when available and a static placeholder image when not.
+- Reposition/restyle the bottom fixed action buttons (MT-LOAN / Support / Calculator) so they float cleanly above content without covering form controls; ensure pages add sufficient bottom spacing.
+- Redesign the top three admin money summary cards so the numeric readout looks like a cohesive “display” (remove the harsh white patch behind numbers while keeping high contrast/readability).
+- Update the shared ConfirmDialog UI to a rounder, more colorful (vibrant) style with clear confirm/cancel hierarchy and mobile-safe sizing.
 
-**User-visible outcome:** Production becomes a pure report in both Admin and User panels, Work entries correctly credit worker earnings while Nasta/Payment/Loan remain deductions, Admin submissions for Nasta and Payment/Loan require confirmation, and the Admin UI has cleaner header actions/styling plus a bottom nav that remains clear and usable on mobile devices.
+**User-visible outcome:** Admin screens (especially System Settings) look cleaner and more spacious; dropdowns and inputs are easier to read; summary cards and confirmation dialogs look more polished; the header shows a profile avatar; and the fixed footer buttons no longer obscure page content.

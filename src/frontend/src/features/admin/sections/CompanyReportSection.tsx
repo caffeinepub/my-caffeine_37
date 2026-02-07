@@ -5,8 +5,7 @@ import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
-import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
-import { getCompanyReports, addCompanyReport, deleteCompanyReport, type ReportType, type CompanyReportEntry } from '../../../lib/storage/companyReportStorage';
+import { getCompanyReports, addCompanyReport, deleteCompanyReport, getTotalWorkEarned, type CompanyReportEntry } from '../../../lib/storage/companyReportStorage';
 import { notify } from '../../../components/feedback/notify';
 import { ConfirmDialog } from '../../../components/feedback/ConfirmDialog';
 import { useSingleConfirmSubmit } from '../../../hooks/useSingleConfirmSubmit';
@@ -14,7 +13,6 @@ import { Trash2 } from 'lucide-react';
 
 export default function CompanyReportSection() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [type, setType] = useState<ReportType>('taken');
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
   const [reports, setReports] = useState<CompanyReportEntry[]>([]);
@@ -49,7 +47,6 @@ export default function CompanyReportSection() {
   const saveReport = async () => {
     addCompanyReport({
       date,
-      type,
       amount: Number(amount),
       note,
     });
@@ -57,7 +54,7 @@ export default function CompanyReportSection() {
     setAmount('');
     setNote('');
     loadReports();
-    notify.success('রিপোর্ট সফলভাবে যোগ করা হয়েছে');
+    notify.success('পেমেন্ট সফলভাবে যোগ করা হয়েছে');
   };
 
   const handleDelete = () => {
@@ -65,22 +62,20 @@ export default function CompanyReportSection() {
     deleteCompanyReport(deleteId);
     loadReports();
     setDeleteId(null);
-    notify.success('রিপোর্ট মুছে ফেলা হয়েছে');
+    notify.success('পেমেন্ট মুছে ফেলা হয়েছে');
   };
 
-  const takenReports = reports.filter((r) => r.type === 'taken');
-  const dueReports = reports.filter((r) => r.type === 'due');
-
-  const totalTaken = takenReports.reduce((sum, r) => sum + r.amount, 0);
-  const totalDue = dueReports.reduce((sum, r) => sum + r.amount, 0);
-  const netBalance = totalTaken - totalDue;
+  // Calculate totals
+  const totalEarned = getTotalWorkEarned();
+  const totalPaid = reports.reduce((sum, r) => sum + r.amount, 0);
+  const remainingDue = totalEarned - totalPaid;
 
   return (
     <>
       <div className="space-y-6">
         <Card className="border-purple-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-500">
-            <CardTitle className="text-lg text-white">নতুন রিপোর্ট যোগ করুন</CardTitle>
+            <CardTitle className="text-lg text-white section-title-accent">কোম্পানি থেকে টাকা নেওয়া</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 pt-6">
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -96,21 +91,7 @@ export default function CompanyReportSection() {
               </div>
 
               <div className="space-y-2">
-                <Label>রিপোর্ট টাইপ</Label>
-                <RadioGroup value={type} onValueChange={(v) => setType(v as ReportType)}>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="taken" id="taken" />
-                    <Label htmlFor="taken" className="cursor-pointer">নেওয়া</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="due" id="due" />
-                    <Label htmlFor="due" className="cursor-pointer">পাওনা</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="amount">পরিমাণ (৳)</Label>
+                <Label htmlFor="amount">কোম্পানি থেকে কত টাকা নিয়েছি (৳)</Label>
                 <Input
                   id="amount"
                   type="number"
@@ -118,7 +99,7 @@ export default function CompanyReportSection() {
                   step="0.01"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="border-2"
+                  className="border-2 text-lg py-6"
                   required
                 />
               </div>
@@ -130,7 +111,7 @@ export default function CompanyReportSection() {
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   className="border-2"
-                  rows={3}
+                  rows={2}
                 />
               </div>
 
@@ -153,27 +134,27 @@ export default function CompanyReportSection() {
           <CardContent className="pt-4">
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">মোট নেওয়া:</span>
-                <span className="text-lg font-bold text-green-700">৳{totalTaken.toFixed(0)}</span>
+                <span className="text-sm font-medium">মোট কাজের টাকা:</span>
+                <span className="text-lg font-bold text-blue-700">৳{totalEarned.toFixed(0)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">মোট পাওনা:</span>
-                <span className="text-lg font-bold text-red-700">৳{totalDue.toFixed(0)}</span>
+                <span className="text-sm font-medium">কোম্পানি থেকে নেওয়া:</span>
+                <span className="text-lg font-bold text-green-700">৳{totalPaid.toFixed(0)}</span>
               </div>
               <div className="flex justify-between items-center pt-2 border-t-2">
-                <span className="text-base font-bold">নেট ব্যালেন্স:</span>
-                <span className={`text-xl font-bold ${netBalance >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-                  ৳{netBalance.toFixed(0)}
+                <span className="text-base font-bold">বাকি পাওনা:</span>
+                <span className={`text-xl font-bold ${remainingDue >= 0 ? 'text-orange-700' : 'text-red-700'}`}>
+                  ৳{remainingDue.toFixed(0)}
                 </span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Taken Reports */}
+        {/* Payment History */}
         <Card className="border-green-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-500">
-            <CardTitle className="text-lg text-white">নেওয়া রিপোর্ট</CardTitle>
+            <CardTitle className="text-lg text-white">পেমেন্ট ইতিহাস</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="overflow-x-auto">
@@ -187,67 +168,17 @@ export default function CompanyReportSection() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {takenReports.length === 0 ? (
+                  {reports.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
                         কোনো এন্ট্রি নেই
                       </TableCell>
                     </TableRow>
                   ) : (
-                    takenReports.map((report) => (
+                    reports.map((report) => (
                       <TableRow key={report.id}>
                         <TableCell className="font-medium">{report.date}</TableCell>
                         <TableCell className="text-right font-bold text-green-700">
-                          ৳{report.amount.toFixed(0)}
-                        </TableCell>
-                        <TableCell className="text-sm">{report.note || '-'}</TableCell>
-                        <TableCell className="text-center">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setDeleteId(report.id)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Due Reports */}
-        <Card className="border-red-200 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-red-500 to-rose-500">
-            <CardTitle className="text-lg text-white">পাওনা রিপোর্ট</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>তারিখ</TableHead>
-                    <TableHead className="text-right">পরিমাণ</TableHead>
-                    <TableHead>নোট</TableHead>
-                    <TableHead className="text-center">অ্যাকশন</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {dueReports.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                        কোনো এন্ট্রি নেই
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    dueReports.map((report) => (
-                      <TableRow key={report.id}>
-                        <TableCell className="font-medium">{report.date}</TableCell>
-                        <TableCell className="text-right font-bold text-red-700">
                           ৳{report.amount.toFixed(0)}
                         </TableCell>
                         <TableCell className="text-sm">{report.note || '-'}</TableCell>
@@ -275,7 +206,7 @@ export default function CompanyReportSection() {
         open={showConfirm}
         onOpenChange={setShowConfirm}
         title="নিশ্চিত করুন"
-        description="আপনি কি এই রিপোর্ট সংরক্ষণ করতে চান?"
+        description="আপনি কি এই পেমেন্ট সংরক্ষণ করতে চান?"
         onConfirm={handleConfirmSubmit}
         confirmText="হ্যাঁ, সংরক্ষণ করুন"
         cancelText="না"
@@ -284,8 +215,8 @@ export default function CompanyReportSection() {
       <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
-        title="রিপোর্ট মুছুন"
-        description="আপনি কি নিশ্চিত যে আপনি এই রিপোর্ট মুছে ফেলতে চান?"
+        title="পেমেন্ট মুছুন"
+        description="আপনি কি নিশ্চিত যে আপনি এই পেমেন্ট মুছে ফেলতে চান?"
         onConfirm={handleDelete}
         confirmText="হ্যাঁ, মুছুন"
         cancelText="না"

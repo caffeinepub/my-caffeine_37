@@ -2,15 +2,17 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
+import { Checkbox } from '../../../components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
-import { safeGetItem, safeSetItem } from '../../../lib/storage/safeStorage';
 import { notify } from '../../../components/feedback/notify';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Lock, Unlock } from 'lucide-react';
 import { ConfirmDialog } from '../../../components/feedback/ConfirmDialog';
+import { loadWorkerRates, saveWorkerRates, type WorkerRate } from '../../../lib/storage/workerRatesStorage';
+import { loadSelectedWorkers, toggleWorkerSelection, removeDeletedWorker } from '../../../lib/storage/adminSelectedWorkersStorage';
 
 export default function WorkerRateSettingsSection() {
-  const [workers, setWorkers] = useState<string[]>([]);
-  const [rates, setRates] = useState<Record<string, { s: number; d: number }>>({});
+  const [workerRates, setWorkerRates] = useState<WorkerRate[]>([]);
+  const [selectedWorkers, setSelectedWorkers] = useState<string[]>([]);
   const [newWorkerName, setNewWorkerName] = useState('');
   const [deleteWorker, setDeleteWorker] = useState<string | null>(null);
 
@@ -19,10 +21,10 @@ export default function WorkerRateSettingsSection() {
   }, []);
 
   const loadData = () => {
-    const loadedWorkers = safeGetItem<string[]>('workers', []) || [];
-    const loadedRates = safeGetItem<Record<string, { s: number; d: number }>>('rates', {}) || {};
-    setWorkers(loadedWorkers);
-    setRates(loadedRates);
+    const rates = loadWorkerRates();
+    const selected = loadSelectedWorkers();
+    setWorkerRates(rates);
+    setSelectedWorkers(selected);
   };
 
   const handleAddWorker = () => {
@@ -32,18 +34,14 @@ export default function WorkerRateSettingsSection() {
       return;
     }
 
-    if (workers.includes(name)) {
+    if (workerRates.some((w) => w.name === name)) {
       notify.error('এই কর্মী ইতিমধ্যে বিদ্যমান');
       return;
     }
 
-    const updatedWorkers = [...workers, name];
-    const updatedRates = { ...rates, [name]: { s: 0, d: 0 } };
-
-    setWorkers(updatedWorkers);
-    setRates(updatedRates);
-    safeSetItem('workers', updatedWorkers);
-    safeSetItem('rates', updatedRates);
+    const updated = [...workerRates, { name, rateDouble: 0, rateSingle: 0, locked: false }];
+    setWorkerRates(updated);
+    saveWorkerRates(updated);
     setNewWorkerName('');
 
     notify.success('কর্মী সফলভাবে যোগ করা হয়েছে');
@@ -52,34 +50,45 @@ export default function WorkerRateSettingsSection() {
   const handleDeleteConfirm = () => {
     if (!deleteWorker) return;
 
-    const updatedWorkers = workers.filter((w) => w !== deleteWorker);
-    const updatedRates = { ...rates };
-    delete updatedRates[deleteWorker];
+    const updated = workerRates.filter((w) => w.name !== deleteWorker);
+    setWorkerRates(updated);
+    saveWorkerRates(updated);
 
-    setWorkers(updatedWorkers);
-    setRates(updatedRates);
-    safeSetItem('workers', updatedWorkers);
-    safeSetItem('rates', updatedRates);
+    // Remove from selected workers
+    removeDeletedWorker(deleteWorker);
+    setSelectedWorkers(loadSelectedWorkers());
 
     notify.success('কর্মী মুছে ফেলা হয়েছে');
     setDeleteWorker(null);
   };
 
-  const handleRateChange = (worker: string, type: 's' | 'd', value: number) => {
-    const updatedRates = {
-      ...rates,
-      [worker]: { ...rates[worker], [type]: value },
-    };
-    setRates(updatedRates);
-    safeSetItem('rates', updatedRates);
+  const handleRateChange = (workerName: string, field: 'rateDouble' | 'rateSingle', value: number) => {
+    const updated = workerRates.map((w) =>
+      w.name === workerName ? { ...w, [field]: value } : w
+    );
+    setWorkerRates(updated);
+    saveWorkerRates(updated);
+  };
+
+  const handleToggleSelection = (workerName: string) => {
+    toggleWorkerSelection(workerName);
+    setSelectedWorkers(loadSelectedWorkers());
+  };
+
+  const handleToggleLock = (workerName: string) => {
+    const updated = workerRates.map((w) =>
+      w.name === workerName ? { ...w, locked: !w.locked } : w
+    );
+    setWorkerRates(updated);
+    saveWorkerRates(updated);
   };
 
   return (
     <>
       <div className="space-y-6">
-        <Card className="border-slate-200">
-          <CardHeader className="bg-slate-50">
-            <CardTitle className="text-lg">কর্মী ও রেট সেটিংস</CardTitle>
+        <Card className="border-2 border-gray-200 shadow-lg rounded-2xl overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-slate-600 to-slate-700 border-b-2">
+            <CardTitle className="text-lg font-bold text-white">কর্মী ও রেট সেটিংস</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 pt-6">
             <div className="flex gap-2">
@@ -87,11 +96,11 @@ export default function WorkerRateSettingsSection() {
                 placeholder="নতুন কর্মীর নাম লিখুন"
                 value={newWorkerName}
                 onChange={(e) => setNewWorkerName(e.target.value)}
-                className="flex-1"
+                className="flex-1 admin-input-style"
               />
               <Button 
                 onClick={handleAddWorker}
-                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold"
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl"
               >
                 যোগ করুন
               </Button>
@@ -101,6 +110,8 @@ export default function WorkerRateSettingsSection() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-12">লক</TableHead>
+                    <TableHead className="w-12">নির্বাচন</TableHead>
                     <TableHead>নাম</TableHead>
                     <TableHead>সিঙ্গেল রেট</TableHead>
                     <TableHead>ডাবল রেট</TableHead>
@@ -108,37 +119,62 @@ export default function WorkerRateSettingsSection() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {workers.map((worker) => (
-                    <TableRow key={worker}>
-                      <TableCell className="font-medium">{worker}</TableCell>
-                      <TableCell>
-                        <Input
-                          type="number"
-                          value={rates[worker]?.s || 0}
-                          onChange={(e) => handleRateChange(worker, 's', Number(e.target.value))}
-                          className="w-24"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          type="number"
-                          value={rates[worker]?.d || 0}
-                          onChange={(e) => handleRateChange(worker, 'd', Number(e.target.value))}
-                          className="w-24"
-                        />
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setDeleteWorker(worker)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {workerRates.map((worker) => {
+                    const isLocked = worker.locked ?? false;
+                    return (
+                      <TableRow key={worker.name} className={isLocked ? 'bg-gray-50' : ''}>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleToggleLock(worker.name)}
+                            className={isLocked ? 'text-red-600 hover:text-red-700' : 'text-gray-400 hover:text-gray-600'}
+                          >
+                            {isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedWorkers.includes(worker.name)}
+                            onCheckedChange={() => handleToggleSelection(worker.name)}
+                            disabled={isLocked}
+                          />
+                        </TableCell>
+                        <TableCell className={`font-medium ${isLocked ? 'text-gray-600' : 'text-gray-900'}`}>
+                          {worker.name}
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            value={worker.rateSingle}
+                            onChange={(e) => handleRateChange(worker.name, 'rateSingle', Number(e.target.value))}
+                            className="w-24 admin-input-style"
+                            disabled={isLocked}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            value={worker.rateDouble}
+                            onChange={(e) => handleRateChange(worker.name, 'rateDouble', Number(e.target.value))}
+                            className="w-24 admin-input-style"
+                            disabled={isLocked}
+                          />
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setDeleteWorker(worker.name)}
+                            className="text-destructive hover:text-destructive"
+                            disabled={isLocked}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
@@ -149,10 +185,10 @@ export default function WorkerRateSettingsSection() {
       <ConfirmDialog
         open={!!deleteWorker}
         onOpenChange={(open) => !open && setDeleteWorker(null)}
-        title="কর্মী মুছে ফেলুন"
-        description={`আপনি কি নিশ্চিত যে আপনি ${deleteWorker} কে মুছে ফেলতে চান?`}
+        title="কর্মী মুছুন"
+        description="আপনি কি নিশ্চিত যে আপনি এই কর্মী মুছে ফেলতে চান?"
         onConfirm={handleDeleteConfirm}
-        confirmText="হ্যাঁ, মুছে ফেলুন"
+        confirmText="হ্যাঁ, মুছুন"
         cancelText="না"
         variant="destructive"
       />

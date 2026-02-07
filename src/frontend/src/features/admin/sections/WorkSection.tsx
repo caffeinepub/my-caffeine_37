@@ -9,6 +9,7 @@ import { notify } from '../../../components/feedback/notify';
 import { ConfirmDialog } from '../../../components/feedback/ConfirmDialog';
 import { useSingleConfirmSubmit } from '../../../hooks/useSingleConfirmSubmit';
 import { Trash2 } from 'lucide-react';
+import { loadWorkerRates, type WorkerRate } from '../../../lib/storage/workerRatesStorage';
 
 interface WorkEntry {
   id: string;
@@ -21,19 +22,12 @@ interface WorkEntry {
   timestamp: number;
 }
 
-interface WorkerRate {
-  name: string;
-  rateDouble: number;
-  rateSingle: number;
-}
-
 export default function WorkSection() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedWorkers, setSelectedWorkers] = useState<string[]>([]);
   const [quantityDouble, setQuantityDouble] = useState('');
   const [quantitySingle, setQuantitySingle] = useState('');
-  const [workers, setWorkers] = useState<string[]>([]);
-  const [workerRates, setWorkerRates] = useState<Record<string, WorkerRate>>({});
+  const [workerRates, setWorkerRates] = useState<WorkerRate[]>([]);
   const [history, setHistory] = useState<WorkEntry[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -49,15 +43,8 @@ export default function WorkSection() {
   }, []);
 
   const loadWorkers = () => {
-    const workerList = safeGetArray<string>('workers');
-    setWorkers(workerList);
-
-    const rates = safeGetArray<WorkerRate>('workerRates');
-    const rateMap: Record<string, WorkerRate> = {};
-    rates.forEach((r) => {
-      rateMap[r.name] = r;
-    });
-    setWorkerRates(rateMap);
+    const rates = loadWorkerRates();
+    setWorkerRates(rates);
   };
 
   const loadHistory = () => {
@@ -93,7 +80,11 @@ export default function WorkSection() {
     }
 
     // Validate that all selected workers have rates
-    const missingRates = selectedWorkers.filter((w) => !workerRates[w]);
+    const missingRates = selectedWorkers.filter((w) => {
+      const rate = workerRates.find((r) => r.name === w);
+      return !rate || (rate.rateDouble === 0 && rate.rateSingle === 0);
+    });
+    
     if (missingRates.length > 0) {
       notify.error(`রেট নেই: ${missingRates.join(', ')}`);
       return;
@@ -109,11 +100,11 @@ export default function WorkSection() {
     const perWorkerAmounts: Record<string, number> = {};
     let grandTotal = 0;
 
-    selectedWorkers.forEach((worker) => {
-      const rate = workerRates[worker];
+    selectedWorkers.forEach((workerName) => {
+      const rate = workerRates.find((r) => r.name === workerName);
       if (rate) {
         const amount = qtyDouble * rate.rateDouble + qtySingle * rate.rateSingle;
-        perWorkerAmounts[worker] = amount;
+        perWorkerAmounts[workerName] = amount;
         grandTotal += amount;
       }
     });
@@ -197,18 +188,18 @@ export default function WorkSection() {
               <div className="space-y-2">
                 <Label>কর্মী নির্বাচন করুন</Label>
                 <div className="grid grid-cols-2 gap-2">
-                  {workers.map((worker) => (
+                  {workerRates.map((worker) => (
                     <Button
-                      key={worker}
+                      key={worker.name}
                       type="button"
-                      onClick={() => toggleWorker(worker)}
+                      onClick={() => toggleWorker(worker.name)}
                       className={`font-bold transition-all ${
-                        selectedWorkers.includes(worker)
+                        selectedWorkers.includes(worker.name)
                           ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg scale-105'
                           : 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-700 hover:from-gray-300 hover:to-gray-400'
                       }`}
                     >
-                      {worker}
+                      {worker.name}
                     </Button>
                   ))}
                 </div>
@@ -313,21 +304,21 @@ export default function WorkSection() {
       <ConfirmDialog
         open={showConfirm}
         onOpenChange={setShowConfirm}
-        title="নিশ্চিত করুন"
-        description="আপনি কি এই কাজ এন্ট্রি সংরক্ষণ করতে চান?"
+        title="Confirm Submission"
+        description="Are you sure you want to save this work entry?"
         onConfirm={handleConfirmSubmit}
-        confirmText="হ্যাঁ, সংরক্ষণ করুন"
-        cancelText="না"
+        confirmText="Yes, Save"
+        cancelText="Cancel"
       />
 
       <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
-        title="এন্ট্রি মুছুন"
-        description="আপনি কি নিশ্চিত যে আপনি এই এন্ট্রি মুছে ফেলতে চান?"
+        title="Delete Entry"
+        description="Are you sure you want to delete this entry?"
         onConfirm={handleDelete}
-        confirmText="হ্যাঁ, মুছুন"
-        cancelText="না"
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
         variant="destructive"
       />
     </>

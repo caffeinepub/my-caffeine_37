@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DashboardOverrides, loadDashboardOverrides } from '../lib/storage/dashboardOverridesStorage';
+import { loadDashboardOverrides, DashboardOverrides } from '../lib/storage/dashboardOverridesStorage';
 
 export function useDashboardOverrides() {
   const [overrides, setOverrides] = useState<DashboardOverrides>(() => loadDashboardOverrides());
@@ -14,7 +14,7 @@ export function useDashboardOverrides() {
     return () => window.removeEventListener('dashboard-overrides-updated', handleUpdate);
   }, []);
 
-  const getLabel = (key: keyof DashboardOverrides, fallback: string): string => {
+  const getLabel = (key: keyof DashboardOverrides, fallback?: string): string | undefined => {
     return overrides[key] || fallback;
   };
 

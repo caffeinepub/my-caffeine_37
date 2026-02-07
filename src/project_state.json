@@ -1,86 +1,77 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Admin panel update work: align Production report between Admin/User panels; enhance Work Management as main accounting section; add confirmation popups; UI/UX tweaks; add MT-LOAN and Calculator buttons; header/bottom navigation styling.",
-  "architectural_notes": [
-    "Work Management is the primary accounting module; user balances are derived from work earnings minus breakfast and payment/loan deductions.",
-    "Worker rates are managed per-user (no rate input in Work Management); admin totals are computed from selected workers' existing rates.",
-    "Production module is report-only with no financial impact."
-  ],
+  "summary": "Admin panel UI/UX polishing requests: adjust tab section card layout/colors, standardize input styles, improve readability of dropdown/confirmation messages, refine dashboard summary cards display, add header profile picture, and reposition action buttons; then build/deploy updated draft.",
+  "architectural_notes": [],
   "known_issues": [
-    "No confirm popup appears after submitting forms in Breakfast Management and Payment/Loan Management."
+    "Dropdown: on click, inside text/options are not clearly readable (blurry/cut off)",
+    "Settings section title color/contrast appears washed out/unclear",
+    "Top money cards: text area shows an unwanted white background patch"
   ],
   "isFixRequest": true,
+  "imageRequirements": "## Required Images\n- Default round avatar placeholder illustration (admin-avatar-placeholder.dim_128x128.png)",
   "existing_features": [
     {
-      "id": "feature-update-the-admin-production-section-so-it-is-report-only-no-accounting-transactions-keep-the-existing-input-form-and-history-storage-but-do-not-change-any-user-account-balances-when-a-production-entry-is-added-or-deleted",
-      "title": "Update the Admin Production section so it is report-only (no accounting/transactions): keep the existing input form and history storage, but do not change any user/account balances when a production entry is added or deleted.",
+      "id": "feature-enlarge-the-main-white-content-card-under-the-settings-tabs-increase-effective-width-on-mobile-desktop-and-increase-vertical-spacing-and-visually-group-the-settings-tab-buttons-inside-a-clearer-rounded-bordered-container-so-the-tabs-feel-placed-inside-the-box-apply-this-to-the-settings-view-rendered-by-adminlayoutshell-systemsettingssection",
+      "title": "Enlarge the main white content card under the Settings tabs (increase effective width on mobile/desktop and increase vertical spacing), and visually group the Settings tab buttons inside a clearer rounded, bordered container so the tabs feel placed “inside the box”. Apply this to the Settings view rendered by AdminLayoutShell + SystemSettingsSection.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-make-the-user-production-report-show-the-exact-same-report-format-data-as-the-admin-production-report-same-fields-aggregation-and-same-source-history-so-both-panels-display-production-reports-consistently",
-      "title": "Make the User Production report show the exact same report format/data as the Admin Production report (same fields/aggregation and same source history), so both panels display production reports consistently.",
+      "id": "feature-fix-select-dropdown-readability-in-settings-so-that-when-the-dropdown-opens-option-text-is-not-blurry-cut-off-and-the-dropdown-panel-positions-and-stacks-correctly-above-surrounding-cards-ensure-consistent-font-size-line-height-and-adequate-padding-for-selecttrigger-selectcontent-in-systemsettingssection-and-any-similar-select-usage-in-admin-settings",
+      "title": "Fix Select/dropdown readability in Settings so that when the dropdown opens, option text is not blurry/cut off and the dropdown panel positions and stacks correctly above surrounding cards. Ensure consistent font size, line height, and adequate padding for SelectTrigger/SelectContent in SystemSettingsSection (and any similar Select usage in admin settings).",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-fix-work-management-to-behave-as-the-main-accounting-section-when-admin-submits-a-work-entry-compute-per-worker-amounts-using-each-selected-worker-s-saved-rates-no-rate-input-in-work-section-compute-and-display-a-grand-total-for-admin-and-credit-each-selected-worker-s-account-balance-as-earnings-not-as-cost",
-      "title": "Fix Work Management to behave as the main accounting section: when Admin submits a work entry, compute per-worker amounts using each selected worker’s saved rates (no rate input in Work section), compute and display a grand total for Admin, and credit each selected worker’s account balance as earnings (not as cost).",
+      "id": "feature-improve-the-visibility-contrast-of-the-worker-rate-settings-section-title-and-restyle-all-input-boxes-in-that-section-to-match-the-lighter-cleaner-input-style-used-elsewhere-consistent-background-shade-border-focus-ring-apply-to-workerratesettingssection-inputs-new-worker-name-rate-inputs-and-any-settings-inputs-that-currently-look-washed-out",
+      "title": "Improve the visibility/contrast of the \"Worker & Rate Settings\" section title and restyle all input boxes in that section to match the lighter, cleaner input style used elsewhere (consistent background shade, border, focus ring). Apply to WorkerRateSettingsSection inputs (new worker name, rate inputs) and any Settings inputs that currently look washed out.",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-ensure-deductions-are-reflected-in-each-user-s-balance-nasta-and-payment-loan-submissions-must-continue-to-reduce-the-user-s-net-balance-by-increasing-the-user-s-cost-so-the-final-balance-remaining-amount-equals-earnings-bill-minus-deductions-cost",
-      "title": "Ensure deductions are reflected in each user’s balance: Nasta and Payment/Loan submissions must continue to reduce the user’s net balance by increasing the user’s cost, so the final balance/remaining amount equals earnings (bill) minus deductions (cost).",
+      "id": "feature-add-an-admin-header-profile-avatar-to-the-right-side-of-the-adminlayoutshell-header-the-avatar-should-display-a-stored-profile-photo-when-available-reuse-existing-profile-photo-storage-approach-otherwise-show-a-default-placeholder-avatar-image-ensure-it-fits-in-the-header-without-breaking-title-back-button-layout",
+      "title": "Add an admin header profile avatar to the right side of the AdminLayoutShell header. The avatar should display a stored profile photo when available (reuse existing profile photo storage approach); otherwise show a default placeholder avatar image. Ensure it fits in the header without breaking title/back button layout.",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-a-confirmation-popup-before-saving-submit-in-admin-nasta-management-and-admin-payment-loan-management-matching-the-confirm-flow-already-used-in-production-work-single-confirm-prevents-duplicate-submits",
-      "title": "Add a confirmation popup before saving (submit) in Admin Nasta Management and Admin Payment & Loan Management, matching the confirm flow already used in Production/Work (single-confirm, prevents duplicate submits).",
+      "id": "feature-reposition-restyle-the-bottom-fixed-action-buttons-mt-loan-support-calculator-so-they-appear-visually-clean-above-on-top-of-the-content-card-without-obscuring-content-ensure-adequate-bottom-spacing-in-scrollable-content-and-adjust-footer-container-styling-rounded-floating-bar-look-consistent-shadow-border-if-needed",
+      "title": "Reposition/restyle the bottom fixed action buttons (MT-LOAN / Support / Calculator) so they appear visually clean “above/on top of” the content card without obscuring content. Ensure adequate bottom spacing in scrollable content, and adjust footer container styling (rounded floating bar look, consistent shadow/border) if needed.",
       "reqIds": [
         "REQ-5"
       ],
       "version": 1
     },
     {
-      "id": "feature-in-system-settings-apply-distinct-button-colors-to-the-four-tabs-label-total-layout-branding-each-tab-visually-different-even-when-not-active",
-      "title": "In System Settings, apply distinct button colors to the four tabs: Label, Total, Layout, Branding (each tab visually different even when not active).",
+      "id": "feature-redesign-the-top-3-admin-money-summary-cards-so-the-numeric-readout-does-not-show-an-ugly-white-patch-behind-the-text-replace-the-current-inner-white-opaque-block-style-with-a-cleaner-display-screen-readout-look-high-contrast-no-harsh-white-rectangle-consistent-across-all-three-cards",
+      "title": "Redesign the top 3 admin money summary cards so the numeric readout does not show an ugly white patch behind the text. Replace the current inner white/opaque block style with a cleaner “display/screen” readout look (high contrast, no harsh white rectangle, consistent across all three cards).",
       "reqIds": [
         "REQ-6"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-two-new-admin-header-quick-action-buttons-around-support-chat-1-a-new-button-labeled-mt-loan-placed-to-the-left-of-support-chat-2-a-calculator-button-placed-to-the-right-of-support-chat-wire-them-to-placeholder-actions-e-g-open-a-modal-or-toast-so-they-are-clickable-and-ready-for-future-section-expansion",
-      "title": "Add two new Admin header quick-action buttons around Support/Chat: (1) a new button labeled “MT-LOAN” placed to the left of Support/Chat; (2) a Calculator button placed to the right of Support/Chat. Wire them to placeholder actions (e.g., open a modal or toast) so they are clickable and ready for future section expansion.",
+      "id": "feature-update-confirmation-dialog-ui-to-a-round-shaped-colorful-bangladesh-style-vibrant-look-while-maintaining-readability-apply-to-the-shared-confirmdialog-component-so-admin-confirmations-e-g-delete-worker-logout-confirm-usage-where-applicable-have-improved-visual-appeal-and-clear-button-hierarchy",
+      "title": "Update confirmation dialog UI to a round-shaped, colorful (Bangladesh-style vibrant) look while maintaining readability. Apply to the shared ConfirmDialog component so admin confirmations (e.g., delete worker, logout confirm usage where applicable) have improved visual appeal and clear button hierarchy.",
       "reqIds": [
         "REQ-7"
       ],
       "version": 1
     },
     {
-      "id": "feature-improve-admin-header-styling-to-look-cleaner-add-a-subtle-border-and-or-backdrop-blur-and-keep-a-consistent-shadow-so-the-header-is-visually-separated-from-content",
-      "title": "Improve Admin header styling to look cleaner: add a subtle border and/or backdrop blur and keep a consistent shadow so the header is visually separated from content.",
+      "id": "feature-add-the-generated-default-avatar-placeholder-image-as-a-static-asset-and-wire-it-into-the-admin-header-avatar-fallback-do-not-serve-it-from-the-backend",
+      "title": "Add the generated default avatar placeholder image as a static asset and wire it into the admin header avatar fallback (do not serve it from the backend).",
       "reqIds": [
         "REQ-8"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-adjust-the-bottom-navigation-footer-area-so-the-app-s-own-bottom-buttons-do-not-visually-clash-with-the-phone-s-system-navigation-home-back-recent-add-a-styled-bottom-container-with-clear-separation-and-safe-area-padding",
-      "title": "Adjust the bottom navigation/footer area so the app’s own bottom buttons do not visually clash with the phone’s system navigation (home/back/recent): add a styled bottom container with clear separation and safe-area padding.",
-      "reqIds": [
-        "REQ-9"
       ],
       "version": 1
     }
@@ -88,55 +79,48 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Production section: no accounting/transactions; show the exact same report in both Admin and User Production pages (report-only).",
+      "summary": "Increase size (height+width) of the large white card under the top tab section and place/align the tab buttons within a clearer bordered/colored container",
       "reqIds": [],
-      "status": "in_progress"
+      "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Work Management section as main accounting: keep admin report, calculate grand total based on selected workers' existing user rates; user panel credits personal earnings; track balance after breakfast + payment/loan deductions; support two report types (admin vs user).",
+      "summary": "Fix Settings section 'কর্মী ও রেট সেটিংস' title visibility (color/contrast) and restyle all input boxes to match other sections with a lighter shade/consistent design",
       "reqIds": [],
-      "status": "in_progress"
+      "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Add confirm popup on submit in Breakfast Management and Payment & Loan Management sections.",
+      "summary": "Add a profile picture/avatar in the admin panel header",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "System Settings UI: give distinct colors to the four buttons (Label, Total, Layout, Branding).",
+      "summary": "Reposition/style the bottom action buttons so they appear cleanly on/above the target card and look nicer",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-5",
-      "summary": "Admin header: add new button 'MT-LOAN' to the left of Support/Chat for adding sections later.",
+      "summary": "Redesign the top three money summary cards so the text doesn't show an ugly white patch behind it and looks like a clean display/screen-style readout",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-6",
-      "summary": "Add a Calculator button to the right of Support/Chat in Admin panel.",
+      "summary": "Fix dropdown click state so the inside text/options are clearly readable (not blurry/cut off)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-7",
-      "summary": "Improve header styling with border/shadow/light background blur for cleaner look.",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-8",
-      "summary": "Mobile UI: add a styled bottom container/border so the app’s bottom buttons don’t visually clash with the phone system navigation buttons (home/back/recent).",
+      "summary": "Update confirmation message UI to a round-shaped, BD colorful, visually appealing style",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
-  "projectName": "Admin panel accounting & UX updates (Production report parity, Work accounting, confirmations, header/nav tweaks)",
+  "projectName": "Admin panel UI polish: settings tabs container, dropdown readability, KPI display cards, confirmation dialog style, header avatar, and footer button placement",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

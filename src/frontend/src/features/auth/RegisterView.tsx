@@ -3,15 +3,19 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { safeGetArray, safeSetItem } from '../../lib/storage/safeStorage';
 import { notify } from '../../components/feedback/notify';
-import { useBranding } from '../../hooks/useBranding';
+import { safeGetItem, safeSetItem } from '../../lib/storage/safeStorage';
+import { ArrowLeft } from 'lucide-react';
 
 interface PendingRequest {
-  name: string;
-  mobile: string;
-  password: string;
-  userId: number;
+  mob: string;
+  pass: string;
+  timestamp: number;
+}
+
+interface ApprovedUser {
+  mob: string;
+  pass: string;
 }
 
 interface RegisterViewProps {
@@ -19,132 +23,150 @@ interface RegisterViewProps {
 }
 
 export default function RegisterView({ onBack }: RegisterViewProps) {
-  const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
-  const { branding } = useBranding();
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [voterIdType, setVoterIdType] = useState<'nid' | 'birth'>('nid');
 
-  const handleRegister = () => {
-    if (!name.trim() || !mobile.trim() || !password.trim()) {
-      notify.error('সব ফিল্ড পূরণ করুন');
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!mobile || !password || !confirmPassword) {
+      notify.error('সব ঘর পূরণ করুন');
       return;
     }
 
-    const pendingRequests = safeGetArray<PendingRequest>('pendingRequests');
-    const existingRequest = pendingRequests.find(
-      (req) => req.name === name.trim() || req.mobile === mobile.trim()
-    );
-
-    if (existingRequest) {
-      notify.error('এই নাম বা মোবাইল নম্বর ইতিমধ্যে নিবন্ধিত');
+    if (password !== confirmPassword) {
+      notify.error('পাসওয়ার্ড মিলছে না');
       return;
     }
 
-    const nextUserId = Math.max(0, ...pendingRequests.map((r) => r.userId || 0)) + 1;
+    // Check if mobile already exists in approved users
+    const approvedUsers = safeGetItem<ApprovedUser[]>('approved_users', []);
+    const existsInApproved = approvedUsers.some((u) => u.mob === mobile);
 
+    if (existsInApproved) {
+      notify.error('এই মোবাইল নম্বর ইতিমধ্যে নিবন্ধিত');
+      return;
+    }
+
+    // Check if mobile already exists in pending requests
+    const pendingReqs = safeGetItem<PendingRequest[]>('pending_reqs', []);
+    const existsInPending = pendingReqs.some((r) => r.mob === mobile);
+
+    if (existsInPending) {
+      notify.error('এই মোবাইল নম্বরের জন্য ইতিমধ্যে অনুরোধ পাঠানো হয়েছে');
+      return;
+    }
+
+    // Add to pending requests
     const newRequest: PendingRequest = {
-      name: name.trim(),
-      mobile: mobile.trim(),
-      password: password.trim(),
-      userId: nextUserId,
+      mob: mobile,
+      pass: password,
+      timestamp: Date.now(),
     };
 
-    pendingRequests.push(newRequest);
-    safeSetItem('pendingRequests', pendingRequests);
+    pendingReqs.push(newRequest);
+    safeSetItem('pending_reqs', pendingReqs);
 
-    notify.success('রেজিস্ট্রেশন সফল! অনুমোদনের জন্য অপেক্ষা করুন');
-    setName('');
+    notify.success('নিবন্ধন অনুরোধ পাঠানো হয়েছে। অনুমোদনের জন্য অপেক্ষা করুন।');
     setMobile('');
     setPassword('');
+    setConfirmPassword('');
   };
 
-  const logoUrl = branding.logoDataUrl || '/assets/generated/login-hero-illustration.dim_1024x1024.png';
-  const companyName = branding.companyName || 'স্মার্ট হিসাব লেজার';
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
-        {/* Logo and Title */}
-        <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <div className="w-32 h-32 rounded-full bg-white shadow-lg flex items-center justify-center p-4">
-              <img
-                src={logoUrl}
-                alt="Logo"
-                className="w-full h-full object-contain"
-              />
-            </div>
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              {companyName}
-            </h1>
-            <p className="text-gray-600 mt-2">নতুন অ্যাকাউন্ট তৈরি করুন</p>
-          </div>
-        </div>
-
-        {/* Registration Form */}
-        <Card className="shadow-xl border-2 border-teal-200">
-          <CardHeader className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-t-lg">
-            <CardTitle className="text-center text-xl">রেজিস্ট্রেশন ফর্ম</CardTitle>
-            <p className="text-center text-sm text-teal-50 mt-1">আপনার তথ্য দিয়ে বিবরণ করুন</p>
-          </CardHeader>
-          <CardContent className="space-y-4 pt-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4">
+      <Card className="w-full max-w-md border-2 border-gray-200 shadow-2xl">
+        <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white relative">
+          <Button
+            onClick={onBack}
+            variant="ghost"
+            size="sm"
+            className="absolute left-2 top-2 text-white hover:bg-white/20"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <CardTitle className="text-center text-xl font-bold pt-6">নতুন নিবন্ধন</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6 pt-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-base font-medium">নাম</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="আপনার নাম লিখুন"
-                className="h-12 text-base border-2 border-teal-200 focus:border-teal-500"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="mobile" className="text-base font-medium">মোবাইল নম্বর</Label>
+              <Label htmlFor="mobile" className="font-semibold">মোবাইল নম্বর</Label>
               <Input
                 id="mobile"
+                type="text"
                 value={mobile}
                 onChange={(e) => setMobile(e.target.value)}
-                placeholder="মোবাইল নম্বর লিখুন"
-                className="h-12 text-base border-2 border-teal-200 focus:border-teal-500"
+                placeholder="01XXXXXXXXX"
+                className="border-2"
+                required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-base font-medium">পাসওয়ার্ড</Label>
+              <Label htmlFor="password" className="font-semibold">পাসওয়ার্ড</Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="পাসওয়ার্ড লিখুন"
-                className="h-12 text-base border-2 border-teal-200 focus:border-teal-500"
+                className="border-2"
+                required
               />
             </div>
 
-            <Button
-              onClick={handleRegister}
-              className="w-full h-12 text-base font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white shadow-lg"
-            >
-              রেজিস্ট্রেশন করুন
-            </Button>
-          </CardContent>
-        </Card>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="font-semibold">পাসওয়ার্ড নিশ্চিত করুন</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="পাসওয়ার্ড পুনরায় লিখুন"
+                className="border-2"
+                required
+              />
+            </div>
 
-        {/* Back to Login */}
-        <div className="text-center">
-          <p className="text-gray-600 mb-3">ইতিমধ্যে অ্যাকাউন্ট আছে?</p>
-          <Button
-            onClick={onBack}
-            variant="outline"
-            className="w-full h-12 text-base font-semibold border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-          >
-            লগইন করুন
-          </Button>
-        </div>
-      </div>
+            <div className="space-y-2">
+              <Label className="font-semibold">ভোটার আইডি ধরন</Label>
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  type="button"
+                  onClick={() => setVoterIdType('nid')}
+                  className={`font-bold transition-all border-2 ${
+                    voterIdType === 'nid'
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-600 shadow-lg'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
+                  }`}
+                >
+                  NID
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setVoterIdType('birth')}
+                  className={`font-bold transition-all border-2 ${
+                    voterIdType === 'birth'
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-600 shadow-lg'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
+                  }`}
+                >
+                  জন্ম নিবন্ধন
+                </Button>
+              </div>
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3"
+            >
+              নিবন্ধন করুন
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

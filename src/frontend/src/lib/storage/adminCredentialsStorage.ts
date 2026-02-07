@@ -13,8 +13,8 @@ const DEFAULT_CREDENTIALS: AdminCredentials = {
 };
 
 export function loadAdminCredentials(): AdminCredentials {
-  const stored = safeGetItem<AdminCredentials>(ADMIN_CREDENTIALS_KEY, null);
-  return stored || DEFAULT_CREDENTIALS;
+  const stored = safeGetItem<AdminCredentials>(ADMIN_CREDENTIALS_KEY, DEFAULT_CREDENTIALS);
+  return stored;
 }
 
 export function saveAdminCredentials(credentials: AdminCredentials): void {

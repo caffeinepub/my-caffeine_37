@@ -1,6 +1,6 @@
 /**
  * localStorage utilities for label entries with serial/order and optional override text
- * Supports reorderable label management including the three admin totals
+ * Supports reorderable label management including the three admin totals and all section labels
  */
 
 const LABEL_SETTINGS_KEY = 'label_settings';
@@ -13,9 +13,35 @@ export interface LabelEntry {
 }
 
 const DEFAULT_LABELS: LabelEntry[] = [
+  // Admin totals
   { key: 'totalTaken', defaultLabel: 'মোট নেওয়া', serial: 1 },
   { key: 'totalWork', defaultLabel: 'মোট কাজ', serial: 2 },
   { key: 'totalDue', defaultLabel: 'আমার কাছে পাওনা', serial: 3 },
+  
+  // Section labels
+  { key: 'productionSection', defaultLabel: 'প্রোডাকশন ম্যানেজমেন্ট', serial: 4 },
+  { key: 'workSection', defaultLabel: 'কাজের ম্যানেজমেন্ট', serial: 5 },
+  { key: 'nastaSection', defaultLabel: 'নাস্তা ম্যানেজমেন্ট', serial: 6 },
+  { key: 'paymentSection', defaultLabel: 'পেমেন্ট ও লোন ম্যানেজমেন্ট', serial: 7 },
+  { key: 'userRequestsSection', defaultLabel: 'ইউজার রিকুয়েস্ট', serial: 8 },
+  { key: 'settingsSection', defaultLabel: 'সিস্টেম সেটিংস', serial: 9 },
+  { key: 'workerRateSection', defaultLabel: 'কর্মী ও রেট সেটিংস', serial: 10 },
+  { key: 'finalBalanceSection', defaultLabel: 'চূড়ান্ত ব্যালেন্স', serial: 11 },
+  { key: 'companyReportSection', defaultLabel: 'কোম্পানি রিপোর্ট', serial: 12 },
+  
+  // Grid menu labels
+  { key: 'productionTile', defaultLabel: 'প্রোডাকশন', serial: 13 },
+  { key: 'workTile', defaultLabel: 'কাজ', serial: 14 },
+  { key: 'companyReportTile', defaultLabel: 'কোম্পানি রিপোর্ট', serial: 15 },
+  { key: 'nastaTile', defaultLabel: 'নাস্তা', serial: 16 },
+  { key: 'paymentTile', defaultLabel: 'পেমেন্ট/লোন', serial: 17 },
+  { key: 'finalBalanceTile', defaultLabel: 'চূড়ান্ত ব্যালেন্স', serial: 18 },
+  { key: 'userRequestsTile', defaultLabel: 'ইউজার রিকুয়েস্ট', serial: 19 },
+  { key: 'settingsTile', defaultLabel: 'সেটিংস', serial: 20 },
+  { key: 'workerRateTile', defaultLabel: 'রেট', serial: 21 },
+  
+  // User-related labels
+  { key: 'userCurrent', defaultLabel: 'ইউজার কারেন্ট', serial: 22 },
 ];
 
 export function loadLabelSettings(): LabelEntry[] {

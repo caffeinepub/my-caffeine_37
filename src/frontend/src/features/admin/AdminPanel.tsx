@@ -17,8 +17,10 @@ import SupportView from '../support/SupportView';
 import { AdminView } from './components/adminNavTypes';
 import { useSession } from '../../state/session/useSession';
 import { ConfirmDialog } from '../../components/feedback/ConfirmDialog';
-import { LogOut } from 'lucide-react';
+import { LogOut, DollarSign, Calculator, MessageCircle } from 'lucide-react';
 import { useBranding } from '../../hooks/useBranding';
+import { notify } from '../../components/feedback/notify';
+import { getLabelText } from '../../lib/storage/labelSettingsStorage';
 
 export default function AdminPanel() {
   const [activeView, setActiveView] = useState<AdminView>('dashboard');
@@ -37,17 +39,25 @@ export default function AdminPanel() {
     setShowLogoutDialog(false);
   };
 
+  const handleMTLoanClick = () => {
+    notify.info('MT-LOAN ফিচার শীঘ্রই আসছে');
+  };
+
+  const handleCalculatorClick = () => {
+    notify.info('ক্যালকুলেটর শীঘ্রই আসছে');
+  };
+
   const renderContent = () => {
     switch (activeView) {
       case 'dashboard':
         return (
           <DashboardFrame>
             <div className="flex flex-col h-full">
-              {/* Fixed Header - Dashboard gradient */}
-              <div className="fixed top-0 left-0 right-0 z-20 dashboard-gradient px-2 py-2 flex items-center justify-between shadow-md border-b-2 border-blue-900">
-                <div className="flex items-center gap-2">
+              {/* Fixed Header - Version 45 style */}
+              <div className="fixed top-0 left-0 right-0 z-20 dashboard-gradient px-4 py-3 flex items-center justify-between shadow-lg border-b-2 border-blue-900 backdrop-blur-sm">
+                <div className="flex items-center gap-3">
                   {branding.logoDataUrl && (
-                    <div className="w-8 h-8 rounded-full overflow-hidden border border-white/30">
+                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/30">
                       <img
                         src={branding.logoDataUrl}
                         alt="Logo"
@@ -55,24 +65,22 @@ export default function AdminPanel() {
                       />
                     </div>
                   )}
-                </div>
-                <div className="flex-1 text-center">
-                  <h1 className="text-2xl font-black text-white tracking-widest uppercase" style={{ fontFamily: 'Impact, sans-serif', letterSpacing: '0.1em' }}>
+                  <h1 className="text-xl font-bold section-title-accent tracking-wide">
                     ADMIN PANEL
                   </h1>
                 </div>
                 <button
                   type="button"
                   onClick={handleLogoutClick}
-                  className="flex-shrink-0 px-3 py-1.5 rounded-full bg-red-600 border-2 border-red-700 shadow-md flex items-center gap-1.5 hover:bg-red-700 transition-all active:scale-95 touch-manipulation"
+                  className="flex-shrink-0 px-4 py-2 rounded-full bg-red-600 border-2 border-red-700 shadow-md flex items-center gap-2 hover:bg-red-700 transition-all active:scale-95 touch-manipulation"
                 >
                   <LogOut className="w-4 h-4 text-white" />
-                  <span className="text-white font-bold text-xs">LOGOUT</span>
+                  <span className="text-white font-bold text-sm">LOGOUT</span>
                 </button>
               </div>
 
               {/* Scrollable Content with professional background */}
-              <div className="flex-1 overflow-y-auto pt-[52px] pb-[72px] px-2 dashboard-professional-bg">
+              <div className="flex-1 overflow-y-auto pt-[64px] pb-[88px] px-2 dashboard-professional-bg">
                 {/* Summary Cards - Compact spacing */}
                 <div className="mt-2 mb-2">
                   <AdminSummaryCards />
@@ -86,62 +94,123 @@ export default function AdminPanel() {
 
               {/* Fixed Footer */}
               <div className="fixed bottom-0 left-0 right-0 z-20">
-                <DashboardFooter onSupportClick={() => setActiveView('support')} />
+                <DashboardFooter 
+                  leftAction={{
+                    label: 'MT-LOAN',
+                    onClick: handleMTLoanClick,
+                    icon: DollarSign,
+                  }}
+                  centerAction={{
+                    label: 'সাপোর্ট / চ্যাট',
+                    onClick: () => setActiveView('support'),
+                    icon: MessageCircle,
+                  }}
+                  rightAction={{
+                    label: 'ক্যালকুলেটর',
+                    onClick: handleCalculatorClick,
+                    icon: Calculator,
+                  }}
+                />
               </div>
             </div>
           </DashboardFrame>
         );
       case 'production':
         return (
-          <AdminLayoutShell title="প্রোডাকশন ম্যানেজমেন্ট" onBack={() => setActiveView('dashboard')}>
+          <AdminLayoutShell 
+            title={getLabelText('productionSection') || 'প্রোডাকশন ম্যানেজমেন্ট'} 
+            onBack={() => setActiveView('dashboard')}
+            onLeftButtonClick={handleMTLoanClick}
+            onRightButtonClick={handleCalculatorClick}
+          >
             <ProductionSection />
           </AdminLayoutShell>
         );
       case 'work':
         return (
-          <AdminLayoutShell title="কাজের ম্যানেজমেন্ট" onBack={() => setActiveView('dashboard')}>
+          <AdminLayoutShell 
+            title={getLabelText('workSection') || 'কাজের ম্যানেজমেন্ট'} 
+            onBack={() => setActiveView('dashboard')}
+            onLeftButtonClick={handleMTLoanClick}
+            onRightButtonClick={handleCalculatorClick}
+          >
             <WorkSection />
           </AdminLayoutShell>
         );
       case 'nasta':
         return (
-          <AdminLayoutShell title="নাস্তা ম্যানেজমেন্ট" onBack={() => setActiveView('dashboard')}>
+          <AdminLayoutShell 
+            title={getLabelText('nastaSection') || 'নাস্তা ম্যানেজমেন্ট'} 
+            onBack={() => setActiveView('dashboard')}
+            onLeftButtonClick={handleMTLoanClick}
+            onRightButtonClick={handleCalculatorClick}
+          >
             <NastaSection />
           </AdminLayoutShell>
         );
       case 'payment':
         return (
-          <AdminLayoutShell title="পেমেন্ট ও লোন ম্যানেজমেন্ট" onBack={() => setActiveView('dashboard')}>
+          <AdminLayoutShell 
+            title={getLabelText('paymentSection') || 'পেমেন্ট ও লোন ম্যানেজমেন্ট'} 
+            onBack={() => setActiveView('dashboard')}
+            onLeftButtonClick={handleMTLoanClick}
+            onRightButtonClick={handleCalculatorClick}
+          >
             <PaymentLoanSection />
           </AdminLayoutShell>
         );
       case 'user-requests':
         return (
-          <AdminLayoutShell title="ইউজার রিকুয়েস্ট" onBack={() => setActiveView('dashboard')}>
+          <AdminLayoutShell 
+            title={getLabelText('userRequestsSection') || 'ইউজার রিকুয়েস্ট'} 
+            onBack={() => setActiveView('dashboard')}
+            onLeftButtonClick={handleMTLoanClick}
+            onRightButtonClick={handleCalculatorClick}
+          >
             <UserRequestsSection />
           </AdminLayoutShell>
         );
       case 'settings':
         return (
-          <AdminLayoutShell title="সিস্টেম সেটিংস" onBack={() => setActiveView('dashboard')}>
+          <AdminLayoutShell 
+            title={getLabelText('settingsSection') || 'সিস্টেম সেটিংস'} 
+            onBack={() => setActiveView('dashboard')}
+            onLeftButtonClick={handleMTLoanClick}
+            onRightButtonClick={handleCalculatorClick}
+          >
             <SystemSettingsSection />
           </AdminLayoutShell>
         );
       case 'worker-rate-settings':
         return (
-          <AdminLayoutShell title="কর্মী ও রেট সেটিংস" onBack={() => setActiveView('dashboard')}>
+          <AdminLayoutShell 
+            title={getLabelText('workerRateSection') || 'কর্মী ও রেট সেটিংস'} 
+            onBack={() => setActiveView('dashboard')}
+            onLeftButtonClick={handleMTLoanClick}
+            onRightButtonClick={handleCalculatorClick}
+          >
             <WorkerRateSettingsSection />
           </AdminLayoutShell>
         );
       case 'final-balance':
         return (
-          <AdminLayoutShell title="চূড়ান্ত ব্যালেন্স" onBack={() => setActiveView('dashboard')}>
+          <AdminLayoutShell 
+            title={getLabelText('finalBalanceSection') || 'চূড়ান্ত ব্যালেন্স'} 
+            onBack={() => setActiveView('dashboard')}
+            onLeftButtonClick={handleMTLoanClick}
+            onRightButtonClick={handleCalculatorClick}
+          >
             <FinalBalanceSection />
           </AdminLayoutShell>
         );
       case 'company-report':
         return (
-          <AdminLayoutShell title="কোম্পানি রিপোর্ট" onBack={() => setActiveView('dashboard')}>
+          <AdminLayoutShell 
+            title={getLabelText('companyReportSection') || 'কোম্পানি রিপোর্ট'} 
+            onBack={() => setActiveView('dashboard')}
+            onLeftButtonClick={handleMTLoanClick}
+            onRightButtonClick={handleCalculatorClick}
+          >
             <CompanyReportSection />
           </AdminLayoutShell>
         );

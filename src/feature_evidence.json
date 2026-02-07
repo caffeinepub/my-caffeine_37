@@ -2,10 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-admin-production-section-so-it-is-report-only-no-accounting-transactions-keep-the-existing-input-form-and-history-storage-but-do-not-change-any-user-account-balances-when-a-production-entry-is-added-or-deleted",
-      "featureTitle": "Update the Admin Production section so it is report-only (no accounting/transactions): keep the existing input form and history storage, but do not change any user/account balances when a production entry is added or deleted.",
+      "featureId": "feature-enlarge-the-main-white-content-card-under-the-settings-tabs-increase-effective-width-on-mobile-desktop-and-increase-vertical-spacing-and-visually-group-the-settings-tab-buttons-inside-a-clearer-rounded-bordered-container-so-the-tabs-feel-placed-inside-the-box-apply-this-to-the-settings-view-rendered-by-adminlayoutshell-systemsettingssection",
+      "featureTitle": "Enlarge the main white content card under the Settings tabs (increase effective width on mobile/desktop and increase vertical spacing), and visually group the Settings tab buttons inside a clearer rounded, bordered container so the tabs feel placed “inside the box”. Apply this to the Settings view rendered by AdminLayoutShell + SystemSettingsSection.",
       "files": [
-        "frontend/src/features/admin/sections/ProductionSection.tsx"
+        "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+        "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+        "frontend/src/index.css"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -23,10 +25,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-make-the-user-production-report-show-the-exact-same-report-format-data-as-the-admin-production-report-same-fields-aggregation-and-same-source-history-so-both-panels-display-production-reports-consistently",
-      "featureTitle": "Make the User Production report show the exact same report format/data as the Admin Production report (same fields/aggregation and same source history), so both panels display production reports consistently.",
+      "featureId": "feature-fix-select-dropdown-readability-in-settings-so-that-when-the-dropdown-opens-option-text-is-not-blurry-cut-off-and-the-dropdown-panel-positions-and-stacks-correctly-above-surrounding-cards-ensure-consistent-font-size-line-height-and-adequate-padding-for-selecttrigger-selectcontent-in-systemsettingssection-and-any-similar-select-usage-in-admin-settings",
+      "featureTitle": "Fix Select/dropdown readability in Settings so that when the dropdown opens, option text is not blurry/cut off and the dropdown panel positions and stacks correctly above surrounding cards. Ensure consistent font size, line height, and adequate padding for SelectTrigger/SelectContent in SystemSettingsSection (and any similar Select usage in admin settings).",
       "files": [
-        "frontend/src/features/admin/sections/ProductionSection.tsx"
+        "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+        "frontend/src/index.css"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -44,10 +47,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-fix-work-management-to-behave-as-the-main-accounting-section-when-admin-submits-a-work-entry-compute-per-worker-amounts-using-each-selected-worker-s-saved-rates-no-rate-input-in-work-section-compute-and-display-a-grand-total-for-admin-and-credit-each-selected-worker-s-account-balance-as-earnings-not-as-cost",
-      "featureTitle": "Fix Work Management to behave as the main accounting section: when Admin submits a work entry, compute per-worker amounts using each selected worker’s saved rates (no rate input in Work section), compute and display a grand total for Admin, and credit each selected worker’s account balance as earnings (not as cost).",
+      "featureId": "feature-improve-the-visibility-contrast-of-the-worker-rate-settings-section-title-and-restyle-all-input-boxes-in-that-section-to-match-the-lighter-cleaner-input-style-used-elsewhere-consistent-background-shade-border-focus-ring-apply-to-workerratesettingssection-inputs-new-worker-name-rate-inputs-and-any-settings-inputs-that-currently-look-washed-out",
+      "featureTitle": "Improve the visibility/contrast of the \"Worker & Rate Settings\" section title and restyle all input boxes in that section to match the lighter, cleaner input style used elsewhere (consistent background shade, border, focus ring). Apply to WorkerRateSettingsSection inputs (new worker name, rate inputs) and any Settings inputs that currently look washed out.",
       "files": [
-        "frontend/src/features/admin/sections/WorkSection.tsx"
+        "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
+        "frontend/src/index.css"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -65,11 +69,12 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-deductions-are-reflected-in-each-user-s-balance-nasta-and-payment-loan-submissions-must-continue-to-reduce-the-user-s-net-balance-by-increasing-the-user-s-cost-so-the-final-balance-remaining-amount-equals-earnings-bill-minus-deductions-cost",
-      "featureTitle": "Ensure deductions are reflected in each user’s balance: Nasta and Payment/Loan submissions must continue to reduce the user’s net balance by increasing the user’s cost, so the final balance/remaining amount equals earnings (bill) minus deductions (cost).",
+      "featureId": "feature-add-an-admin-header-profile-avatar-to-the-right-side-of-the-adminlayoutshell-header-the-avatar-should-display-a-stored-profile-photo-when-available-reuse-existing-profile-photo-storage-approach-otherwise-show-a-default-placeholder-avatar-image-ensure-it-fits-in-the-header-without-breaking-title-back-button-layout",
+      "featureTitle": "Add an admin header profile avatar to the right side of the AdminLayoutShell header. The avatar should display a stored profile photo when available (reuse existing profile photo storage approach); otherwise show a default placeholder avatar image. Ensure it fits in the header without breaking title/back button layout.",
       "files": [
-        "frontend/src/features/admin/sections/NastaSection.tsx",
-        "frontend/src/features/admin/sections/PaymentLoanSection.tsx"
+        "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
+        "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+        "frontend/src/lib/storage/userProfileStorage.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -87,11 +92,12 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-a-confirmation-popup-before-saving-submit-in-admin-nasta-management-and-admin-payment-loan-management-matching-the-confirm-flow-already-used-in-production-work-single-confirm-prevents-duplicate-submits",
-      "featureTitle": "Add a confirmation popup before saving (submit) in Admin Nasta Management and Admin Payment & Loan Management, matching the confirm flow already used in Production/Work (single-confirm, prevents duplicate submits).",
+      "featureId": "feature-reposition-restyle-the-bottom-fixed-action-buttons-mt-loan-support-calculator-so-they-appear-visually-clean-above-on-top-of-the-content-card-without-obscuring-content-ensure-adequate-bottom-spacing-in-scrollable-content-and-adjust-footer-container-styling-rounded-floating-bar-look-consistent-shadow-border-if-needed",
+      "featureTitle": "Reposition/restyle the bottom fixed action buttons (MT-LOAN / Support / Calculator) so they appear visually clean “above/on top of” the content card without obscuring content. Ensure adequate bottom spacing in scrollable content, and adjust footer container styling (rounded floating bar look, consistent shadow/border) if needed.",
       "files": [
-        "frontend/src/features/admin/sections/NastaSection.tsx",
-        "frontend/src/features/admin/sections/PaymentLoanSection.tsx"
+        "frontend/src/components/layout/DashboardFooter.tsx",
+        "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+        "frontend/src/index.css"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -109,11 +115,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-in-system-settings-apply-distinct-button-colors-to-the-four-tabs-label-total-layout-branding-each-tab-visually-different-even-when-not-active",
-      "featureTitle": "In System Settings, apply distinct button colors to the four tabs: Label, Total, Layout, Branding (each tab visually different even when not active).",
+      "featureId": "feature-redesign-the-top-3-admin-money-summary-cards-so-the-numeric-readout-does-not-show-an-ugly-white-patch-behind-the-text-replace-the-current-inner-white-opaque-block-style-with-a-cleaner-display-screen-readout-look-high-contrast-no-harsh-white-rectangle-consistent-across-all-three-cards",
+      "featureTitle": "Redesign the top 3 admin money summary cards so the numeric readout does not show an ugly white patch behind the text. Replace the current inner white/opaque block style with a cleaner “display/screen” readout look (high contrast, no harsh white rectangle, consistent across all three cards).",
       "files": [
-        "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-        "frontend/src/index.css"
+        "frontend/src/components/dashboard/dashboardBorders.ts",
+        "frontend/src/features/admin/components/AdminSummaryCards.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -131,10 +137,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-two-new-admin-header-quick-action-buttons-around-support-chat-1-a-new-button-labeled-mt-loan-placed-to-the-left-of-support-chat-2-a-calculator-button-placed-to-the-right-of-support-chat-wire-them-to-placeholder-actions-e-g-open-a-modal-or-toast-so-they-are-clickable-and-ready-for-future-section-expansion",
-      "featureTitle": "Add two new Admin header quick-action buttons around Support/Chat: (1) a new button labeled “MT-LOAN” placed to the left of Support/Chat; (2) a Calculator button placed to the right of Support/Chat. Wire them to placeholder actions (e.g., open a modal or toast) so they are clickable and ready for future section expansion.",
+      "featureId": "feature-update-confirmation-dialog-ui-to-a-round-shaped-colorful-bangladesh-style-vibrant-look-while-maintaining-readability-apply-to-the-shared-confirmdialog-component-so-admin-confirmations-e-g-delete-worker-logout-confirm-usage-where-applicable-have-improved-visual-appeal-and-clear-button-hierarchy",
+      "featureTitle": "Update confirmation dialog UI to a round-shaped, colorful (Bangladesh-style vibrant) look while maintaining readability. Apply to the shared ConfirmDialog component so admin confirmations (e.g., delete worker, logout confirm usage where applicable) have improved visual appeal and clear button hierarchy.",
       "files": [
-        "frontend/src/components/layout/AppShell.tsx"
+        "frontend/src/components/feedback/ConfirmDialog.tsx",
+        "frontend/src/index.css"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -152,10 +159,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-improve-admin-header-styling-to-look-cleaner-add-a-subtle-border-and-or-backdrop-blur-and-keep-a-consistent-shadow-so-the-header-is-visually-separated-from-content",
-      "featureTitle": "Improve Admin header styling to look cleaner: add a subtle border and/or backdrop blur and keep a consistent shadow so the header is visually separated from content.",
+      "featureId": "feature-add-the-generated-default-avatar-placeholder-image-as-a-static-asset-and-wire-it-into-the-admin-header-avatar-fallback-do-not-serve-it-from-the-backend",
+      "featureTitle": "Add the generated default avatar placeholder image as a static asset and wire it into the admin header avatar fallback (do not serve it from the backend).",
       "files": [
-        "frontend/src/components/layout/AppShell.tsx"
+        "frontend/src/features/admin/components/AdminHeaderAvatar.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -169,29 +176,6 @@
       ],
       "testIds": [
         "REQ-8"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-adjust-the-bottom-navigation-footer-area-so-the-app-s-own-bottom-buttons-do-not-visually-clash-with-the-phone-s-system-navigation-home-back-recent-add-a-styled-bottom-container-with-clear-separation-and-safe-area-padding",
-      "featureTitle": "Adjust the bottom navigation/footer area so the app’s own bottom buttons do not visually clash with the phone’s system navigation (home/back/recent): add a styled bottom container with clear separation and safe-area padding.",
-      "files": [
-        "frontend/src/components/layout/DashboardFooter.tsx",
-        "frontend/src/features/admin/components/AdminBottomNav.tsx",
-        "frontend/src/index.css"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "user-approval@3.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-9"
       ],
       "confidence": "high"
     }

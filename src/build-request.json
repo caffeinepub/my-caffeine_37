@@ -1,187 +1,189 @@
 {
   "kind": "build_request",
-  "title": "Admin panel accounting & UX updates (Production report parity, Work accounting, confirmations, header/nav tweaks)",
+  "title": "Admin panel UI polish: settings tabs container, dropdown readability, KPI display cards, confirmation dialog style, header avatar, and footer button placement",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the Admin Production section so it is report-only (no accounting/transactions): keep the existing input form and history storage, but do not change any user/account balances when a production entry is added or deleted.",
+      "text": "Enlarge the main white content card under the Settings tabs (increase effective width on mobile/desktop and increase vertical spacing), and visually group the Settings tab buttons inside a clearer rounded, bordered container so the tabs feel placed “inside the box”. Apply this to the Settings view rendered by AdminLayoutShell + SystemSettingsSection.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5",
-          "msg-12"
+          "recent-5",
+          "recent-6",
+          "recent-12"
         ],
         "quotes": [
-          "\"প্রোডাকশন\" এই সেকশনে ... এটার সাথে কোন টাকার লেনদেন হবে না",
-          "প্রোডাকশন সেকশন: ... এটার সাথে কোন অন্য কিছুর হিসাব হবে না"
+          "লেবেল লেআউট ব্র্যান্ডিং শেয়ারিং ব্যাকআপ এগুলা নিচে ... বক্সটা একটু বড় করে",
+          "১/উপরে থাকা ট্যাব সেকশনের নিচে যে বড় সাদা কার্ড আছে সেটা? ২/উচ্চতা বাড়ানো, প্রস্থ বাড়ানো",
+          "\"বিল্ড কর\""
         ]
       },
       "acceptanceCriteria": [
-        "When submitting a new production entry in Admin, the entry is saved to production history as before.",
-        "Submitting/deleting a production entry does NOT modify the stored accounts (no bill/cost changes).",
-        "Existing production history list/table in Admin still shows all entries correctly."
+        "On the System Settings screen, the white content card is noticeably wider (reduced side margins) and taller (more internal padding/spacing), especially on mobile.",
+        "The tabs (Labels/Layout/Branding/Sharing/Backup) are contained within a rounded bordered container that looks intentional; active/inactive states remain clear.",
+        "No content is clipped/overlapped by the fixed header or fixed footer on common mobile sizes."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Make the User Production report show the exact same report format/data as the Admin Production report (same fields/aggregation and same source history), so both panels display production reports consistently.",
+      "text": "Fix Select/dropdown readability in Settings so that when the dropdown opens, option text is not blurry/cut off and the dropdown panel positions and stacks correctly above surrounding cards. Ensure consistent font size, line height, and adequate padding for SelectTrigger/SelectContent in SystemSettingsSection (and any similar Select usage in admin settings).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5",
-          "msg-12"
+          "recent-2",
+          "recent-8",
+          "recent-12"
         ],
         "quotes": [
-          "ইউজার ফ্যানেলেও ঠিক সেম রিপোর্টটাই সু হবে"
+          "এখানে ক্লিক করলে আসলে কি লেখা আসছে",
+          "ক্লিক করলে ভিতরে কি লেখা আছে বোঝা যায় না",
+          "\"বিল্ড কর\""
         ]
       },
       "acceptanceCriteria": [
-        "Admin and User Production pages render the same report structure (columns/rows and totals) for the same underlying production history.",
-        "No user/account balance changes are introduced on the User Production report page (report display only)."
+        "Opening a dropdown shows all options fully (no clipping), with readable contrast and font sizing.",
+        "Dropdown content overlays above nearby cards/containers correctly (no being hidden behind other elements).",
+        "The selected value inside the trigger remains readable on both light and gradient backgrounds."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Fix Work Management to behave as the main accounting section: when Admin submits a work entry, compute per-worker amounts using each selected worker’s saved rates (no rate input in Work section), compute and display a grand total for Admin, and credit each selected worker’s account balance as earnings (not as cost).",
+      "text": "Improve the visibility/contrast of the \"Worker & Rate Settings\" section title and restyle all input boxes in that section to match the lighter, cleaner input style used elsewhere (consistent background shade, border, focus ring). Apply to WorkerRateSettingsSection inputs (new worker name, rate inputs) and any Settings inputs that currently look washed out.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5",
-          "msg-12"
+          "recent-5",
+          "recent-6",
+          "recent-12"
         ],
         "quotes": [
-          "কাজের ম্যানেজমেন্ট... রেট বসানোর কোন অপশন নেই ... ওই কজনের রেট অনুযায়ী মোট টাকা শো করবে",
-          "ইউজার প্যানেলে পার্সোনাল রেট অনুযায়ী তার একাউন্টে জমা হবে"
+          "২/কর্মী ও রেট সেটিংস একটা টাইটেলটা দেখা যাচ্ছে না ... ইনপুটের বক্স আছে ... ওগুলার মত একটু হালকা সেডা দিয়ে",
+          "১/উপরে থাকা ট্যাব সেকশনের নিচে ... ৩/...",
+          "\"বিল্ড কর\""
         ]
       },
       "acceptanceCriteria": [
-        "Admin Work entry form has no rate inputs and continues to use saved worker rates (e.g., from worker rate settings).",
-        "On submit, the saved WorkHistory entry includes perWorkerAmounts and grandTotal derived from the selected workers’ rates.",
-        "Admin Work history table continues to show the grand total for each entry.",
-        "Accounts are updated so that each selected worker’s earnings increase (bill increases by that worker’s computed amount) when a work entry is added.",
-        "Deleting a Work entry reverses the same earnings effect (bill decreases by that worker’s amount)."
+        "The \"কর্মী ও রেট সেটিংস\" title has clear contrast against its header background and is readable on mobile.",
+        "All inputs in WorkerRateSettingsSection have a consistent light background shade, consistent border thickness, and consistent focus state.",
+        "Disabled/locked inputs remain visually distinct but still readable."
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Ensure deductions are reflected in each user’s balance: Nasta and Payment/Loan submissions must continue to reduce the user’s net balance by increasing the user’s cost, so the final balance/remaining amount equals earnings (bill) minus deductions (cost).",
+      "text": "Add an admin header profile avatar to the right side of the AdminLayoutShell header. The avatar should display a stored profile photo when available (reuse existing profile photo storage approach); otherwise show a default placeholder avatar image. Ensure it fits in the header without breaking title/back button layout.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "recent-6",
+          "recent-12"
         ],
         "quotes": [
-          "নাস্তা বাবদ... পেমেন্ট... এগুলো কাটছাঁট করে কত পাবে"
+          "৩/admun প্যানেলের হেডারে প্রোফাইল পিক এড করবে",
+          "\"বিল্ড কর\""
         ]
       },
       "acceptanceCriteria": [
-        "After adding Work earnings and then adding Nasta/Payment entries for the same worker(s), the worker’s final/remaining balance reflects bill - cost.",
-        "No section other than Work increases bill; Nasta/Payment/Loan only affect cost."
+        "Admin header shows a circular avatar on the right side on all admin screens using AdminLayoutShell.",
+        "If a profile photo exists for the current user/admin identity, it is displayed; otherwise a placeholder avatar is shown.",
+        "Header layout remains stable: title truncates gracefully and the avatar does not overlap buttons/text."
       ]
     },
     {
       "id": "REQ-5",
-      "text": "Add a confirmation popup before saving (submit) in Admin Nasta Management and Admin Payment & Loan Management, matching the confirm flow already used in Production/Work (single-confirm, prevents duplicate submits).",
+      "text": "Reposition/restyle the bottom fixed action buttons (MT-LOAN / Support / Calculator) so they appear visually clean “above/on top of” the content card without obscuring content. Ensure adequate bottom spacing in scrollable content, and adjust footer container styling (rounded floating bar look, consistent shadow/border) if needed.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "recent-6",
+          "recent-12"
         ],
         "quotes": [
-          "এই দুইটা সেকশনে কোন কিছু ইনপুট দিয়ে সাবমিট করলে কনফার্ম popup আসে না"
+          "৪/নিচে প্রটারে বাটন গুলার ... কার্ড টার উপরে বাটন গুলো সুন্দর দেখা যায়",
+          "\"বিল্ড কর\""
         ]
       },
       "acceptanceCriteria": [
-        "Clicking Submit in Admin Nasta shows a confirmation dialog; confirming performs the save; cancelling does not save.",
-        "Clicking Submit in Admin Payment/Loan shows a confirmation dialog; confirming performs the save; cancelling does not save.",
-        "While saving, the submit action is disabled to prevent double-submits (same pattern as useSingleConfirmSubmit)."
+        "The footer does not cover important content at the bottom of pages; last form controls remain accessible without being hidden.",
+        "Footer buttons look intentionally placed (consistent spacing, rounded container, readable labels) and do not clash with underlying card borders.",
+        "Behavior remains fixed/sticky at bottom during scroll."
       ]
     },
     {
       "id": "REQ-6",
-      "text": "In System Settings, apply distinct button colors to the four tabs: Label, Total, Layout, Branding (each tab visually different even when not active).",
+      "text": "Redesign the top 3 admin money summary cards so the numeric readout does not show an ugly white patch behind the text. Replace the current inner white/opaque block style with a cleaner “display/screen” readout look (high contrast, no harsh white rectangle, consistent across all three cards).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "recent-7",
+          "recent-12"
         ],
         "quotes": [
-          "লেবেল মোট লেআউট ব্র্যান্ডিং এই চারটা বাটনে চারটা কালার দিয়ে দিও"
+          "প্যানেলের উপরে যে টাকা দেখানোর তিনটা কার্ড আছে ... লেখার মাঝখানে সাদা আছে দেখতে খারাপ দেখা যায় ... ডিসপ্লের মত থাকবে",
+          "\"বিল্ড কর\""
         ]
       },
       "acceptanceCriteria": [
-        "The four System Settings tabs are visually color-distinct from each other.",
-        "Active tab state remains clear/accessible (contrast, readable text)."
+        "In AdminSummaryCards, the number area no longer appears as a stark white patch; it reads like a cohesive display element.",
+        "Text remains highly readable in all three cards (Due/Work/Taken) on mobile.",
+        "Borders/radius/shadow remain consistent with the dashboard style constants where applicable."
       ]
     },
     {
       "id": "REQ-7",
-      "text": "Add two new Admin header quick-action buttons around Support/Chat: (1) a new button labeled “MT-LOAN” placed to the left of Support/Chat; (2) a Calculator button placed to the right of Support/Chat. Wire them to placeholder actions (e.g., open a modal or toast) so they are clickable and ready for future section expansion.",
+      "text": "Update confirmation dialog UI to a round-shaped, colorful (Bangladesh-style vibrant) look while maintaining readability. Apply to the shared ConfirmDialog component so admin confirmations (e.g., delete worker, logout confirm usage where applicable) have improved visual appeal and clear button hierarchy.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "recent-9",
+          "recent-10",
+          "recent-12"
         ],
         "quotes": [
-          "সাপোর্ট / চ্যাট বাটনের বাম পাশে ... বাটনের নাম দিবে MT-LOAN",
-          "সাপোর্ট chat এর ডান পাশে একটি বাটন দিবে যেটাতে থাকবে ক্যালকুলেটর"
+          "কনফার্মেশন যে মেসেজটা আছে দেখা যায় ... বিডি কালারফুল থাকবে",
+          "রাহুল বলিনি বলছি রাউন্ড শেপ",
+          "\"বিল্ড কর\""
         ]
       },
       "acceptanceCriteria": [
-        "Admin UI shows an “MT-LOAN” button to the left of Support/Chat and a Calculator button to the right.",
-        "Both buttons are clickable and trigger a visible placeholder response (modal/sheet/toast) without breaking navigation.",
-        "Buttons render correctly on mobile widths (no overlap/clipping)."
+        "ConfirmDialog has noticeably rounder corners and a more colorful, polished header/body styling while keeping text readable.",
+        "Primary/confirm and cancel buttons are clearly distinguished and remain at least 44px tall for touch.",
+        "Dialog content is centered and not clipped on mobile; overlay stacking remains correct."
       ]
     },
     {
       "id": "REQ-8",
-      "text": "Improve Admin header styling to look cleaner: add a subtle border and/or backdrop blur and keep a consistent shadow so the header is visually separated from content.",
+      "text": "Add the generated default avatar placeholder image as a static asset and wire it into the admin header avatar fallback (do not serve it from the backend).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "recent-6",
+          "recent-12"
         ],
         "quotes": [
-          "হেডারের চারপাশে বর্ডার দিলে যেন আরও সুন্দর ও পরিষ্কার দেখা যায়। আপনি চাইলে বর্ডার, শ্যাডো, অথবা হালকা ব্যাকগ্রাউন্ড‑ব্লার"
+          "৩/admun প্যানেলের হেডারে প্রোফাইল পিক এড করবে",
+          "\"বিল্ড কর\""
         ]
       },
       "acceptanceCriteria": [
-        "Admin header has a visible border separation from the page body.",
-        "Header maintains a consistent shadow and does not visually clash with gradient backgrounds.",
-        "No layout shift occurs when scrolling (sticky header remains stable)."
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "text": "Adjust the bottom navigation/footer area so the app’s own bottom buttons do not visually clash with the phone’s system navigation (home/back/recent): add a styled bottom container with clear separation and safe-area padding.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-5"
-        ],
-        "quotes": [
-          "মোবাইলের নিচের সিস্টেম ন্যাভিগেশন বাটনগুলো ... নিচের দিকে ফুল‑স্ক্রিনে একটা বর্ডার বা স্টাইল করা বক্স থাকবে, যার ভেতরে আপনার নিজের বাটনগুলো থাকবে"
-        ]
-      },
-      "acceptanceCriteria": [
-        "On mobile, the bottom navigation/footer is contained within a clearly styled bar/container with border/separation from the page background.",
-        "There is adequate bottom spacing (safe-area aware) so the phone system navigation area does not visually merge with app controls.",
-        "No bottom nav items become unreachable or overlapped by the OS navigation area."
+        "The placeholder avatar file exists under frontend/public/assets/generated and is referenced directly by the frontend for fallback rendering.",
+        "No backend endpoints are added for serving images."
       ]
     }
   ],
   "constraints": [
     "Frontend immutable paths must not be edited: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui/*.",
-    "Keep backend as single-actor; no new backend services or external databases."
+    "Keep the backend single-actor architecture unchanged; UI polish should not require backend changes."
   ],
   "nonGoals": [
-    "Implementing real-time chat or external messaging integrations.",
-    "Implementing a full calculator engine (only a UI entry point/placeholder interaction is required).",
-    "Adding new backend persistence for these changes (continue using existing storage approach)."
+    "Implementing MT-LOAN, Support chat, or Calculator features beyond existing placeholder/toast behavior.",
+    "Adding third-party authentication providers or external databases/services.",
+    "Changing core storage schema unless strictly required for the visual fixes above."
   ],
   "imageRequirements": {
-    "required": [],
+    "required": [
+      "Default round avatar placeholder illustration (admin-avatar-placeholder.dim_128x128.png)"
+    ],
     "edits": []
   },
   "userProfileUpdate": {

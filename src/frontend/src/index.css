@@ -29,6 +29,9 @@
     --chart-3: oklch(55% 0.12 197);
     --chart-4: oklch(65% 0.13 291);
     --chart-5: oklch(60% 0.11 340);
+    
+    /* Section title accent color - high contrast white for gradient backgrounds */
+    --section-title-accent: oklch(100% 0 0);
   }
 
   .dark {
@@ -56,6 +59,8 @@
     --chart-3: oklch(65% 0.12 220);
     --chart-4: oklch(70% 0.12 280);
     --chart-5: oklch(65% 0.11 340);
+    
+    --section-title-accent: oklch(100% 0 0);
   }
 }
 
@@ -72,12 +77,24 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
+.dashboard-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
 .dashboard-gradient-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .gradient-footer {
   background: linear-gradient(to right, #4f46e5, #7c3aed);
+}
+
+.gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-slate {
+  background: linear-gradient(to right, #475569, #64748b);
 }
 
 .pb-safe-bottom {
@@ -89,4 +106,47 @@
     min-height: 44px;
     min-width: 44px;
   }
+  
+  .section-title-accent {
+    color: var(--section-title-accent);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    font-weight: 700;
+  }
+  
+  .back-button-colored {
+    @apply bg-red-600 hover:bg-red-700 active:bg-red-800 text-white border-2 border-red-700 shadow-md;
+    font-weight: 700;
+    transition: all 0.2s ease;
+  }
+  
+  .back-button-colored:focus {
+    @apply ring-2 ring-red-400 ring-offset-2;
+  }
+
+  /* Admin settings input styling */
+  .admin-input-style {
+    @apply bg-white border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all;
+  }
+
+  .admin-input-style:disabled {
+    @apply bg-gray-100 text-gray-600 border-gray-300 cursor-not-allowed;
+  }
+
+  /* Admin select styling */
+  .admin-select-trigger {
+    @apply bg-white border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-base font-medium transition-all;
+  }
+
+  .admin-select-content {
+    @apply z-[10000] bg-white border-2 border-gray-300 shadow-2xl rounded-xl overflow-hidden;
+  }
+
+  .admin-select-content [role="option"] {
+    @apply text-base font-medium py-3 px-4 cursor-pointer hover:bg-blue-50 transition-colors;
+  }
+}
+
+/* Ensure Radix Select portal content stacks above everything */
+[data-radix-popper-content-wrapper] {
+  z-index: 10000 !important;
 }

@@ -18,27 +18,27 @@ export default function AdminBottomNav({ activeView, onNavigate }: AdminBottomNa
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-slate-300 shadow-2xl z-50 pb-safe-bottom">
-      <div className="container mx-auto max-w-7xl">
-        <div className="grid grid-cols-6 gap-0">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeView === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => onNavigate(item.id)}
-                className={`flex flex-col items-center justify-center py-2.5 px-1 transition-colors active:scale-95 ${
-                  isActive
-                    ? 'text-primary bg-primary/5'
-                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
-                }`}
-              >
-                <Icon className={`w-5 h-5 mb-0.5 ${isActive ? 'text-primary' : ''}`} />
-                <span className="text-[10px] font-medium leading-tight">{item.label}</span>
-              </button>
-            );
-          })}
-        </div>
+      <div className="grid grid-cols-6 gap-0 px-1 py-2">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = activeView === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => onNavigate(item.id)}
+              className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95 ${
+                isActive
+                  ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-md'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <Icon className={`${isActive ? 'w-5 h-5' : 'w-4 h-4'} mb-1`} />
+              <span className={`text-[9px] font-medium leading-tight text-center ${isActive ? 'font-bold' : ''}`}>
+                {item.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

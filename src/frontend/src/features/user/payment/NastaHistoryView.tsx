@@ -1,18 +1,22 @@
 import { useState, useEffect } from 'react';
-import { useSession } from '../../../state/session/useSession';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
-import { ArrowLeft } from 'lucide-react';
 import { safeGetItem } from '../../../lib/storage/safeStorage';
+import { useSession } from '../../../state/session/useSession';
+import { ArrowLeft } from 'lucide-react';
+import { getPerHeadAmount } from '../../../utils/moneySplit';
 
 interface NastaEntry {
   id: number;
   date: string;
   names: string[];
-  name?: string;
   amount: number;
-  perHead: number;
+  perHead?: number;
   note: string;
+}
+
+interface Histories {
+  nasta?: NastaEntry[];
 }
 
 interface NastaHistoryViewProps {
@@ -21,121 +25,86 @@ interface NastaHistoryViewProps {
 
 export default function NastaHistoryView({ onBack }: NastaHistoryViewProps) {
   const { session } = useSession();
-  const [history, setHistory] = useState<NastaEntry[]>([]);
+  const [entries, setEntries] = useState<NastaEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadHistory();
+    loadEntries();
   }, [session?.userName]);
 
-  const loadHistory = () => {
+  const loadEntries = () => {
     setIsLoading(true);
-    
     try {
-      if (!session?.userName) {
-        setHistory([]);
-        setIsLoading(false);
-        return;
-      }
-
-      const histories = safeGetItem<{ nasta?: NastaEntry[] }>(
-        'histories',
-        { nasta: [] }
+      const histories = safeGetItem<Histories>('histories', { nasta: [] });
+      const nastaArray = Array.isArray(histories?.nasta) ? histories.nasta : [];
+      
+      // Filter entries for current user
+      const userEntries = nastaArray.filter((entry) =>
+        entry.names?.includes(session?.userName || '')
       );
 
-      if (!histories) {
-        setHistory([]);
-        setIsLoading(false);
-        return;
-      }
-
-      const nastaArray = Array.isArray(histories.nasta) ? histories.nasta : [];
-
-      const userNasta = nastaArray
-        .filter((h) => {
-          if (!h) return false;
-          if (Array.isArray(h.names)) return h.names.includes(session.userName!);
-          return h.name === session.userName;
-        })
-        .sort((a, b) => (b.id || 0) - (a.id || 0));
-
-      setHistory(userNasta);
+      setEntries(userEntries.sort((a, b) => (b.id || 0) - (a.id || 0)));
     } catch (error) {
       console.error('Error loading nasta history:', error);
-      setHistory([]);
+      setEntries([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const calculateMyAmount = (entry: NastaEntry): number => {
-    return Array.isArray(entry.names) ? (entry.perHead || 0) : (entry.amount || 0);
-  };
-
-  const totalAmount = history.reduce((sum, h) => sum + calculateMyAmount(h), 0);
+  const totalAmount = entries.reduce((sum, entry) => sum + getPerHeadAmount(entry), 0);
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 p-3">
-      <Card className="shadow-xl border-2 border-orange-200">
-        <CardHeader className="bg-gradient-to-r from-orange-100 to-amber-100 py-3">
+    <div className="space-y-4">
+      <Card>
+        <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500">
           <div className="flex items-center gap-3">
             <Button
-              onClick={onBack}
               variant="ghost"
               size="sm"
-              className="hover:bg-orange-200 text-orange-900"
+              onClick={onBack}
+              className="back-button-colored -ml-2"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="w-5 h-5" />
             </Button>
-            <CardTitle className="text-xl font-bold text-orange-900">নাস্তার বিবরণ</CardTitle>
+            <CardTitle className="text-lg text-white section-title-accent">নাস্তা ইতিহাস</CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="pt-4 px-2">
+        <CardContent className="pt-6">
           {isLoading ? (
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-orange-600 border-t-transparent"></div>
-              <p className="mt-4 text-base text-muted-foreground">লোড হচ্ছে...</p>
-            </div>
+            <p className="text-center text-muted-foreground py-8">লোড হচ্ছে...</p>
+          ) : entries.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">কোনো এন্ট্রি নেই</p>
           ) : (
-            <>
-              <div className="space-y-2">
-                {history.length === 0 ? (
-                  <div className="text-center text-muted-foreground py-12 text-base">
-                    কোনো রেকর্ড নেই
-                  </div>
-                ) : (
-                  history.map((entry) => (
-                    <div key={entry.id} className="bg-white border-2 border-orange-200 rounded-lg p-3 shadow-sm">
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex-1">
-                          <div className="text-sm font-semibold text-orange-900">{entry.date || '-'}</div>
-                          <div className="text-sm text-gray-600 mt-1 break-words">
-                            {entry.note || '-'}
-                          </div>
-                        </div>
-                        <div className="text-right ml-2 flex-shrink-0">
-                          <div className="text-lg font-bold text-orange-700">
-                            ৳{calculateMyAmount(entry).toFixed(2)}
-                          </div>
-                        </div>
+            <div className="space-y-4">
+              {entries.map((entry) => (
+                <Card key={entry.id} className="border-amber-200">
+                  <CardContent className="pt-4 space-y-2">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1 flex-1">
+                        <p className="text-sm text-muted-foreground">{entry.date}</p>
+                        <p className="text-lg font-bold text-amber-700">
+                          ৳{getPerHeadAmount(entry).toFixed(2)}
+                        </p>
+                        {entry.note && (
+                          <p className="text-sm text-muted-foreground break-words">
+                            {entry.note}
+                          </p>
+                        )}
                       </div>
                     </div>
-                  ))
-                )}
-              </div>
-              
-              {/* Total Summary */}
-              {history.length > 0 && (
-                <div className="mt-4 bg-orange-200 rounded-lg p-4 border-2 border-orange-300">
-                  <div className="flex justify-between items-center">
-                    <div className="text-base font-bold text-orange-900">সর্বমোট</div>
-                    <div className="text-2xl font-bold text-orange-900">
-                      ৳{totalAmount.toFixed(2)}
-                    </div>
-                  </div>
+                  </CardContent>
+                </Card>
+              ))}
+              <div className="pt-4 border-t-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-base font-bold">মোট:</span>
+                  <span className="text-xl font-bold text-amber-700">
+                    ৳{totalAmount.toFixed(2)}
+                  </span>
                 </div>
-              )}
-            </>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>

@@ -24,6 +24,7 @@ export interface SessionContextValue {
   updateUserProfile: (params: UpdateProfileParams) => Promise<LoginResult>;
 }
 
+// Unified field names for consistency across the app
 export interface ApprovedUser {
   name: string;
   mob: string;
@@ -35,5 +36,5 @@ export interface PendingRequest {
   name: string;
   mob: string;
   pass: string;
-  userId?: number; // Pre-assigned registration-order ID
+  userId: number; // Pre-assigned registration-order ID
 }

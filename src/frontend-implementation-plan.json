@@ -1,208 +1,192 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Admin panel accounting parity + UX polish (production report-only, work earnings, confirmations, header/nav tweaks)",
+  "title": "Admin panel UI polish for settings layout, dropdowns, KPI cards, confirm dialog, header avatar, and footer placement",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Make Admin Production report-only: keep saving/deleting production history but stop updating accounts/balances from Production entries.",
+      "summary": "Make the Settings view content area wider/taller and visually group Settings tabs inside a clearer rounded bordered container within AdminLayoutShell + SystemSettingsSection.",
       "acceptanceCriteria": [
-        "When submitting a new production entry in Admin, the entry is saved to production history as before.",
-        "Submitting/deleting a production entry does NOT modify the stored accounts (no bill/cost changes).",
-        "Existing production history list/table in Admin still shows all entries correctly."
+        "On the System Settings screen, the white content card is noticeably wider (reduced side margins) and taller (more internal padding/spacing), especially on mobile.",
+        "The tabs (Labels/Layout/Branding/Sharing/Backup) are contained within a rounded bordered container that looks intentional; active/inactive states remain clear.",
+        "No content is clipped/overlapped by the fixed header or fixed footer on common mobile sizes."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/admin/sections/ProductionSection.tsx",
+          "path": "frontend/src/features/admin/components/AdminLayoutShell.tsx",
           "operation": "modify",
-          "description": "Remove all account/balance mutations from Production save/delete flows (stop changing accounts.bill). Keep the existing form validation and productionHistory storage behavior intact."
+          "description": "Adjust the Settings (and other admin) content container spacing: reduce side padding on small screens, increase inner padding, and tune scroll-area top/bottom padding so the main white content card appears larger and never collides with the fixed header/footer."
+        },
+        {
+          "path": "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "operation": "modify",
+          "description": "Restyle the Tabs header area to sit inside a clearer rounded, bordered container (more intentional grouping) and increase vertical spacing/padding in Settings tab contents so the primary white card feels larger. Verify the component's usage instructions before implementing (shadcn-ui Tabs/Card/ScrollArea)."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add/adjust a small set of global utility classes (only where needed) to support consistent spacing for admin settings containers without editing immutable shadcn ui component files."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Unify User Production report UI/data with Admin Production report (same structure, same production history source).",
+      "summary": "Fix Settings Select/dropdown readability and overlay stacking by standardizing trigger/content typography, padding, and z-index behavior.",
       "acceptanceCriteria": [
-        "Admin and User Production pages render the same report structure (columns/rows and totals) for the same underlying production history.",
-        "No user/account balance changes are introduced on the User Production report page (report display only)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/features/production/ProductionReportTable.tsx",
-          "operation": "create",
-          "description": "Create a shared, read-only Production report component that renders the same table structure used by Admin Production (date, names, double, single, total) from production history. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/ProductionSection.tsx",
-          "operation": "modify",
-          "description": "Refactor Admin Production history rendering to use the shared ProductionReportTable for consistent structure with User Production. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/user/production/ProductionHistoryView.tsx",
-          "operation": "modify",
-          "description": "Update User Production view to render the shared ProductionReportTable using the same productionHistory source (no account mutations; display-only). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/user/production/productionAggregates.ts",
-          "operation": "modify",
-          "description": "Adjust or deprecate production aggregation exports that are no longer used by the User Production report after switching to the shared Admin-format table (keep file compiling; avoid unused exports if linting/build enforces it)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Fix Work Management accounting: derive amounts from saved worker rates, show grand total, and credit workers as earnings (bill), with reversible deletes.",
-      "acceptanceCriteria": [
-        "Admin Work entry form has no rate inputs and continues to use saved worker rates (e.g., from worker rate settings).",
-        "On submit, the saved WorkHistory entry includes perWorkerAmounts and grandTotal derived from the selected workers’ rates.",
-        "Admin Work history table continues to show the grand total for each entry.",
-        "Accounts are updated so that each selected worker’s earnings increase (bill increases by that worker’s computed amount) when a work entry is added.",
-        "Deleting a Work entry reverses the same earnings effect (bill decreases by that worker’s amount)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/features/admin/sections/WorkSection.tsx",
-          "operation": "modify",
-          "description": "Change Work accounting updates to credit earnings to accounts.bill (not accounts.cost) on save, and reverse by decreasing accounts.bill on delete. Keep perWorkerAmounts + grandTotal derived from saved workerRates; add validation/guard for missing rates for selected workers."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Ensure deductions (Nasta, Payment/Loan) reduce net balance by increasing cost, while only Work increases bill (earnings).",
-      "acceptanceCriteria": [
-        "After adding Work earnings and then adding Nasta/Payment entries for the same worker(s), the worker’s final/remaining balance reflects bill - cost.",
-        "No section other than Work increases bill; Nasta/Payment/Loan only affect cost."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/features/admin/sections/NastaSection.tsx",
-          "operation": "modify",
-          "description": "Confirm Nasta continues to update accounts.cost only; add any necessary guardrails to prevent accidental bill updates during refactors (no behavior change besides ensuring cost-only)."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
-          "operation": "modify",
-          "description": "Confirm Payment/Loan continues to update accounts.cost only; add any necessary guardrails to prevent accidental bill updates during refactors (no behavior change besides ensuring cost-only)."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/FinalBalanceSection.tsx",
-          "operation": "modify",
-          "description": "Verify final/remaining balance presentation remains based on bill - cost and still renders correctly after Work/Production accounting changes (no new persistence)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Add single-confirm submit dialogs to Admin Nasta and Admin Payment/Loan, preventing duplicate submits (match Production/Work pattern).",
-      "acceptanceCriteria": [
-        "Clicking Submit in Admin Nasta shows a confirmation dialog; confirming performs the save; cancelling does not save.",
-        "Clicking Submit in Admin Payment/Loan shows a confirmation dialog; confirming performs the save; cancelling does not save.",
-        "While saving, the submit action is disabled to prevent double-submits (same pattern as useSingleConfirmSubmit)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/features/admin/sections/NastaSection.tsx",
-          "operation": "modify",
-          "description": "Integrate useSingleConfirmSubmit + ConfirmDialog for the submit flow (like Production/Work). Disable the submit button while saving and ensure cancel does not persist."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
-          "operation": "modify",
-          "description": "Integrate useSingleConfirmSubmit + ConfirmDialog for the submit flow (like Production/Work). Disable the submit button while saving and ensure cancel does not persist."
-        },
-        {
-          "path": "frontend/src/hooks/useSingleConfirmSubmit.ts",
-          "operation": "modify",
-          "description": "If needed for parity, extend/adjust the hook API to support Nasta/Payment/Loan flows cleanly (e.g., consistent disabled state + confirm open/close handling) without changing immutable auth-related hooks."
-        }
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "summary": "Give System Settings tabs distinct, always-visible colors (Label, Total, Layout, Branding) with clear active state.",
-      "acceptanceCriteria": [
-        "The four System Settings tabs are visually color-distinct from each other.",
-        "Active tab state remains clear/accessible (contrast, readable text)."
+        "Opening a dropdown shows all options fully (no clipping), with readable contrast and font sizing.",
+        "Dropdown content overlays above nearby cards/containers correctly (no being hidden behind other elements).",
+        "The selected value inside the trigger remains readable on both light and gradient backgrounds."
       ],
       "file_operations": [
         {
           "path": "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
           "operation": "modify",
-          "description": "Style the four TabsTrigger buttons with distinct color themes even when inactive, and add accessible active-state styling (e.g., using data-[state=active] classes) so selected tab remains clearly indicated."
+          "description": "Update SelectTrigger/SelectContent usages to apply consistent font size/line height/padding and stronger z-index/overlay styling; ensure option rows are not clipped and the trigger value remains readable. Verify the component's usage instructions before implementing (shadcn-ui Select)."
         },
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "If required for consistency, add/adjust small utility classes for tab color variants and active states while preserving existing Tailwind theme variables (no changes to frontend/src/components/ui/*)."
+          "description": "Add targeted CSS overrides for admin settings dropdown overlays (e.g., ensure Radix portal content stacks above fixed header/footer and card borders) without modifying frontend/src/components/ui/*."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Increase contrast of the Worker & Rate Settings title and restyle inputs in WorkerRateSettingsSection to match the cleaner input style used elsewhere, including disabled/locked readability.",
+      "acceptanceCriteria": [
+        "The \"কর্মী ও রেট সেটিংস\" title has clear contrast against its header background and is readable on mobile.",
+        "All inputs in WorkerRateSettingsSection have a consistent light background shade, consistent border thickness, and consistent focus state.",
+        "Disabled/locked inputs remain visually distinct but still readable."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
+          "operation": "modify",
+          "description": "Restyle the CardHeader/CardTitle contrast and apply consistent Input classNames (background, border, focus ring) for new worker name and rate inputs; ensure locked/disabled state remains readable and visually distinct. Verify the component's usage instructions before implementing (shadcn-ui Card/Input/Table/Checkbox)."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add reusable admin input styling utilities (light background, border, focus ring) to keep WorkerRateSettingsSection and similar settings inputs consistent without editing immutable UI component sources."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Add a right-aligned circular profile avatar in AdminLayoutShell header using stored profile photo when available, otherwise a placeholder.",
+      "acceptanceCriteria": [
+        "Admin header shows a circular avatar on the right side on all admin screens using AdminLayoutShell.",
+        "If a profile photo exists for the current user/admin identity, it is displayed; otherwise a placeholder avatar is shown.",
+        "Header layout remains stable: title truncates gracefully and the avatar does not overlap buttons/text."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
+          "operation": "create",
+          "description": "Create a small header avatar component that reads the current session identity (user vs admin), loads the stored profile photo via the existing localStorage approach, and falls back to the generated placeholder image. Verify the component's usage instructions before implementing (shadcn-ui styling conventions where applicable)."
+        },
+        {
+          "path": "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "operation": "modify",
+          "description": "Wire the new AdminHeaderAvatar into the fixed header right side for all AdminLayoutShell screens, ensuring proper spacing with optional headerActions and stable truncation of the title/back button row."
+        },
+        {
+          "path": "frontend/src/lib/storage/userProfileStorage.ts",
+          "operation": "modify",
+          "description": "Extend the existing profile photo getter usage pattern to support a consistent key for admin (fallback identity) while keeping the same storage approach (localStorage data URL), without introducing backend image serving."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Reposition/restyle fixed bottom action buttons as a clean floating bar above content and ensure scrollable content has adequate bottom spacing.",
+      "acceptanceCriteria": [
+        "The footer does not cover important content at the bottom of pages; last form controls remain accessible without being hidden.",
+        "Footer buttons look intentionally placed (consistent spacing, rounded container, readable labels) and do not clash with underlying card borders.",
+        "Behavior remains fixed/sticky at bottom during scroll."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/layout/DashboardFooter.tsx",
+          "operation": "modify",
+          "description": "Restyle the footer as a rounded, floating action bar (remove internal fixed positioning, add outer rounded container, consistent border/shadow, and safe-area padding) so it can be positioned cleanly by parent shells."
+        },
+        {
+          "path": "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "operation": "modify",
+          "description": "Adjust the fixed footer wrapper to position the floating bar above content (with margins) and update the scroll container bottom padding so the last content is never obscured by the floating footer."
+        },
+        {
+          "path": "frontend/src/features/admin/AdminPanel.tsx",
+          "operation": "modify",
+          "description": "Update dashboard view footer usage to match the new floating DashboardFooter (parent owns fixed positioning) and tune dashboard scroll bottom padding to maintain access to the last tiles/cards."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add a small global utility (if needed) for consistent 'floating footer bar' spacing and safe-area bottom padding so multiple admin views behave consistently."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Restyle AdminSummaryCards numeric readout to remove the stark white patch and use a cohesive high-contrast display/screen look across all 3 cards.",
+      "acceptanceCriteria": [
+        "In AdminSummaryCards, the number area no longer appears as a stark white patch; it reads like a cohesive display element.",
+        "Text remains highly readable in all three cards (Due/Work/Taken) on mobile.",
+        "Borders/radius/shadow remain consistent with the dashboard style constants where applicable."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/admin/components/AdminSummaryCards.tsx",
+          "operation": "modify",
+          "description": "Replace the inner 'bg-white/90' number block styling with a cleaner display/screen readout (cohesive translucent/darkened panel, subtle border, optional backdrop blur, consistent typography) across Due/Work/Taken while preserving existing dashboardBorders constants."
+        },
+        {
+          "path": "frontend/src/components/dashboard/dashboardBorders.ts",
+          "operation": "modify",
+          "description": "If needed, extend/update shared KPI inner styling constants to support the new display-like readout styling consistently across KPI cards."
         }
       ]
     },
     {
       "id": "REQ-7",
-      "summary": "Add Admin header quick actions: MT-LOAN (left of Support/Chat) and Calculator (right), wired to placeholder interactions.",
+      "summary": "Update shared ConfirmDialog styling to a rounder, vibrant colorful look with clear button hierarchy and correct mobile stacking.",
       "acceptanceCriteria": [
-        "Admin UI shows an “MT-LOAN” button to the left of Support/Chat and a Calculator button to the right.",
-        "Both buttons are clickable and trigger a visible placeholder response (modal/sheet/toast) without breaking navigation.",
-        "Buttons render correctly on mobile widths (no overlap/clipping)."
+        "ConfirmDialog has noticeably rounder corners and a more colorful, polished header/body styling while keeping text readable.",
+        "Primary/confirm and cancel buttons are clearly distinguished and remain at least 44px tall for touch.",
+        "Dialog content is centered and not clipped on mobile; overlay stacking remains correct."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/layout/AppShell.tsx",
+          "path": "frontend/src/components/feedback/ConfirmDialog.tsx",
           "operation": "modify",
-          "description": "Update the Admin header action area to insert an “MT-LOAN” button immediately left of Support/Chat and a Calculator button immediately right. Wire both to placeholder UI feedback (e.g., notify.info toast or existing modal/sheet). Verify the component's usage instructions before implementing."
+          "description": "Restyle AlertDialogContent/Header/Footer to a round-shaped, vibrant theme (Bangladesh-style colorful accents), improve spacing/typography, and ensure overlay/z-index behavior is correct on mobile. Verify the component's usage instructions before implementing (shadcn-ui AlertDialog)."
         },
         {
-          "path": "frontend/src/components/feedback/notify.ts",
+          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "If needed, add a small helper for consistent placeholder messaging (e.g., info toast text) used by MT-LOAN/Calculator without changing navigation behavior."
+          "description": "Add minimal global styles (if needed) to ensure dialog overlay/content stacks above fixed headers/footers and remains readable on small screens without modifying frontend/src/components/ui/*."
         }
       ]
     },
     {
       "id": "REQ-8",
-      "summary": "Polish Admin header visuals with border/backdrop blur and consistent shadow; keep sticky header stable.",
+      "summary": "Add generated default avatar placeholder asset and wire it into the admin header avatar fallback as a static frontend asset.",
       "acceptanceCriteria": [
-        "Admin header has a visible border separation from the page body.",
-        "Header maintains a consistent shadow and does not visually clash with gradient backgrounds.",
-        "No layout shift occurs when scrolling (sticky header remains stable)."
+        "The placeholder avatar file exists under frontend/public/assets/generated and is referenced directly by the frontend for fallback rendering.",
+        "No backend endpoints are added for serving images."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/layout/AppShell.tsx",
-          "operation": "modify",
-          "description": "Adjust Admin header container styling to add subtle border and/or backdrop blur with a consistent shadow. Ensure sticky positioning remains stable and does not introduce scroll layout shifts."
+          "path": "frontend/public/assets/generated/admin-avatar-placeholder.dim_128x128.png",
+          "operation": "create",
+          "description": "Add the generated placeholder avatar image asset at the exact path frontend/public/assets/generated/admin-avatar-placeholder.dim_128x128.png for static serving by the frontend build."
         },
         {
-          "path": "frontend/src/components/dashboard/dashboardBorders.ts",
+          "path": "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
           "operation": "modify",
-          "description": "If shared border/shadow tokens are used across dashboards, extend/update exported Tailwind class constants so header separation matches the app’s existing visual system."
-        }
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "summary": "Add a styled bottom container with safe-area padding so bottom nav/buttons don’t clash with phone system navigation.",
-      "acceptanceCriteria": [
-        "On mobile, the bottom navigation/footer is contained within a clearly styled bar/container with border/separation from the page background.",
-        "There is adequate bottom spacing (safe-area aware) so the phone system navigation area does not visually merge with app controls.",
-        "No bottom nav items become unreachable or overlapped by the OS navigation area."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/features/admin/components/AdminBottomNav.tsx",
-          "operation": "modify",
-          "description": "Wrap fixed bottom navigation in a styled container (border/background/shadow) and add safe-area-aware padding (env(safe-area-inset-bottom)) so controls remain reachable and visually separated from OS navigation."
-        },
-        {
-          "path": "frontend/src/components/layout/DashboardFooter.tsx",
-          "operation": "modify",
-          "description": "Apply the same safe-area padding + styled bottom container treatment to the footer buttons (Support/Settings) so user-facing bottom controls also avoid OS navigation overlap."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "If Tailwind arbitrary env() padding is insufficient in the current setup, add a minimal global utility (e.g., a class that applies padding-bottom using safe-area inset) and reuse it in bottom bars."
+          "description": "Reference frontend/public/assets/generated/admin-avatar-placeholder.dim_128x128.png as the fallback image when no stored profile photo exists. Verify the component's usage instructions before implementing."
         }
       ]
     }

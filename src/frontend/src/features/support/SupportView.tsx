@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Textarea } from '../../components/ui/textarea';
 import { ScrollArea } from '../../components/ui/scroll-area';
 import { getSupportThreads, getUserThread, addSupportMessage, SupportThread } from '../../lib/storage/supportMessagingStorage';
 import { useSession } from '../../state/session/useSession';
 import { notify } from '../../components/feedback/notify';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, MessageCircle } from 'lucide-react';
 import DashboardFooter from '../../components/layout/DashboardFooter';
 
 interface SupportViewProps {
@@ -104,7 +104,13 @@ export default function SupportView({ onBack }: SupportViewProps) {
 
         {/* Fixed Footer */}
         <div className="fixed bottom-0 left-0 right-0 z-20">
-          <DashboardFooter onSupportClick={() => {}} />
+          <DashboardFooter 
+            centerAction={{
+              label: 'সাপোর্ট',
+              onClick: () => {},
+              icon: MessageCircle,
+            }}
+          />
         </div>
       </div>
     );
@@ -156,9 +162,11 @@ export default function SupportView({ onBack }: SupportViewProps) {
                               : 'bg-white border-2 border-blue-200 text-slate-900'
                           }`}
                         >
-                          <p className="text-sm font-bold mb-1">{msg.from}</p>
-                          <p className="text-sm">{msg.message}</p>
-                          <p className="text-xs opacity-70 mt-2">
+                          <p className="text-sm font-bold mb-1">
+                            {msg.fromRole === 'admin' ? 'Admin' : msg.from}
+                          </p>
+                          <p className="text-base">{msg.message}</p>
+                          <p className="text-xs mt-2 opacity-70">
                             {new Date(msg.timestamp).toLocaleString('bn-BD')}
                           </p>
                         </div>
@@ -167,7 +175,7 @@ export default function SupportView({ onBack }: SupportViewProps) {
                   </div>
                 ) : (
                   <p className="text-center text-muted-foreground py-12 text-base">
-                    কোনো মেসেজ নেই। প্রথম মেসেজ পাঠান।
+                    কোনো মেসেজ নেই। প্রথম মেসেজ পাঠান!
                   </p>
                 )}
               </ScrollArea>
@@ -177,27 +185,35 @@ export default function SupportView({ onBack }: SupportViewProps) {
       </div>
 
       {/* Fixed Message Input Area */}
-      <div className="fixed bottom-20 left-0 right-0 z-20 bg-white border-t-2 border-blue-200 p-4 shadow-xl">
-        <div className="flex gap-3 max-w-4xl mx-auto">
-          <Textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="মেসেজ লিখুন..."
-            rows={2}
-            className="flex-1 border-2 border-blue-300 focus:border-blue-500 text-sm"
-          />
-          <Button 
-            onClick={handleSendMessage}
-            className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 font-bold px-6"
-          >
-            পাঠান
-          </Button>
+      <div className="fixed bottom-[72px] left-0 right-0 z-10 bg-white border-t-2 border-blue-200 shadow-xl p-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="flex gap-3">
+            <Textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="মেসেজ লিখুন..."
+              rows={2}
+              className="flex-1 border-2 border-blue-300 focus:border-blue-500 rounded-xl resize-none"
+            />
+            <Button
+              onClick={handleSendMessage}
+              className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold px-6 rounded-xl"
+            >
+              পাঠান
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Fixed Footer */}
       <div className="fixed bottom-0 left-0 right-0 z-20">
-        <DashboardFooter onSupportClick={() => {}} />
+        <DashboardFooter 
+          centerAction={{
+            label: 'সাপোর্ট',
+            onClick: () => {},
+            icon: MessageCircle,
+          }}
+        />
       </div>
     </div>
   );

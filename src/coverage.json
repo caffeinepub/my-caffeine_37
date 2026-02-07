@@ -1,129 +1,124 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-07T08:16:40.094Z",
+  "generatedAt": "2026-02-07T21:08:26.936Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 9,
-    "implemented": 9,
+    "total": 8,
+    "implemented": 8,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the Admin Production section so it is report-only (no accounting/transactions): keep the existing input form and history storage, but do not change any user/account balances when a production entry is added or deleted.",
+        "summary": "Enlarge the main white content card under the Settings tabs (increase effective width on mobile/desktop and increase vertical spacing), and visually group the Settings tab buttons inside a clearer rounded, bordered container so the tabs feel placed “inside the box”. Apply this to the Settings view rendered by AdminLayoutShell + SystemSettingsSection.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/sections/ProductionSection.tsx"
+          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/sections/ProductionSection.tsx"
+          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "frontend/src/index.css"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Make the User Production report show the exact same report format/data as the Admin Production report (same fields/aggregation and same source history), so both panels display production reports consistently.",
+        "summary": "Fix Select/dropdown readability in Settings so that when the dropdown opens, option text is not blurry/cut off and the dropdown panel positions and stacks correctly above surrounding cards. Ensure consistent font size, line height, and adequate padding for SelectTrigger/SelectContent in SystemSettingsSection (and any similar Select usage in admin settings).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/production/ProductionReportTable.tsx",
-          "frontend/src/features/admin/sections/ProductionSection.tsx",
-          "frontend/src/features/user/production/ProductionHistoryView.tsx",
-          "frontend/src/features/user/production/productionAggregates.ts"
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/sections/ProductionSection.tsx"
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "frontend/src/index.css"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Fix Work Management to behave as the main accounting section: when Admin submits a work entry, compute per-worker amounts using each selected worker’s saved rates (no rate input in Work section), compute and display a grand total for Admin, and credit each selected worker’s account balance as earnings (not as cost).",
+        "summary": "Improve the visibility/contrast of the \"Worker & Rate Settings\" section title and restyle all input boxes in that section to match the lighter, cleaner input style used elsewhere (consistent background shade, border, focus ring). Apply to WorkerRateSettingsSection inputs (new worker name, rate inputs) and any Settings inputs that currently look washed out.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/sections/WorkSection.tsx"
+          "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/sections/WorkSection.tsx"
+          "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
+          "frontend/src/index.css"
         ]
       },
       {
         "id": "REQ-4",
-        "summary": "Ensure deductions are reflected in each user’s balance: Nasta and Payment/Loan submissions must continue to reduce the user’s net balance by increasing the user’s cost, so the final balance/remaining amount equals earnings (bill) minus deductions (cost).",
+        "summary": "Add an admin header profile avatar to the right side of the AdminLayoutShell header. The avatar should display a stored profile photo when available (reuse existing profile photo storage approach); otherwise show a default placeholder avatar image. Ensure it fits in the header without breaking title/back button layout.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/sections/NastaSection.tsx",
-          "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
-          "frontend/src/features/admin/sections/FinalBalanceSection.tsx"
+          "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
+          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "frontend/src/lib/storage/userProfileStorage.ts"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/sections/NastaSection.tsx",
-          "frontend/src/features/admin/sections/PaymentLoanSection.tsx"
+          "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
+          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "frontend/src/lib/storage/userProfileStorage.ts"
         ]
       },
       {
         "id": "REQ-5",
-        "summary": "Add a confirmation popup before saving (submit) in Admin Nasta Management and Admin Payment & Loan Management, matching the confirm flow already used in Production/Work (single-confirm, prevents duplicate submits).",
+        "summary": "Reposition/restyle the bottom fixed action buttons (MT-LOAN / Support / Calculator) so they appear visually clean “above/on top of” the content card without obscuring content. Ensure adequate bottom spacing in scrollable content, and adjust footer container styling (rounded floating bar look, consistent shadow/border) if needed.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/sections/NastaSection.tsx",
-          "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
-          "frontend/src/hooks/useSingleConfirmSubmit.ts"
+          "frontend/src/components/layout/DashboardFooter.tsx",
+          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "frontend/src/features/admin/AdminPanel.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/sections/NastaSection.tsx",
-          "frontend/src/features/admin/sections/PaymentLoanSection.tsx"
+          "frontend/src/components/layout/DashboardFooter.tsx",
+          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "frontend/src/index.css"
         ]
       },
       {
         "id": "REQ-6",
-        "summary": "In System Settings, apply distinct button colors to the four tabs: Label, Total, Layout, Branding (each tab visually different even when not active).",
+        "summary": "Redesign the top 3 admin money summary cards so the numeric readout does not show an ugly white patch behind the text. Replace the current inner white/opaque block style with a cleaner “display/screen” readout look (high contrast, no harsh white rectangle, consistent across all three cards).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-          "frontend/src/index.css"
+          "frontend/src/features/admin/components/AdminSummaryCards.tsx",
+          "frontend/src/components/dashboard/dashboardBorders.ts"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-          "frontend/src/index.css"
+          "frontend/src/features/admin/components/AdminSummaryCards.tsx",
+          "frontend/src/components/dashboard/dashboardBorders.ts"
         ]
       },
       {
         "id": "REQ-7",
-        "summary": "Add two new Admin header quick-action buttons around Support/Chat: (1) a new button labeled “MT-LOAN” placed to the left of Support/Chat; (2) a Calculator button placed to the right of Support/Chat. Wire them to placeholder actions (e.g., open a modal or toast) so they are clickable and ready for future section expansion.",
+        "summary": "Update confirmation dialog UI to a round-shaped, colorful (Bangladesh-style vibrant) look while maintaining readability. Apply to the shared ConfirmDialog component so admin confirmations (e.g., delete worker, logout confirm usage where applicable) have improved visual appeal and clear button hierarchy.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/layout/AppShell.tsx",
-          "frontend/src/components/feedback/notify.ts"
+          "frontend/src/components/feedback/ConfirmDialog.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/components/layout/AppShell.tsx"
+          "frontend/src/components/feedback/ConfirmDialog.tsx",
+          "frontend/src/index.css"
         ]
       },
       {
         "id": "REQ-8",
-        "summary": "Improve Admin header styling to look cleaner: add a subtle border and/or backdrop blur and keep a consistent shadow so the header is visually separated from content.",
+        "summary": "Add the generated default avatar placeholder image as a static asset and wire it into the admin header avatar fallback (do not serve it from the backend).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/layout/AppShell.tsx",
-          "frontend/src/components/dashboard/dashboardBorders.ts"
+          "frontend/public/assets/generated/admin-avatar-placeholder.dim_128x128.png",
+          "frontend/src/features/admin/components/AdminHeaderAvatar.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/layout/AppShell.tsx"
-        ]
-      },
-      {
-        "id": "REQ-9",
-        "summary": "Adjust the bottom navigation/footer area so the app’s own bottom buttons do not visually clash with the phone’s system navigation (home/back/recent): add a styled bottom container with clear separation and safe-area padding.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/admin/components/AdminBottomNav.tsx",
-          "frontend/src/components/layout/DashboardFooter.tsx",
-          "frontend/src/index.css"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/admin/components/AdminBottomNav.tsx",
-          "frontend/src/components/layout/DashboardFooter.tsx",
-          "frontend/src/index.css"
+          "frontend/public/assets/generated/admin-avatar-placeholder.dim_128x128.png",
+          "frontend/src/features/admin/components/AdminHeaderAvatar.tsx"
         ]
       }
     ]
@@ -133,15 +128,17 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/public/assets/generated/admin-avatar-placeholder.dim_128x128.png",
+    "frontend/src/components/dashboard/dashboardBorders.ts",
+    "frontend/src/components/feedback/ConfirmDialog.tsx",
     "frontend/src/components/layout/DashboardFooter.tsx",
-    "frontend/src/features/admin/components/AdminBottomNav.tsx",
-    "frontend/src/features/admin/sections/NastaSection.tsx",
-    "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
-    "frontend/src/features/admin/sections/ProductionSection.tsx",
+    "frontend/src/features/admin/components/AdminHeaderAvatar.tsx",
+    "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+    "frontend/src/features/admin/components/AdminSummaryCards.tsx",
     "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-    "frontend/src/features/admin/sections/WorkSection.tsx",
+    "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
     "frontend/src/index.css",
+    "frontend/src/lib/storage/userProfileStorage.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -6,9 +6,12 @@ export const kpiCardPadding = 'p-3';
 export const kpiCardRadius = 'rounded-xl';
 export const kpiCardShadow = 'shadow-md';
 
-// KPI Inner content area
-export const kpiInnerPadding = 'p-2.5';
+// KPI Inner content area - display-like styling
+export const kpiInnerPadding = 'p-3';
 export const kpiInnerRadius = 'rounded-lg';
+export const kpiInnerBg = 'bg-black/10 backdrop-blur-sm';
+export const kpiInnerBorder = 'border border-white/20';
+export const kpiInnerText = 'text-white drop-shadow-lg';
 
 // Outer container for KPI groups (no border, just background)
 export const outerContainerBorder = '';

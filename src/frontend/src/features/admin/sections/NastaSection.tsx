@@ -5,55 +5,55 @@ import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
-import { safeGetArray, safeSetItem, safeGetItem } from '../../../lib/storage/safeStorage';
+import { safeGetItem, safeSetItem } from '../../../lib/storage/safeStorage';
+import { loadWorkerRates } from '../../../lib/storage/workerRatesStorage';
 import { notify } from '../../../components/feedback/notify';
 import { ConfirmDialog } from '../../../components/feedback/ConfirmDialog';
 import { useSingleConfirmSubmit } from '../../../hooks/useSingleConfirmSubmit';
 import { Trash2 } from 'lucide-react';
+import { computeEqualSplit } from '../../../utils/moneySplit';
 
 interface NastaEntry {
-  id: string;
+  id: number;
   date: string;
   names: string[];
   amount: number;
+  perHead: number;
   note: string;
-  timestamp: number;
+}
+
+interface Histories {
+  nasta?: NastaEntry[];
+}
+
+interface Account {
+  nasta?: number;
 }
 
 export default function NastaSection() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [selectedWorkers, setSelectedWorkers] = useState<string[]>([]);
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
-  const [workers, setWorkers] = useState<string[]>([]);
-  const [history, setHistory] = useState<NastaEntry[]>([]);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [selectedWorkers, setSelectedWorkers] = useState<string[]>([]);
+  const [entries, setEntries] = useState<NastaEntry[]>([]);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const { isSaving, showConfirm, setShowConfirm, handleSubmit: handleConfirmSubmit } = useSingleConfirmSubmit(
     async () => {
-      await saveNasta();
+      await saveEntry();
     }
   );
 
+  const workers = loadWorkerRates().map((w) => w.name);
+
   useEffect(() => {
-    loadWorkers();
-    loadHistory();
+    loadEntries();
   }, []);
 
-  const loadWorkers = () => {
-    const workerList = safeGetArray<string>('workers');
-    setWorkers(workerList);
-  };
-
-  const loadHistory = () => {
-    const entries = safeGetArray<NastaEntry>('nastaHistory');
-    setHistory(entries.sort((a, b) => b.timestamp - a.timestamp));
-  };
-
-  const toggleWorker = (worker: string) => {
-    setSelectedWorkers((prev) =>
-      prev.includes(worker) ? prev.filter((w) => w !== worker) : [...prev, worker]
-    );
+  const loadEntries = () => {
+    const histories = safeGetItem<Histories>('histories', { nasta: [] });
+    const nastaArray = Array.isArray(histories?.nasta) ? histories.nasta : [];
+    setEntries(nastaArray.sort((a, b) => (b.id || 0) - (a.id || 0)));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -64,74 +64,84 @@ export default function NastaSection() {
       return;
     }
 
-    if (!amount) {
-      notify.error('পরিমাণ লিখুন');
-      return;
-    }
-
-    const amt = Number(amount);
-    if (amt <= 0) {
-      notify.error('পরিমাণ শূন্যের চেয়ে বেশি হতে হবে');
+    if (!amount || Number(amount) <= 0) {
+      notify.error('সঠিক পরিমাণ লিখুন');
       return;
     }
 
     setShowConfirm(true);
   };
 
-  const saveNasta = async () => {
-    const amt = Number(amount);
-    const entry: NastaEntry = {
-      id: Date.now().toString(),
+  const saveEntry = async () => {
+    const totalAmount = Number(amount);
+    const perHead = computeEqualSplit(totalAmount, selectedWorkers.length);
+
+    const histories = safeGetItem<Histories>('histories', { nasta: [] });
+    const nastaArray = Array.isArray(histories?.nasta) ? histories.nasta : [];
+
+    const newEntry: NastaEntry = {
+      id: Date.now(),
       date,
       names: selectedWorkers,
-      amount: amt,
+      amount: totalAmount,
+      perHead,
       note,
-      timestamp: Date.now(),
     };
 
-    const entries = safeGetArray<NastaEntry>('nastaHistory');
-    entries.push(entry);
-    safeSetItem('nastaHistory', entries);
+    const updatedNasta = [newEntry, ...nastaArray];
+    safeSetItem('histories', { ...histories, nasta: updatedNasta });
 
-    // Update accounts: Nasta increases cost (deduction)
-    const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
-    selectedWorkers.forEach((worker) => {
-      if (!accounts[worker]) {
-        accounts[worker] = { bill: 0, cost: 0 };
-      }
-      accounts[worker].cost += amt;
+    // Update accounts for each worker
+    selectedWorkers.forEach((workerName) => {
+      const accountKey = `account_${workerName}`;
+      const account = safeGetItem<Account>(accountKey, {});
+      const currentNasta = (account?.nasta) || 0;
+      safeSetItem(accountKey, { ...account, nasta: currentNasta + perHead });
     });
-    safeSetItem('accounts', accounts);
 
-    setSelectedWorkers([]);
     setAmount('');
     setNote('');
-    loadHistory();
+    setSelectedWorkers([]);
+    loadEntries();
     notify.success('নাস্তা সফলভাবে যোগ করা হয়েছে');
   };
 
   const handleDelete = () => {
-    if (!deleteId) return;
+    if (deleteId === null) return;
 
-    const entries = safeGetArray<NastaEntry>('nastaHistory');
-    const entry = entries.find((e) => e.id === deleteId);
-    if (!entry) return;
+    const histories = safeGetItem<Histories>('histories', { nasta: [] });
+    const nastaArray = Array.isArray(histories?.nasta) ? histories.nasta : [];
 
-    // Reverse account updates: decrease cost
-    const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
-    entry.names.forEach((worker) => {
-      if (accounts[worker]) {
-        accounts[worker].cost -= entry.amount;
-      }
+    const entryToDelete = nastaArray.find((e) => e.id === deleteId);
+    if (!entryToDelete) {
+      notify.error('এন্ট্রি খুঁজে পাওয়া যায়নি');
+      setDeleteId(null);
+      return;
+    }
+
+    // Compute per-head amount with fallback for legacy entries
+    const perHead = entryToDelete.perHead ?? computeEqualSplit(entryToDelete.amount, entryToDelete.names.length);
+
+    // Reverse account updates
+    entryToDelete.names.forEach((workerName) => {
+      const accountKey = `account_${workerName}`;
+      const account = safeGetItem<Account>(accountKey, {});
+      const currentNasta = (account?.nasta) || 0;
+      safeSetItem(accountKey, { ...account, nasta: currentNasta - perHead });
     });
-    safeSetItem('accounts', accounts);
 
-    const updated = entries.filter((e) => e.id !== deleteId);
-    safeSetItem('nastaHistory', updated);
+    const updatedNasta = nastaArray.filter((e) => e.id !== deleteId);
+    safeSetItem('histories', { ...histories, nasta: updatedNasta });
 
-    loadHistory();
+    loadEntries();
     setDeleteId(null);
-    notify.success('এন্ট্রি মুছে ফেলা হয়েছে');
+    notify.success('নাস্তা মুছে ফেলা হয়েছে');
+  };
+
+  const toggleWorker = (workerName: string) => {
+    setSelectedWorkers((prev) =>
+      prev.includes(workerName) ? prev.filter((w) => w !== workerName) : [...prev, workerName]
+    );
   };
 
   return (
@@ -175,7 +185,7 @@ export default function NastaSection() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="amount">পরিমাণ (টাকা)</Label>
+                <Label htmlFor="amount">মোট পরিমাণ (৳)</Label>
                 <Input
                   id="amount"
                   type="number"
@@ -189,13 +199,13 @@ export default function NastaSection() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="note">নোট (ঐচ্ছিক)</Label>
+                <Label htmlFor="note">নোট</Label>
                 <Textarea
                   id="note"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  className="border-2"
                   rows={2}
+                  className="border-2"
                 />
               </div>
 
@@ -221,28 +231,28 @@ export default function NastaSection() {
                   <TableRow>
                     <TableHead>তারিখ</TableHead>
                     <TableHead>নাম</TableHead>
-                    <TableHead className="text-right">পরিমাণ</TableHead>
-                    <TableHead>নোট</TableHead>
+                    <TableHead className="text-right">মোট</TableHead>
+                    <TableHead className="text-right">প্রতি জন</TableHead>
                     <TableHead className="text-center">অ্যাকশন</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {history.length === 0 ? (
+                  {entries.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                         কোনো এন্ট্রি নেই
                       </TableCell>
                     </TableRow>
                   ) : (
-                    history.map((entry) => (
+                    entries.map((entry) => (
                       <TableRow key={entry.id}>
                         <TableCell className="font-medium">{entry.date}</TableCell>
                         <TableCell>{entry.names.join(', ')}</TableCell>
                         <TableCell className="text-right font-bold text-amber-700">
                           ৳{entry.amount.toFixed(0)}
                         </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {entry.note || '-'}
+                        <TableCell className="text-right text-sm text-gray-600">
+                          ৳{entry.perHead.toFixed(0)}
                         </TableCell>
                         <TableCell className="text-center">
                           <Button
