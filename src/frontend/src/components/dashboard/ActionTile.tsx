@@ -15,16 +15,19 @@ export default function ActionTile({ icon, label, onClick, bgGradient, size = 'a
       container: 'rounded-2xl p-4 border-2 border-black w-full min-w-0',
       icon: 'w-12 h-12',
       text: 'text-sm',
+      gap: 'gap-2',
     },
     user: {
       container: 'rounded-2xl p-3 border-2 border-black w-full min-w-0',
       icon: 'w-10 h-10',
       text: 'text-xs',
+      gap: 'gap-1.5',
     },
     small: {
-      container: 'rounded-xl p-2 border-2 border-black w-full min-w-0',
-      icon: 'w-7 h-7',
+      container: 'rounded-xl p-1.5 border-2 border-black w-full min-w-0',
+      icon: 'w-5 h-5',
       text: 'text-[10px]',
+      gap: 'gap-0.5',
     },
   };
 
@@ -33,9 +36,10 @@ export default function ActionTile({ icon, label, onClick, bgGradient, size = 'a
   return (
     <button
       onClick={onClick}
-      className={`bg-gradient-to-br ${bgGradient} ${styles.container} shadow-md active:scale-95 transition-transform touch-manipulation aspect-square`}
+      className={`bg-gradient-to-br ${bgGradient} ${styles.container} shadow-md active:scale-95 transition-transform touch-manipulation`}
+      style={{ aspectRatio: size === 'small' ? '1.1' : '1' }}
     >
-      <div className="flex flex-col items-center justify-center gap-0.5 h-full">
+      <div className={`flex flex-col items-center justify-center ${styles.gap} h-full`}>
         {typeof icon === 'string' ? (
           <img src={icon} alt={label} className={styles.icon} />
         ) : (

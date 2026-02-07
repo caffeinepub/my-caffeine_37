@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
+import { Textarea } from '../../../components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
 import { safeGetItem, safeSetItem, safeGetArray } from '../../../lib/storage/safeStorage';
 import { notify } from '../../../components/feedback/notify';
@@ -14,7 +15,8 @@ interface PaymentEntry {
   date: string;
   names: string[];
   amount: number;
-  perPerson: number;
+  perHead: number;
+  note: string;
   timestamp: number;
 }
 
@@ -22,6 +24,7 @@ export default function PaymentLoanSection() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedWorkers, setSelectedWorkers] = useState<string[]>([]);
   const [amount, setAmount] = useState('');
+  const [note, setNote] = useState('');
   const [workers, setWorkers] = useState<string[]>([]);
   const [history, setHistory] = useState<PaymentEntry[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -37,7 +40,7 @@ export default function PaymentLoanSection() {
   };
 
   const loadHistory = () => {
-    const entries = safeGetArray<PaymentEntry>('loanHistory');
+    const entries = safeGetArray<PaymentEntry>('paymentHistory');
     setHistory(entries.sort((a, b) => b.timestamp - a.timestamp));
   };
 
@@ -60,31 +63,33 @@ export default function PaymentLoanSection() {
       return;
     }
 
-    const perPerson = Number(amount) / selectedWorkers.length;
+    const perHead = Number(amount) / selectedWorkers.length;
     const entry: PaymentEntry = {
       id: Date.now().toString(),
       date,
       names: selectedWorkers,
       amount: Number(amount),
-      perPerson,
+      perHead,
+      note,
       timestamp: Date.now(),
     };
 
-    const entries = safeGetArray<PaymentEntry>('loanHistory');
+    const entries = safeGetArray<PaymentEntry>('paymentHistory');
     entries.push(entry);
-    safeSetItem('loanHistory', entries);
+    safeSetItem('paymentHistory', entries);
 
     const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
     selectedWorkers.forEach((worker) => {
       if (!accounts[worker]) {
         accounts[worker] = { bill: 0, cost: 0 };
       }
-      accounts[worker].cost += perPerson;
+      accounts[worker].cost += perHead;
     });
     safeSetItem('accounts', accounts);
 
     setSelectedWorkers([]);
     setAmount('');
+    setNote('');
     loadHistory();
     notify.success('পেমেন্ট সফলভাবে যোগ করা হয়েছে');
   };
@@ -92,20 +97,20 @@ export default function PaymentLoanSection() {
   const handleDelete = () => {
     if (!deleteId) return;
 
-    const entries = safeGetArray<PaymentEntry>('loanHistory');
+    const entries = safeGetArray<PaymentEntry>('paymentHistory');
     const entry = entries.find((e) => e.id === deleteId);
     if (!entry) return;
 
     const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
     entry.names.forEach((worker) => {
       if (accounts[worker]) {
-        accounts[worker].cost -= entry.perPerson;
+        accounts[worker].cost -= entry.perHead;
       }
     });
     safeSetItem('accounts', accounts);
 
     const updated = entries.filter((e) => e.id !== deleteId);
-    safeSetItem('loanHistory', updated);
+    safeSetItem('paymentHistory', updated);
 
     loadHistory();
     setDeleteId(null);
@@ -117,7 +122,7 @@ export default function PaymentLoanSection() {
       <div className="space-y-6">
         <Card className="border-rose-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-rose-500 to-pink-500">
-            <CardTitle className="text-lg text-white">নতুন পেমেন্ট যোগ করুন</CardTitle>
+            <CardTitle className="text-lg text-white">নতুন পেমেন্ট/লোন যোগ করুন</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 pt-6">
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -159,7 +164,19 @@ export default function PaymentLoanSection() {
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  placeholder="পরিমাণ"
+                  placeholder="মোট পরিমাণ"
+                  className="border-2"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="note">নোট (ঐচ্ছিক)</Label>
+                <Textarea
+                  id="note"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="নোট লিখুন..."
+                  rows={2}
                   className="border-2"
                 />
               </div>
@@ -173,7 +190,7 @@ export default function PaymentLoanSection() {
 
         <Card className="border-rose-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-rose-500 to-pink-500">
-            <CardTitle className="text-lg text-white">পেমেন্ট হিস্ট্রি</CardTitle>
+            <CardTitle className="text-lg text-white">পেমেন্ট/লোন হিস্ট্রি</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="overflow-x-auto">
@@ -182,15 +199,16 @@ export default function PaymentLoanSection() {
                   <TableRow>
                     <TableHead>তারিখ</TableHead>
                     <TableHead>নাম</TableHead>
-                    <TableHead className="text-right">মোট</TableHead>
-                    <TableHead className="text-right">প্রতি জন</TableHead>
+                    <TableHead>মোট</TableHead>
+                    <TableHead>প্রতি জন</TableHead>
+                    <TableHead>নোট</TableHead>
                     <TableHead className="text-center">অ্যাকশন</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {history.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                      <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                         কোনো এন্ট্রি নেই
                       </TableCell>
                     </TableRow>
@@ -199,10 +217,9 @@ export default function PaymentLoanSection() {
                       <TableRow key={entry.id}>
                         <TableCell className="font-medium">{entry.date}</TableCell>
                         <TableCell>{entry.names.join(', ')}</TableCell>
-                        <TableCell className="text-right font-bold text-rose-700">
-                          ৳{entry.amount.toFixed(0)}
-                        </TableCell>
-                        <TableCell className="text-right">৳{entry.perPerson.toFixed(0)}</TableCell>
+                        <TableCell className="font-bold text-rose-700">৳{entry.amount.toFixed(0)}</TableCell>
+                        <TableCell>৳{entry.perHead.toFixed(2)}</TableCell>
+                        <TableCell className="max-w-xs truncate">{entry.note || '-'}</TableCell>
                         <TableCell className="text-center">
                           <Button
                             variant="ghost"

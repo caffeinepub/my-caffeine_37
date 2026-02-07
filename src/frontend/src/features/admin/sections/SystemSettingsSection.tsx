@@ -10,7 +10,8 @@ import { notify } from '../../../components/feedback/notify';
 import { getBrandingSettings, setBrandingSettings } from '../../../lib/branding/brandingStorage';
 import { loadDashboardOverrides, saveDashboardOverrides, DashboardOverrides } from '../../../lib/storage/dashboardOverridesStorage';
 import { loadNoticeConfig, saveNoticeConfig, NoticeConfig } from '../../../lib/storage/noticeStorage';
-import { Camera } from 'lucide-react';
+import { loadAdminCredentials, saveAdminCredentials, AdminCredentials } from '../../../lib/storage/adminCredentialsStorage';
+import { Camera, Lock } from 'lucide-react';
 
 export default function SystemSettingsSection() {
   const [activeTab, setActiveTab] = useState('branding');
@@ -18,11 +19,37 @@ export default function SystemSettingsSection() {
   return (
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="branding">ব্র্যান্ডিং</TabsTrigger>
-          <TabsTrigger value="labels">লেবেল এডিট</TabsTrigger>
-          <TabsTrigger value="notice">নোটিশ</TabsTrigger>
-          <TabsTrigger value="sections">সেকশন</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-5 gap-1">
+          <TabsTrigger 
+            value="branding"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:font-bold bg-purple-100 text-purple-900 hover:bg-purple-200 transition-all"
+          >
+            ব্র্যান্ডিং
+          </TabsTrigger>
+          <TabsTrigger 
+            value="labels"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:font-bold bg-blue-100 text-blue-900 hover:bg-blue-200 transition-all"
+          >
+            লেবেল এডিট
+          </TabsTrigger>
+          <TabsTrigger 
+            value="notice"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-600 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:font-bold bg-amber-100 text-amber-900 hover:bg-amber-200 transition-all"
+          >
+            নোটিশ
+          </TabsTrigger>
+          <TabsTrigger 
+            value="admin"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-600 data-[state=active]:to-rose-600 data-[state=active]:text-white data-[state=active]:font-bold bg-red-100 text-red-900 hover:bg-red-200 transition-all"
+          >
+            Admin
+          </TabsTrigger>
+          <TabsTrigger 
+            value="sections"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:font-bold bg-emerald-100 text-emerald-900 hover:bg-emerald-200 transition-all"
+          >
+            সেকশন
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="branding">
@@ -35,6 +62,10 @@ export default function SystemSettingsSection() {
 
         <TabsContent value="notice">
           <NoticeTab />
+        </TabsContent>
+
+        <TabsContent value="admin">
+          <AdminSettingsTab />
         </TabsContent>
 
         <TabsContent value="sections">
@@ -87,7 +118,7 @@ function BrandingTab() {
               </div>
             )}
             <label htmlFor="logo-upload" className="cursor-pointer">
-              <div className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-colors font-bold">
                 <Camera className="w-5 h-5" />
                 <span>লোগো আপলোড করুন</span>
               </div>
@@ -125,7 +156,7 @@ function BrandingTab() {
           />
         </div>
 
-        <Button onClick={handleSave} className="w-full">
+        <Button onClick={handleSave} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold">
           সংরক্ষণ করুন
         </Button>
       </CardContent>
@@ -171,7 +202,7 @@ function LabelsTab() {
           </div>
         ))}
 
-        <Button onClick={handleSave} className="w-full">
+        <Button onClick={handleSave} className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold">
           সংরক্ষণ করুন
         </Button>
       </CardContent>
@@ -213,8 +244,82 @@ function NoticeTab() {
           />
         </div>
 
-        <Button onClick={handleSave} className="w-full">
+        <Button onClick={handleSave} className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold">
           সংরক্ষণ করুন
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+function AdminSettingsTab() {
+  const [credentials, setCredentials] = useState<AdminCredentials>(loadAdminCredentials());
+  const [error, setError] = useState<string>('');
+
+  const handleSave = () => {
+    setError('');
+    
+    if (!credentials.username.trim() || !credentials.password.trim()) {
+      setError('Username and password cannot be empty');
+      notify.error('Username and password cannot be empty');
+      return;
+    }
+
+    try {
+      saveAdminCredentials(credentials);
+      notify.success('Admin credentials updated successfully. Please log out and log in again with the new credentials.');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save credentials';
+      setError(errorMessage);
+      notify.error(errorMessage);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Lock className="w-5 h-5" />
+          Admin Credentials
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+          <p className="text-sm text-amber-800">
+            <strong>Important:</strong> After changing your admin credentials, you will need to log out and log in again with the new username and password.
+          </p>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <Label htmlFor="admin-username">Admin Username</Label>
+          <Input
+            id="admin-username"
+            type="text"
+            value={credentials.username}
+            onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+            placeholder="Enter admin username"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="admin-password">Admin Password</Label>
+          <Input
+            id="admin-password"
+            type="password"
+            value={credentials.password}
+            onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+            placeholder="Enter admin password"
+          />
+        </div>
+
+        <Button onClick={handleSave} className="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold">
+          Save Admin Credentials
         </Button>
       </CardContent>
     </Card>

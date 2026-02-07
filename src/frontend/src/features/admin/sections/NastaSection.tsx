@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
+import { Textarea } from '../../../components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
 import { safeGetItem, safeSetItem, safeGetArray } from '../../../lib/storage/safeStorage';
 import { notify } from '../../../components/feedback/notify';
@@ -14,7 +15,8 @@ interface NastaEntry {
   date: string;
   names: string[];
   amount: number;
-  perPerson: number;
+  perHead: number;
+  note: string;
   timestamp: number;
 }
 
@@ -22,6 +24,7 @@ export default function NastaSection() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedWorkers, setSelectedWorkers] = useState<string[]>([]);
   const [amount, setAmount] = useState('');
+  const [note, setNote] = useState('');
   const [workers, setWorkers] = useState<string[]>([]);
   const [history, setHistory] = useState<NastaEntry[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -60,13 +63,14 @@ export default function NastaSection() {
       return;
     }
 
-    const perPerson = Number(amount) / selectedWorkers.length;
+    const perHead = Number(amount) / selectedWorkers.length;
     const entry: NastaEntry = {
       id: Date.now().toString(),
       date,
       names: selectedWorkers,
       amount: Number(amount),
-      perPerson,
+      perHead,
+      note,
       timestamp: Date.now(),
     };
 
@@ -79,12 +83,13 @@ export default function NastaSection() {
       if (!accounts[worker]) {
         accounts[worker] = { bill: 0, cost: 0 };
       }
-      accounts[worker].cost += perPerson;
+      accounts[worker].cost += perHead;
     });
     safeSetItem('accounts', accounts);
 
     setSelectedWorkers([]);
     setAmount('');
+    setNote('');
     loadHistory();
     notify.success('নাস্তা সফলভাবে যোগ করা হয়েছে');
   };
@@ -99,7 +104,7 @@ export default function NastaSection() {
     const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
     entry.names.forEach((worker) => {
       if (accounts[worker]) {
-        accounts[worker].cost -= entry.perPerson;
+        accounts[worker].cost -= entry.perHead;
       }
     });
     safeSetItem('accounts', accounts);
@@ -159,7 +164,19 @@ export default function NastaSection() {
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  placeholder="পরিমাণ"
+                  placeholder="মোট পরিমাণ"
+                  className="border-2"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="note">নোট (ঐচ্ছিক)</Label>
+                <Textarea
+                  id="note"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="নোট লিখুন..."
+                  rows={2}
                   className="border-2"
                 />
               </div>
@@ -173,7 +190,7 @@ export default function NastaSection() {
 
         <Card className="border-amber-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500">
-            <CardTitle className="text-lg text-white">নাস্তা হিস্ট্রি</CardTitle>
+            <CardTitle className="text-lg text-white">নাস্তার হিস্ট্রি</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="overflow-x-auto">
@@ -182,15 +199,16 @@ export default function NastaSection() {
                   <TableRow>
                     <TableHead>তারিখ</TableHead>
                     <TableHead>নাম</TableHead>
-                    <TableHead className="text-right">মোট</TableHead>
-                    <TableHead className="text-right">প্রতি জন</TableHead>
+                    <TableHead>মোট</TableHead>
+                    <TableHead>প্রতি জন</TableHead>
+                    <TableHead>নোট</TableHead>
                     <TableHead className="text-center">অ্যাকশন</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {history.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                      <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                         কোনো এন্ট্রি নেই
                       </TableCell>
                     </TableRow>
@@ -199,10 +217,9 @@ export default function NastaSection() {
                       <TableRow key={entry.id}>
                         <TableCell className="font-medium">{entry.date}</TableCell>
                         <TableCell>{entry.names.join(', ')}</TableCell>
-                        <TableCell className="text-right font-bold text-amber-700">
-                          ৳{entry.amount.toFixed(0)}
-                        </TableCell>
-                        <TableCell className="text-right">৳{entry.perPerson.toFixed(0)}</TableCell>
+                        <TableCell className="font-bold text-amber-700">৳{entry.amount.toFixed(0)}</TableCell>
+                        <TableCell>৳{entry.perHead.toFixed(2)}</TableCell>
+                        <TableCell className="max-w-xs truncate">{entry.note || '-'}</TableCell>
                         <TableCell className="text-center">
                           <Button
                             variant="ghost"

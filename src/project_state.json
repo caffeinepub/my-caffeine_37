@@ -1,24 +1,81 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
+  "summary": "UI/UX update request: adjust user panel card typography/sizing, reduce card button sizes, and apply distinct colors to admin panel save/submit buttons and section tabs for clearer separation.",
   "architectural_notes": [],
   "known_issues": [
-    "Intermittent deployment/build failures (likely network/server-side) requiring a rebuild retry."
+    "User reports UI regression: user panel card titles/text and user/friend text became too small; admin save/submit buttons have no color; admin sections/tabs look merged without distinct colors."
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-retry-the-application-build-and-deployment-without-introducing-any-code-changes-since-the-user-explicitly-requested-a-rebuild-after-an-intermittent-deployment-failure",
-      "title": "Retry the application build and deployment without introducing any code changes, since the user explicitly requested a rebuild after an intermittent deployment failure.",
+      "id": "feature-update-the-user-dashboard-kpi-cards-to-match-the-provided-screenshot-by-increasing-the-kpi-title-body-font-sizes-and-slightly-increasing-kpi-card-vertical-sizing-padding-spacing-so-the-three-kpi-cards-are-visually-larger-and-easier-to-read",
+      "title": "Update the User Dashboard KPI cards to match the provided screenshot by increasing the KPI title/body font sizes and slightly increasing KPI card vertical sizing (padding/spacing) so the three KPI cards are visually larger and easier to read.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-reduce-the-user-dashboard-action-tile-4-tiles-production-work-nasta-payment-loan-button-size-by-approximately-10-while-keeping-the-tile-labels-readable-and-adjust-tile-typography-so-it-is-not-overly-small-compared-to-the-kpi-section",
+      "title": "Reduce the User Dashboard action-tile (4 tiles: Production/Work/Nasta/Payment-Loan) button size by approximately 10% while keeping the tile labels readable, and adjust tile typography so it is not overly small compared to the KPI section.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-increase-user-friend-related-text-sizes-across-the-user-panel-views-so-they-are-consistent-with-the-larger-dashboard-section-typography-restore-readability-similar-to-the-previous-section-styling",
+      "title": "Increase 'user/friend' related text sizes across the user panel views so they are consistent with the larger dashboard section typography (restore readability similar to the previous section styling).",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-admin-panel-apply-clear-distinct-colors-to-the-system-settings-tabs-branding-label-edit-notice-admin-section-so-each-tab-section-is-visually-distinguishable-not-appearing-merged-matching-the-intent-of-the-provided-screenshot",
+      "title": "In the Admin panel, apply clear, distinct colors to the System Settings tabs (Branding, Label Edit, Notice, Admin, Section) so each tab/section is visually distinguishable (not appearing merged), matching the intent of the provided screenshot.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-attractive-non-gray-colors-to-admin-panel-primary-action-buttons-save-submit-add-in-settings-and-rate-sections-and-audit-other-admin-sections-to-ensure-their-primary-action-buttons-are-not-colorless-choose-cohesive-colors-that-match-the-existing-gradients-theme",
+      "title": "Add attractive, non-gray colors to Admin panel primary action buttons (Save/Submit/Add) in Settings and Rate sections, and audit other admin sections to ensure their primary action buttons are not colorless; choose cohesive colors that match the existing gradients/theme.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
     }
   ],
-  "new_feature_requests": [],
-  "projectName": "Retry build and redeploy after intermittent deployment failure",
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Match user panel card title/body text sizes to the provided screenshot; make user/friend-related text larger like the previous section.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Resize user panel cards: make the top three cards slightly bigger and reduce the four card buttons by ~10%.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Admin panel: add visually distinct colors to save/submit buttons across sections (settings, rate, and others as needed), choosing suitable colors.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Admin panel: give each tab/section (Branding, Label Edit, Notice, Admin, Section) a different color so they are clearly distinguishable.",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "projectName": "Restore user dashboard card sizing/typography and add distinct admin settings colors",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

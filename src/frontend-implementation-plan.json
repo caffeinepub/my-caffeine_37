@@ -1,20 +1,159 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Retry build and redeploy after intermittent deployment failure",
+  "title": "Restore dashboard readability and admin UI color differentiation",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Trigger a rebuild/redeploy retry for the current revision without changing application source code, and record deployment logs for troubleshooting if it fails again.",
+      "summary": "Increase User Dashboard KPI card typography and vertical sizing to match the provided screenshot.",
       "acceptanceCriteria": [
-        "A new build/deploy attempt is triggered for the current project revision (no source changes).",
-        "If the deployment fails again, the build output/error logs are captured and surfaced so the next request can target a specific fix."
+        "In the user dashboard KPI area (the 1 full-width card + 2 half-width cards), the title text is visibly larger than the current implementation and matches the relative sizing shown in Screenshot_2026-02-07-05-52-41-812_com.android.chrome.jpg.",
+        "The KPI amount text remains prominent and does not overflow or wrap on typical mobile widths.",
+        "No KPI card content is clipped; spacing between KPI cards remains consistent."
       ],
       "file_operations": [
         {
-          "path": "frontend/DEPLOY_RETRY_RUNBOOK.md",
-          "operation": "create",
-          "description": "Add a non-code runbook describing how to retrigger the build/deploy for the current revision without source changes, and where to capture/paste build output and error logs if the deployment fails again."
+          "path": "frontend/src/features/user/components/UserKpiSummary.tsx",
+          "operation": "modify",
+          "description": "Increase KPI title font sizes (full-width + half-width cards), adjust amount typography to remain prominent on mobile, and slightly increase vertical spacing (e.g., title/amount separation) to align with the screenshot."
+        },
+        {
+          "path": "frontend/src/components/dashboard/dashboardBorders.ts",
+          "operation": "modify",
+          "description": "Slightly increase KPI card padding/inner padding constants used by the KPI section (kpiCardPadding/kpiInnerPadding and related spacing helpers) so the three KPI cards render visually larger without clipping."
+        },
+        {
+          "path": "frontend/src/features/user/UserDashboard.tsx",
+          "operation": "modify",
+          "description": "Verify KPI container spacing (kpiGroup* wrappers and surrounding margins) remains consistent after KPI card sizing updates, ensuring no clipping/overflow on mobile."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Make the four User Dashboard action tiles ~10% smaller while improving label readability to better match the KPI section.",
+      "acceptanceCriteria": [
+        "The four user dashboard action tiles are ~10% smaller compared to current (via padding/icon/text adjustments), while still readable on mobile.",
+        "Tile labels are larger than the current 'text-[9px]' feel and closer to the screenshot’s legibility, without causing label wrapping for the default labels.",
+        "Tiles keep a consistent grid layout (2x2) with even spacing and no overlap."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/dashboard/ActionTile.tsx",
+          "operation": "modify",
+          "description": "Tune the 'small' size variant to reduce overall tile footprint (~10%) via padding/icon sizing/aspect ratio while increasing label typography from the current tiny size (avoid the 'text-[9px]' feel). Ensure labels remain single-line for default Bengali labels where possible."
+        },
+        {
+          "path": "frontend/src/features/user/UserDashboard.tsx",
+          "operation": "modify",
+          "description": "Adjust the action-tile grid spacing (gap/padding wrapper) if needed to keep a stable 2x2 layout after ActionTile 'small' sizing updates, ensuring no overlap or wrapping regressions."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Restore larger, consistent user/friend-facing typography across user panel views to match the updated dashboard readability.",
+      "acceptanceCriteria": [
+        "User-facing text in user-related sections (where the app shows user/friend information) is increased from the current small sizing and is visually consistent with the updated dashboard typography.",
+        "No text truncation/regression is introduced in mobile layout for these sections after font-size increases."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/user/production/ProductionHistoryView.tsx",
+          "operation": "modify",
+          "description": "Increase small secondary text sizes (e.g., worker-name lists and supporting labels) to improve readability on mobile while preserving layout."
+        },
+        {
+          "path": "frontend/src/features/user/work/WorkHistoryView.tsx",
+          "operation": "modify",
+          "description": "Increase small text sizes used in list rows/labels so the view matches the updated dashboard typography without causing overflow."
+        },
+        {
+          "path": "frontend/src/features/user/payment/PaymentHistoryView.tsx",
+          "operation": "modify",
+          "description": "Increase note/secondary text sizing (currently very small) and ensure long notes still wrap safely on mobile."
+        },
+        {
+          "path": "frontend/src/features/user/payment/NastaHistoryView.tsx",
+          "operation": "modify",
+          "description": "Increase note/secondary text sizing and ensure long text remains readable and does not break card layout on mobile."
+        },
+        {
+          "path": "frontend/src/features/support/SupportView.tsx",
+          "operation": "modify",
+          "description": "Increase user/thread list and message typography where it is currently small so user-related text remains consistent with the updated dashboard section sizing."
+        },
+        {
+          "path": "frontend/src/features/user/profile/ProfileSettingsView.tsx",
+          "operation": "modify",
+          "description": "Audit and increase any small user profile/settings text sizing to align with the improved dashboard typography while preventing truncation on mobile."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Add distinct, accessible colors to Admin System Settings tabs so each tab is clearly differentiable.",
+      "acceptanceCriteria": [
+        "In System Settings, each tab trigger has a distinct color identity (background and/or text/border) that clearly differentiates it from the other tabs.",
+        "The active tab state remains clearly visible and accessible (sufficient contrast) for each tab color.",
+        "Tab layout remains usable on mobile (no overlap; labels remain readable)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "operation": "modify",
+          "description": "Apply per-tab distinct styling via TabsTrigger className (background/text/border) with a clear active state (e.g., data-[state=active]) for Branding/Labels/Notice/Admin/Section. Keep triggers readable on mobile by tuning padding/text size and adding spacing between triggers (e.g., TabsList gap) as needed. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Apply cohesive, non-gray styling to Admin primary action buttons in Settings and Rate sections and ensure other admin sections’ primary actions are colored.",
+      "acceptanceCriteria": [
+        "In System Settings, the Save buttons for Branding/Labels/Notice/Admin Credentials are visually styled with clear color (not default/gray).",
+        "In Worker Rate Settings, the primary 'Add' button is visually styled with clear color (not default/gray).",
+        "At least one primary action button in each admin section that includes a Save/Submit/Add action uses a colored style that is consistent and readable on light backgrounds."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "operation": "modify",
+          "description": "Style each primary action Button (Save/Submit) in Branding/Labels/Notice/Admin Credentials with attractive, distinct non-gray colors (prefer gradients aligned to the existing theme). Do not modify shadcn ui sources; only use className/props on Button. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
+          "operation": "modify",
+          "description": "Style the primary 'যোগ করুন' (Add) Button with a cohesive non-gray gradient/color treatment consistent with the app theme. Do not modify shadcn ui sources; only use className/props on Button. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/admin/sections/ProductionSection.tsx",
+          "operation": "modify",
+          "description": "Audit primary submit/add actions and ensure at least one primary action button is clearly colored and consistent (do not change behavior). Do not modify shadcn ui sources; use className/props only. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/admin/sections/WorkSection.tsx",
+          "operation": "modify",
+          "description": "Audit primary submit/add actions and ensure at least one primary action button is clearly colored and consistent (do not change behavior). Do not modify shadcn ui sources; use className/props only. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/admin/sections/NastaSection.tsx",
+          "operation": "modify",
+          "description": "Audit primary submit/add actions and ensure at least one primary action button is clearly colored and consistent (do not change behavior). Do not modify shadcn ui sources; use className/props only. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
+          "operation": "modify",
+          "description": "Audit primary submit/add actions and ensure at least one primary action button is clearly colored and consistent (do not change behavior). Do not modify shadcn ui sources; use className/props only. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/admin/sections/CompanyReportSection.tsx",
+          "operation": "modify",
+          "description": "Audit primary submit/add actions and ensure at least one primary action button is clearly colored and consistent (do not change behavior). Do not modify shadcn ui sources; use className/props only. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/admin/sections/ApprovalsSection.tsx",
+          "operation": "modify",
+          "description": "Audit approve/reject and other primary action buttons to ensure they have a clear colored style consistent with the admin theme (while preserving destructive/secondary semantics). Do not modify shadcn ui sources; use className/props only. Verify the component's usage instructions before implementing."
         }
       ]
     }

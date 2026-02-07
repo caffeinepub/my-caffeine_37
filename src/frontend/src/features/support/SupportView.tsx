@@ -73,7 +73,7 @@ export default function SupportView({ onBack }: SupportViewProps) {
             <Card className="shadow-xl border-2 border-blue-200">
               <CardContent className="pt-6">
                 {threads.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-12 text-lg">কোনো মেসেজ নেই</p>
+                  <p className="text-center text-muted-foreground py-12 text-base">কোনো মেসেজ নেই</p>
                 ) : (
                   <div className="space-y-3">
                     {threads.map((thread) => (
@@ -84,7 +84,7 @@ export default function SupportView({ onBack }: SupportViewProps) {
                       >
                         <div className="flex justify-between items-start">
                           <div>
-                            <p className="font-bold text-lg text-blue-900">{thread.userName}</p>
+                            <p className="font-bold text-base text-blue-900">{thread.userName}</p>
                             <p className="text-sm text-muted-foreground mt-1">
                               {thread.messages[thread.messages.length - 1]?.message.slice(0, 50)}...
                             </p>
@@ -157,7 +157,7 @@ export default function SupportView({ onBack }: SupportViewProps) {
                           }`}
                         >
                           <p className="text-sm font-bold mb-1">{msg.from}</p>
-                          <p className="text-base">{msg.message}</p>
+                          <p className="text-sm">{msg.message}</p>
                           <p className="text-xs opacity-70 mt-2">
                             {new Date(msg.timestamp).toLocaleString('bn-BD')}
                           </p>
@@ -166,7 +166,7 @@ export default function SupportView({ onBack }: SupportViewProps) {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center text-muted-foreground py-12 text-lg">
+                  <p className="text-center text-muted-foreground py-12 text-base">
                     কোনো মেসেজ নেই। প্রথম মেসেজ পাঠান।
                   </p>
                 )}
@@ -184,7 +184,7 @@ export default function SupportView({ onBack }: SupportViewProps) {
             onChange={(e) => setMessage(e.target.value)}
             placeholder="মেসেজ লিখুন..."
             rows={2}
-            className="flex-1 border-2 border-blue-300 focus:border-blue-500"
+            className="flex-1 border-2 border-blue-300 focus:border-blue-500 text-sm"
           />
           <Button 
             onClick={handleSendMessage}

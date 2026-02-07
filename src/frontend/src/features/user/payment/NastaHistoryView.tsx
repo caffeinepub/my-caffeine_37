@@ -93,7 +93,7 @@ export default function NastaHistoryView() {
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex-1">
                           <div className="text-sm font-semibold text-orange-900">{entry.date || '-'}</div>
-                          <div className="text-xs text-gray-600 mt-1 break-words">
+                          <div className="text-sm text-gray-600 mt-1 break-words">
                             {entry.note || '-'}
                           </div>
                         </div>

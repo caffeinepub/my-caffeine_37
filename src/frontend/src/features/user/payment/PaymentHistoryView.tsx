@@ -104,7 +104,7 @@ export default function PaymentHistoryView({ onBack }: PaymentHistoryViewProps) 
                             </Badge>
                             <span className="text-sm font-semibold text-blue-900">{item.entry.date || '-'}</span>
                           </div>
-                          <div className="text-xs text-gray-600 break-words">
+                          <div className="text-sm text-gray-600 break-words">
                             {item.entry.note || '-'}
                           </div>
                         </div>

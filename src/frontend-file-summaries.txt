@@ -1,7 +1,7 @@
 {
   "frontend/src/App.tsx": "Main application component that orchestrates admin-only authentication flow and conditional rendering of login/admin views with toast notifications, removing all registration toggle state and RegisterView rendering.",
   "frontend/src/state/session/sessionTypes.ts": "TypeScript type definitions for session state including userId field and updated PendingRequest interface with optional userId for registration-order ID assignment.",
-  "frontend/src/state/session/SessionProvider.tsx": "React context provider managing authentication with ensureUserIds integration to assign stable numeric IDs and proper session userId hydration for both new and legacy users.",
+  "frontend/src/state/session/SessionProvider.tsx": "React context provider managing authentication with admin credential validation from localStorage, ensureUserIds integration for stable numeric user IDs, and proper session hydration for both admin and user roles.",
   "frontend/src/state/session/useSession.ts": "Custom React hook providing access to session context for authentication state and operations throughout the application.",
   "frontend/src/lib/storage/safeStorage.ts": "Enhanced safe localStorage utilities with array normalization helpers (safeGetArray) that handle both old object-based and new array-based storage formats, plus validation functions.",
   "frontend/src/components/feedback/notify.ts": "Notification helper using Sonner toast library for consistent success/error/info messages across the application.",
@@ -14,7 +14,7 @@
   "frontend/src/features/admin/sections/PaymentLoanSection.tsx": "Payment and loan management with rose-pink gradient theme, colorful worker selection buttons with distinct selected/unselected states, using corrected safeGetArray calls without default parameter.",
   "frontend/src/features/admin/sections/SettingsSection.tsx": "Wrapper component that renders SystemSettingsSection for backward compatibility.",
   "frontend/src/features/admin/sections/ApprovalsSection.tsx": "Pending user registration approval interface that preserves the pre-assigned userId from pending requests when approving users, ensuring stable registration-order IDs.",
-  "frontend/src/features/user/UserDashboard.tsx": "User dashboard with high-contrast white username (larger, centered) and smaller ID displayed directly below in the header, with layout adjusted to fit within the dashboard frame without overflow.",
+  "frontend/src/features/user/UserDashboard.tsx": "User dashboard with two-line header format (Username: + name on first line, Id no: + userId on second line), significantly reduced spacing/padding throughout (notice, clock, KPI, tiles, footer) to fit entire layout within mobile viewport without scrolling.",
   "frontend/src/features/user/production/ProductionHistoryView.tsx": "User production history with card-based layout (no tables), larger readable text, no horizontal scrolling, and emphasized totals.",
   "frontend/src/features/user/production/workerNameFormat.ts": "Utility function to safely format worker names from production entries returning string array with fallback for missing data, supporting both names array and legacy single-name format.",
   "frontend/src/features/user/work/WorkHistoryView.tsx": "User work history with card-based layout (no tables), larger readable text, no horizontal scrolling, and emphasized totals.",
@@ -40,14 +40,14 @@
   "frontend/src/lib/storage/companyReportStorage.ts": "localStorage utilities for managing company report entries with filtering by type (due/taken) and CRUD operations.",
   "frontend/src/lib/storage/supportMessagingStorage.ts": "localStorage utilities for managing support messaging threads between users and admin with message history.",
   "frontend/src/features/admin/sections/UserRequestsSection.tsx": "Admin section displaying only pending user registration requests using ApprovalsSection component.",
-  "frontend/src/features/admin/sections/SystemSettingsSection.tsx": "Admin settings section with four tabs (branding with logo upload, label edit with type-safe override keys, notice, sections placeholder) for customizing company info, dashboard labels, notice configuration, and future section management with localStorage persistence.",
+  "frontend/src/features/admin/sections/SystemSettingsSection.tsx": "Admin settings section with five tabs (branding with logo upload, label edit, notice, admin credentials management with validation/persistence, sections placeholder) for customizing company info, dashboard labels, notice configuration, admin login credentials, and future section management.",
   "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx": "Admin section for managing workers and their rates (add, delete, edit single/double rates) with confirmation dialogs.",
   "frontend/src/features/admin/sections/FinalBalanceSection.tsx": "Admin section displaying final balance table showing worker totals (work, cost, balance) in read-only format.",
   "frontend/src/features/admin/sections/CompanyReportSection.tsx": "Company report section displaying both \"নেওয়া\" (Taken) and \"পাওনা\" (Due) reports on a single page with separate tables, colorful gradient headers, and a unified entry form with radio selection for report type.",
   "frontend/src/features/support/SupportView.tsx": "Support messaging view with fixed header, scrollable message area, fixed message input area above footer, and fixed footer for both admin and user flows.",
-  "frontend/src/components/layout/DashboardFooter.tsx": "Fixed dashboard footer with compact Settings button (bottom-left) and Support/Chat button using dashboard gradient.",
+  "frontend/src/components/layout/DashboardFooter.tsx": "Fixed dashboard footer with significantly reduced padding/button sizing (py-1.5, 10px/xs text) to minimize vertical space and help full dashboard fit on mobile viewports.",
   "frontend/src/features/user/components/UserKpiSummary.tsx": "User KPI summary with reduced spacing and typography (xs/10px labels, xl/base values) to support compact mobile viewport fitting.",
-  "frontend/src/components/dashboard/ActionTile.tsx": "Shared action tile component with enhanced 'small' size variant (w-7 icon, 10px text, reduced padding/gap) for ultra-compact mobile dashboard layouts.",
+  "frontend/src/components/dashboard/ActionTile.tsx": "Shared action tile component with ultra-compact 'small' size variant (w-6 icon, 9px text, 1.5px padding, 1.5px gap, 1.1 aspect ratio) for mobile dashboard layouts that need to fit within viewport without scrolling.",
   "frontend/src/features/user/components/ClockCard.tsx": "Live-updating clock card with significantly reduced padding and text sizes (2xl time, 10px date) to minimize vertical space while maintaining readability.",
   "frontend/src/components/dashboard/dashboardBorders.ts": "Shared Tailwind class constants providing thin black borders for KPI cards, KPI group container, outer container (for admin), and action tile containers with compact sizing for consistent dashboard styling.",
   "frontend/src/components/layout/BottomSheet.tsx": "Reusable full-screen bottom-sheet overlay component with white background, rounded top corners, slide-up animation, backdrop, and close button for user navigation.",
@@ -58,5 +58,6 @@
   "frontend/src/lib/storage/userIdStorage.ts": "localStorage utilities for stable auto-generated user IDs that preserve existing IDs, assign IDs only once for legacy users, and never reorder based on approval order.",
   "frontend/src/components/layout/PopupModal.tsx": "Reusable popup modal with larger screen-filling size (95vh height, max-w-5xl), overflow-x-hidden for no horizontal scrolling, and dashboard gradient header.",
   "frontend/src/features/user/payment/NastaHistoryView.tsx": "User nasta history with card-based layout (no tables), larger readable text, break-words for long notes, and no horizontal scrolling.",
-  "frontend/DEPLOY_RETRY_RUNBOOK.md": "Documentation for retrying builds/deploys after intermittent failures, including troubleshooting steps and common issues without requiring code changes."
+  "frontend/DEPLOY_RETRY_RUNBOOK.md": "Documentation for retrying builds/deploys after intermittent failures, including troubleshooting steps and common issues without requiring code changes.",
+  "frontend/src/lib/storage/adminCredentialsStorage.ts": "localStorage utilities for managing admin credentials with safe defaults (Mamun220/Mamun220), validation helpers, and persistence for admin login authentication."
 }

@@ -1,32 +1,111 @@
 {
   "kind": "build_request",
-  "title": "Retry build and redeploy after intermittent deployment failure",
+  "title": "Restore user dashboard card sizing/typography and add distinct admin settings colors",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Retry the application build and deployment without introducing any code changes, since the user explicitly requested a rebuild after an intermittent deployment failure.",
-      "target": "unknown",
+      "text": "Update the User Dashboard KPI cards to match the provided screenshot by increasing the KPI title/body font sizes and slightly increasing KPI card vertical sizing (padding/spacing) so the three KPI cards are visually larger and easier to read.",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-msg-user-1"
+          "msg-1"
         ],
         "quotes": [
-          "আবার বিল্ড কর"
+          "ইউজার প্যানেলের সেকশন কার্ডের টাইটেল ... লেখাগুলা ছোট হয়ে গেছে এগুলো আরেকটু বড় করতে হবে ... উপরের তিনটা কার্ড আর একটু বড় করে দাও",
+          "আমি একটা স্ক্রিনশট দিয়েছি স্ক্রিনশটে সাইজ গুলা যেমন আছে এরকম ভাবে মিলিয়ে দিও"
         ]
       },
       "acceptanceCriteria": [
-        "A new build/deploy attempt is triggered for the current project revision (no source changes).",
-        "If the deployment fails again, the build output/error logs are captured and surfaced so the next request can target a specific fix."
+        "In the user dashboard KPI area (the 1 full-width card + 2 half-width cards), the title text is visibly larger than the current implementation and matches the relative sizing shown in Screenshot_2026-02-07-05-52-41-812_com.android.chrome.jpg.",
+        "The KPI amount text remains prominent and does not overflow or wrap on typical mobile widths.",
+        "No KPI card content is clipped; spacing between KPI cards remains consistent."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Reduce the User Dashboard action-tile (4 tiles: Production/Work/Nasta/Payment-Loan) button size by approximately 10% while keeping the tile labels readable, and adjust tile typography so it is not overly small compared to the KPI section.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "এই চারটা কার্ডের বাটন গুলো আরেকটু ছোট করে দাও",
+          "২/১০%"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The four user dashboard action tiles are ~10% smaller compared to current (via padding/icon/text adjustments), while still readable on mobile.",
+        "Tile labels are larger than the current 'text-[9px]' feel and closer to the screenshot’s legibility, without causing label wrapping for the default labels.",
+        "Tiles keep a consistent grid layout (2x2) with even spacing and no overlap."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Increase 'user/friend' related text sizes across the user panel views so they are consistent with the larger dashboard section typography (restore readability similar to the previous section styling).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "ইউজার ফ্রেন্ডের সবগুলা লেখা ছোট হয়ে গেছে লেখাগুলো আরেকটু বড় থাকবে আগের সেকশন এর মত"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User-facing text in user-related sections (where the app shows user/friend information) is increased from the current small sizing and is visually consistent with the updated dashboard typography.",
+        "No text truncation/regression is introduced in mobile layout for these sections after font-size increases."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "In the Admin panel, apply clear, distinct colors to the System Settings tabs (Branding, Label Edit, Notice, Admin, Section) so each tab/section is visually distinguishable (not appearing merged), matching the intent of the provided screenshot.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "ব্র্যান্ডিং, লেবেলে এডিট, নোটিশ, এডমিন, সেকশন এ প্রত্যেকটা কালার দিয়ে দিবে যেন বোঝা যায় এগুলা আলাদাভাবে আছে এখন বোঝা যায় সবগুলা একসাথে আছে"
+        ]
+      },
+      "acceptanceCriteria": [
+        "In System Settings, each tab trigger has a distinct color identity (background and/or text/border) that clearly differentiates it from the other tabs.",
+        "The active tab state remains clearly visible and accessible (sufficient contrast) for each tab color.",
+        "Tab layout remains usable on mobile (no overlap; labels remain readable)."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Add attractive, non-gray colors to Admin panel primary action buttons (Save/Submit/Add) in Settings and Rate sections, and audit other admin sections to ensure their primary action buttons are not colorless; choose cohesive colors that match the existing gradients/theme.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "এডমিন প্যানেলে সেটিংস সেকশন, রেট সেকশন,এই দুইটা সেকশন এর ভিতরের সেভ করা বা সাবমিট করা যে বাটন গুলো আছে সবগুলা ছাড়া কোন কালার নেই",
+          "এক একটা বাটন এক একটা কালার দিবে",
+          "তোমার মন মতো তুমি দিয়ে দিও কালার এডমিন প্যানেলে আরো কোন সেকশনের বাটন ভালো কিছু কালার যদি না থাকে সবগুলো দেখে দিয়ে দিও"
+        ]
+      },
+      "acceptanceCriteria": [
+        "In System Settings, the Save buttons for Branding/Labels/Notice/Admin Credentials are visually styled with clear color (not default/gray).",
+        "In Worker Rate Settings, the primary 'Add' button is visually styled with clear color (not default/gray).",
+        "At least one primary action button in each admin section that includes a Save/Submit/Add action uses a colored style that is consistent and readable on light backgrounds."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any frontend or backend code as part of this request; this is a rebuild/redeploy retry only."
+    "Do not modify files under frontend/src/components/ui (Shadcn UI sources); only compose/extend via props/className in feature components.",
+    "Do not edit files in frontend immutablePaths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui.",
+    "No backend (Motoko) changes are required for this UI-only update."
   ],
   "nonGoals": [
-    "Do not implement the pending UI/ID fixes described in project_state.json as part of this request.",
-    "Do not refactor or change application behavior."
+    "Changing the underlying data model, storage schema, or backend canister logic.",
+    "Adding new admin sections/features beyond styling and sizing updates.",
+    "Translating existing Bengali UI text into English (only this build request is written in English)."
   ],
   "imageRequirements": {
     "required": [],

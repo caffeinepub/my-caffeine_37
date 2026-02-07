@@ -1,13 +1,13 @@
 // Shared Tailwind class constants for consistent dashboard styling
 
-// KPI Cards - Thin black full borders with compact sizing
+// KPI Cards - Thin black full borders with increased sizing
 export const kpiCardBorder = 'border-2 border-black';
-export const kpiCardPadding = 'p-2.5';
+export const kpiCardPadding = 'p-3';
 export const kpiCardRadius = 'rounded-xl';
 export const kpiCardShadow = 'shadow-md';
 
 // KPI Inner content area
-export const kpiInnerPadding = 'p-2';
+export const kpiInnerPadding = 'p-2.5';
 export const kpiInnerRadius = 'rounded-lg';
 
 // Outer container for KPI groups (no border, just background)
@@ -20,7 +20,7 @@ export const outerContainerBg = '';
 // KPI Group container (wraps all KPI cards)
 export const kpiGroupBorder = 'border-2 border-black';
 export const kpiGroupRadius = 'rounded-xl';
-export const kpiGroupPadding = 'p-2';
+export const kpiGroupPadding = 'p-2.5';
 export const kpiGroupShadow = 'shadow-md';
 export const kpiGroupBg = 'bg-white';
 

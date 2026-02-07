@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-retry-the-application-build-and-deployment-without-introducing-any-code-changes-since-the-user-explicitly-requested-a-rebuild-after-an-intermittent-deployment-failure",
-      "featureTitle": "Retry the application build and deployment without introducing any code changes, since the user explicitly requested a rebuild after an intermittent deployment failure.",
+      "featureId": "feature-update-the-user-dashboard-kpi-cards-to-match-the-provided-screenshot-by-increasing-the-kpi-title-body-font-sizes-and-slightly-increasing-kpi-card-vertical-sizing-padding-spacing-so-the-three-kpi-cards-are-visually-larger-and-easier-to-read",
+      "featureTitle": "Update the User Dashboard KPI cards to match the provided screenshot by increasing the KPI title/body font sizes and slightly increasing KPI card vertical sizing (padding/spacing) so the three KPI cards are visually larger and easier to read.",
       "files": [
-        "frontend/DEPLOY_RETRY_RUNBOOK.md"
+        "frontend/src/components/dashboard/dashboardBorders.ts",
+        "frontend/src/features/user/components/UserKpiSummary.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -19,6 +20,98 @@
       ],
       "testIds": [
         "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-reduce-the-user-dashboard-action-tile-4-tiles-production-work-nasta-payment-loan-button-size-by-approximately-10-while-keeping-the-tile-labels-readable-and-adjust-tile-typography-so-it-is-not-overly-small-compared-to-the-kpi-section",
+      "featureTitle": "Reduce the User Dashboard action-tile (4 tiles: Production/Work/Nasta/Payment-Loan) button size by approximately 10% while keeping the tile labels readable, and adjust tile typography so it is not overly small compared to the KPI section.",
+      "files": [
+        "frontend/src/components/dashboard/ActionTile.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "user-approval@3.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-increase-user-friend-related-text-sizes-across-the-user-panel-views-so-they-are-consistent-with-the-larger-dashboard-section-typography-restore-readability-similar-to-the-previous-section-styling",
+      "featureTitle": "Increase 'user/friend' related text sizes across the user panel views so they are consistent with the larger dashboard section typography (restore readability similar to the previous section styling).",
+      "files": [
+        "frontend/src/features/support/SupportView.tsx",
+        "frontend/src/features/user/payment/NastaHistoryView.tsx",
+        "frontend/src/features/user/payment/PaymentHistoryView.tsx",
+        "frontend/src/features/user/production/ProductionHistoryView.tsx",
+        "frontend/src/features/user/profile/ProfileSettingsView.tsx",
+        "frontend/src/features/user/work/WorkHistoryView.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "user-approval@3.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-in-the-admin-panel-apply-clear-distinct-colors-to-the-system-settings-tabs-branding-label-edit-notice-admin-section-so-each-tab-section-is-visually-distinguishable-not-appearing-merged-matching-the-intent-of-the-provided-screenshot",
+      "featureTitle": "In the Admin panel, apply clear, distinct colors to the System Settings tabs (Branding, Label Edit, Notice, Admin, Section) so each tab/section is visually distinguishable (not appearing merged), matching the intent of the provided screenshot.",
+      "files": [
+        "frontend/src/features/admin/sections/SystemSettingsSection.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "user-approval@3.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-attractive-non-gray-colors-to-admin-panel-primary-action-buttons-save-submit-add-in-settings-and-rate-sections-and-audit-other-admin-sections-to-ensure-their-primary-action-buttons-are-not-colorless-choose-cohesive-colors-that-match-the-existing-gradients-theme",
+      "featureTitle": "Add attractive, non-gray colors to Admin panel primary action buttons (Save/Submit/Add) in Settings and Rate sections, and audit other admin sections to ensure their primary action buttons are not colorless; choose cohesive colors that match the existing gradients/theme.",
+      "files": [
+        "frontend/src/features/admin/sections/NastaSection.tsx",
+        "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
+        "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+        "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "user-approval@3.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
       ],
       "confidence": "high"
     }

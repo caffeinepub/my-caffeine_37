@@ -1,24 +1,92 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-06T23:14:23.810Z",
+  "generatedAt": "2026-02-07T00:19:19.881Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
+    "total": 5,
+    "implemented": 5,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Retry the application build and deployment without introducing any code changes, since the user explicitly requested a rebuild after an intermittent deployment failure.",
+        "summary": "Update the User Dashboard KPI cards to match the provided screenshot by increasing the KPI title/body font sizes and slightly increasing KPI card vertical sizing (padding/spacing) so the three KPI cards are visually larger and easier to read.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/DEPLOY_RETRY_RUNBOOK.md"
+          "frontend/src/features/user/components/UserKpiSummary.tsx",
+          "frontend/src/components/dashboard/dashboardBorders.ts",
+          "frontend/src/features/user/UserDashboard.tsx"
         ],
         "matchedFiles": [
-          "frontend/DEPLOY_RETRY_RUNBOOK.md"
+          "frontend/src/features/user/components/UserKpiSummary.tsx",
+          "frontend/src/components/dashboard/dashboardBorders.ts"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Reduce the User Dashboard action-tile (4 tiles: Production/Work/Nasta/Payment-Loan) button size by approximately 10% while keeping the tile labels readable, and adjust tile typography so it is not overly small compared to the KPI section.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/dashboard/ActionTile.tsx",
+          "frontend/src/features/user/UserDashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/dashboard/ActionTile.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Increase 'user/friend' related text sizes across the user panel views so they are consistent with the larger dashboard section typography (restore readability similar to the previous section styling).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/features/user/production/ProductionHistoryView.tsx",
+          "frontend/src/features/user/work/WorkHistoryView.tsx",
+          "frontend/src/features/user/payment/PaymentHistoryView.tsx",
+          "frontend/src/features/user/payment/NastaHistoryView.tsx",
+          "frontend/src/features/support/SupportView.tsx",
+          "frontend/src/features/user/profile/ProfileSettingsView.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/features/user/production/ProductionHistoryView.tsx",
+          "frontend/src/features/user/work/WorkHistoryView.tsx",
+          "frontend/src/features/user/payment/PaymentHistoryView.tsx",
+          "frontend/src/features/user/payment/NastaHistoryView.tsx",
+          "frontend/src/features/support/SupportView.tsx",
+          "frontend/src/features/user/profile/ProfileSettingsView.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "In the Admin panel, apply clear, distinct colors to the System Settings tabs (Branding, Label Edit, Notice, Admin, Section) so each tab/section is visually distinguishable (not appearing merged), matching the intent of the provided screenshot.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Add attractive, non-gray colors to Admin panel primary action buttons (Save/Submit/Add) in Settings and Rate sections, and audit other admin sections to ensure their primary action buttons are not colorless; choose cohesive colors that match the existing gradients/theme.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
+          "frontend/src/features/admin/sections/ProductionSection.tsx",
+          "frontend/src/features/admin/sections/WorkSection.tsx",
+          "frontend/src/features/admin/sections/NastaSection.tsx",
+          "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
+          "frontend/src/features/admin/sections/CompanyReportSection.tsx",
+          "frontend/src/features/admin/sections/ApprovalsSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
+          "frontend/src/features/admin/sections/NastaSection.tsx",
+          "frontend/src/features/admin/sections/PaymentLoanSection.tsx"
         ]
       }
     ]
@@ -26,9 +94,20 @@
   "changedFiles": [
     "build-request.json",
     "feature_evidence.json",
-    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/DEPLOY_RETRY_RUNBOOK.md",
+    "frontend/src/components/dashboard/ActionTile.tsx",
+    "frontend/src/components/dashboard/dashboardBorders.ts",
+    "frontend/src/features/admin/sections/NastaSection.tsx",
+    "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
+    "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+    "frontend/src/features/admin/sections/WorkerRateSettingsSection.tsx",
+    "frontend/src/features/support/SupportView.tsx",
+    "frontend/src/features/user/components/UserKpiSummary.tsx",
+    "frontend/src/features/user/payment/NastaHistoryView.tsx",
+    "frontend/src/features/user/payment/PaymentHistoryView.tsx",
+    "frontend/src/features/user/production/ProductionHistoryView.tsx",
+    "frontend/src/features/user/profile/ProfileSettingsView.tsx",
+    "frontend/src/features/user/work/WorkHistoryView.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

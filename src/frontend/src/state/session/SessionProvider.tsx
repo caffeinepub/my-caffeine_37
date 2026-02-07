@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, ReactNode } from 'react';
 import { Session, SessionContextValue, LoginResult, UpdateProfileParams, ApprovedUser } from './sessionTypes';
 import { safeGetArray, safeSetItem } from '../../lib/storage/safeStorage';
 import { ensureUserIds } from '../../lib/storage/userIdStorage';
+import { validateAdminCredentials } from '../../lib/storage/adminCredentialsStorage';
 
 export const SessionContext = createContext<SessionContextValue | null>(null);
 
@@ -9,8 +10,6 @@ interface SessionProviderProps {
   children: ReactNode;
 }
 
-const ADMIN_USERNAME = 'admin';
-const ADMIN_PASSWORD = 'admin123';
 const SESSION_KEY = 'user_session';
 
 export function SessionProvider({ children }: SessionProviderProps) {
@@ -43,8 +42,8 @@ export function SessionProvider({ children }: SessionProviderProps) {
   }, []);
 
   const login = async (usernameOrMobile: string, password: string): Promise<LoginResult> => {
-    // Admin login
-    if (usernameOrMobile === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+    // Admin login - check against stored credentials
+    if (validateAdminCredentials(usernameOrMobile, password)) {
       const adminSession: Session = { role: 'admin' };
       setSession(adminSession);
       localStorage.setItem(SESSION_KEY, JSON.stringify(adminSession));

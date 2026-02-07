@@ -93,10 +93,10 @@ export default function UserDashboard() {
     <>
       <DashboardFrame>
         <div className="flex flex-col h-full">
-          {/* Fixed Header - Dashboard gradient with prominent username */}
-          <div className="dashboard-gradient px-3 py-3 flex items-center justify-between shadow-md border-b-2 border-blue-900">
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/50 shadow-md flex-shrink-0">
+          {/* Fixed Header - Dashboard gradient with two-line username/ID format */}
+          <div className="dashboard-gradient px-3 py-2.5 flex items-center justify-between shadow-md border-b-2 border-blue-900">
+            <div className="flex items-center gap-2.5 flex-1 min-w-0">
+              <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-white/50 shadow-md flex-shrink-0">
                 {profilePhoto ? (
                   <img
                     src={profilePhoto}
@@ -107,17 +107,23 @@ export default function UserDashboard() {
                   <div className="w-full h-full bg-gradient-to-br from-teal-400 to-cyan-500" />
                 )}
               </div>
-              <div className="flex flex-col items-center min-w-0 flex-1">
-                <h1 className="text-2xl font-black text-white tracking-wide leading-tight truncate" style={{ fontFamily: 'Impact, sans-serif' }}>
-                  {session?.userName || 'User'}
-                </h1>
-                <span className="text-white/90 text-xs font-medium">ID: {session?.userId || 'N/A'}</span>
+              <div className="flex flex-col items-start min-w-0 flex-1">
+                <div className="flex items-baseline gap-1 w-full">
+                  <span className="text-white/90 text-[10px] font-medium flex-shrink-0">Username:</span>
+                  <h1 className="text-lg font-black text-white tracking-wide leading-tight truncate" style={{ fontFamily: 'Impact, sans-serif' }}>
+                    {session?.userName || 'User'}
+                  </h1>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-white/80 text-[9px] font-medium">Id no:</span>
+                  <span className="text-white/90 text-xs font-bold">{session?.userId || 'N/A'}</span>
+                </div>
               </div>
             </div>
             <button
               type="button"
               onClick={() => setShowLogoutDialog(true)}
-              className="flex-shrink-0 px-2.5 py-1.5 rounded-full bg-red-600 border-2 border-red-700 shadow-md flex items-center gap-1 hover:bg-red-700 transition-all active:scale-95 touch-manipulation"
+              className="flex-shrink-0 px-2 py-1.5 rounded-full bg-red-600 border-2 border-red-700 shadow-md flex items-center gap-1 hover:bg-red-700 transition-all active:scale-95 touch-manipulation"
             >
               <LogOut className="w-3.5 h-3.5 text-white" />
               <span className="text-white font-bold text-[10px]">LOGOUT</span>
@@ -125,31 +131,31 @@ export default function UserDashboard() {
           </div>
 
           {/* Scrollable Content with professional background */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden pb-[72px] px-2 dashboard-professional-bg">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden pb-[60px] px-2 dashboard-professional-bg">
             {/* Notice Marquee */}
             {noticeConfig.enabled && noticeConfig.text && (
-              <div className="mt-2 mb-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white py-1.5 px-3 rounded-lg shadow-md overflow-hidden">
+              <div className="mt-1.5 mb-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white py-1 px-2.5 rounded-lg shadow-md overflow-hidden">
                 <div className="marquee-container">
                   <div className="marquee-content">
-                    <span className="font-bold text-xs">{noticeConfig.text}</span>
+                    <span className="font-bold text-[10px]">{noticeConfig.text}</span>
                   </div>
                 </div>
               </div>
             )}
 
             {/* Clock Card - Reduced size */}
-            <div className="mt-2 mb-2">
+            <div className="mt-1.5 mb-1.5">
               <ClockCard />
             </div>
 
             {/* KPI Summary - Wrapped in bordered container */}
-            <div className={`mb-2 ${kpiGroupBorder} ${kpiGroupPadding} ${kpiGroupRadius} ${kpiGroupShadow} ${kpiGroupBg}`}>
+            <div className={`mb-1.5 ${kpiGroupBorder} ${kpiGroupPadding} ${kpiGroupRadius} ${kpiGroupShadow} ${kpiGroupBg}`}>
               <UserKpiSummary totalWork={totalWork} totalCost={totalCost} totalDue={totalDue} />
             </div>
 
             {/* Action Tiles - Wrapped in bordered container with reduced size */}
             <div className={`${lowerSectionBorder} ${lowerSectionPadding} ${lowerSectionRadius} ${lowerSectionShadow} ${lowerSectionBg}`}>
-              <div className="grid grid-cols-2 gap-2 w-full">
+              <div className="grid grid-cols-2 gap-1.5 w-full">
                 <ActionTile
                   label="প্রোডাকশন"
                   icon="/assets/generated/icon-production.dim_256x256.png"

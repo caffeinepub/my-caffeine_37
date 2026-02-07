@@ -89,7 +89,12 @@ export default function WorkerRateSettingsSection() {
                 onChange={(e) => setNewWorkerName(e.target.value)}
                 className="flex-1"
               />
-              <Button onClick={handleAddWorker}>যোগ করুন</Button>
+              <Button 
+                onClick={handleAddWorker}
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold"
+              >
+                যোগ করুন
+              </Button>
             </div>
 
             <div className="overflow-x-auto">
