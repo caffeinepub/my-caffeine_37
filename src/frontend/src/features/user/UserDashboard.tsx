@@ -11,7 +11,7 @@ import DashboardFrame from '../../components/layout/DashboardFrame';
 import DashboardFooter from '../../components/layout/DashboardFooter';
 import PopupModal from '../../components/layout/PopupModal';
 import { ConfirmDialog } from '../../components/feedback/ConfirmDialog';
-import { LogOut } from 'lucide-react';
+import { Button } from '../../components/ui/button';
 import UserKpiSummary from './components/UserKpiSummary';
 import ClockCard from './components/ClockCard';
 import ActionTile from '../../components/dashboard/ActionTile';
@@ -29,6 +29,7 @@ import {
 } from '../../components/dashboard/dashboardBorders';
 import { getProfilePhoto } from '../../lib/storage/userProfileStorage';
 import { useUserNotice } from '../../hooks/useUserNotice';
+import { useDashboardOverrides } from '../../hooks/useDashboardOverrides';
 
 type ViewMode = 'dashboard' | 'production' | 'work' | 'payment' | 'nasta' | 'profile' | 'support';
 
@@ -41,24 +42,30 @@ export default function UserDashboard() {
   const [totalDue, setTotalDue] = useState(0);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const noticeConfig = useUserNotice();
+  const { getLabel } = useDashboardOverrides();
 
   useEffect(() => {
     if (session?.userName) {
-      loadUserData();
-      const photo = getProfilePhoto(session.userName);
-      setProfilePhoto(photo);
+      loadAccountData();
+      loadProfilePhoto();
     }
   }, [session?.userName]);
 
-  const loadUserData = () => {
-    if (!session?.userName) return;
-
+  const loadAccountData = () => {
     const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
-    const acc = accounts[session.userName] || { bill: 0, cost: 0 };
-    
-    setTotalWork(acc.bill);
-    setTotalCost(acc.cost);
-    setTotalDue(acc.bill - acc.cost);
+    const account = accounts[session?.userName || ''];
+    if (account) {
+      setTotalWork(account.bill || 0);
+      setTotalCost(account.cost || 0);
+      setTotalDue((account.bill || 0) - (account.cost || 0));
+    }
+  };
+
+  const loadProfilePhoto = () => {
+    if (session?.userName) {
+      const photo = getProfilePhoto(session.userName);
+      setProfilePhoto(photo);
+    }
   };
 
   const handleLogout = () => {
@@ -66,143 +73,171 @@ export default function UserDashboard() {
     setShowLogoutDialog(false);
   };
 
-  const renderModalContent = () => {
-    switch (viewMode) {
-      case 'production':
-        return <ProductionHistoryView onBack={() => setViewMode('dashboard')} />;
-      case 'work':
-        return <WorkHistoryView onBack={() => setViewMode('dashboard')} />;
-      case 'payment':
-        return <PaymentHistoryView onBack={() => setViewMode('dashboard')} />;
-      case 'nasta':
-        return <NastaHistoryView />;
-      case 'profile':
-        return <ProfileSettingsView onBack={() => setViewMode('dashboard')} />;
-      case 'support':
-        return <SupportView onBack={() => setViewMode('dashboard')} />;
-      default:
-        return null;
-    }
-  };
-
-  if (viewMode !== 'dashboard') {
+  if (viewMode === 'production') {
     return (
       <DashboardFrame>
-        <PopupModal isOpen={true} onClose={() => setViewMode('dashboard')}>
-          {renderModalContent()}
-        </PopupModal>
+        <div className="flex flex-col h-full">
+          <ProductionHistoryView onBack={() => setViewMode('dashboard')} />
+        </div>
+      </DashboardFrame>
+    );
+  }
+
+  if (viewMode === 'work') {
+    return (
+      <DashboardFrame>
+        <div className="flex flex-col h-full">
+          <WorkHistoryView onBack={() => setViewMode('dashboard')} />
+        </div>
+      </DashboardFrame>
+    );
+  }
+
+  if (viewMode === 'payment') {
+    return (
+      <DashboardFrame>
+        <div className="flex flex-col h-full">
+          <PaymentHistoryView onBack={() => setViewMode('dashboard')} />
+        </div>
+      </DashboardFrame>
+    );
+  }
+
+  if (viewMode === 'nasta') {
+    return (
+      <DashboardFrame>
+        <div className="flex flex-col h-full">
+          <NastaHistoryView onBack={() => setViewMode('dashboard')} />
+        </div>
+      </DashboardFrame>
+    );
+  }
+
+  if (viewMode === 'profile') {
+    return (
+      <DashboardFrame>
+        <div className="flex flex-col h-full">
+          <ProfileSettingsView onBack={() => setViewMode('dashboard')} />
+        </div>
+      </DashboardFrame>
+    );
+  }
+
+  if (viewMode === 'support') {
+    return (
+      <DashboardFrame>
+        <div className="flex flex-col h-full">
+          <SupportView onBack={() => setViewMode('dashboard')} />
+        </div>
       </DashboardFrame>
     );
   }
 
   return (
-    <>
-      <DashboardFrame>
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="dashboard-gradient px-3 py-2 shadow-lg flex-shrink-0">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {profilePhoto ? (
-                  <img src={profilePhoto} alt="Profile" className="w-10 h-10 rounded-full border-2 border-white object-cover" />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white flex items-center justify-center">
-                    <span className="text-white font-bold text-base">{session?.userName?.charAt(0).toUpperCase()}</span>
-                  </div>
-                )}
-                <div className="flex flex-col">
-                  <div className="text-white text-xs font-medium leading-tight">
-                    Username: <span className="font-bold">{session?.userName}</span>
-                  </div>
-                  <div className="text-white text-xs font-medium leading-tight">
-                    Id no: <span className="font-bold">{session?.userId}</span>
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowLogoutDialog(true)}
-                className="bg-white/90 hover:bg-white p-1.5 rounded-lg shadow-md hover:shadow-lg transition-all active:scale-95 touch-manipulation"
-              >
-                <LogOut className="w-4 h-4 text-red-600" />
-              </button>
-            </div>
-          </div>
-
-          {/* Scrollable Content */}
-          <div className="flex-1 overflow-y-auto pb-16">
-            <div className="p-2 space-y-2">
-              {/* Notice */}
-              {noticeConfig.enabled && noticeConfig.text && (
-                <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg px-2 py-1.5 marquee-container">
-                  <div className="marquee-content">
-                    <p className="text-yellow-900 font-semibold text-xs">{noticeConfig.text}</p>
-                  </div>
+    <DashboardFrame>
+      <div className="flex flex-col h-full border-l-2 border-r-2 border-black/10">
+        {/* Header - reduced padding */}
+        <div className="flex-shrink-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {profilePhoto ? (
+                <img src={profilePhoto} alt="Profile" className="w-10 h-10 rounded-full border-2 border-white object-cover" />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-lg font-bold">
+                  {session?.userName?.charAt(0).toUpperCase()}
                 </div>
               )}
+              <div>
+                <div className="text-lg font-bold">{session?.userName}</div>
+              </div>
+            </div>
+            <Button
+              onClick={() => setShowLogoutDialog(true)}
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20"
+            >
+              লগআউট
+            </Button>
+          </div>
+        </div>
 
-              {/* Clock */}
-              <ClockCard />
+        {/* Notice Bar - sticky and reduced height */}
+        {noticeConfig.enabled && noticeConfig.text && (
+          <div className="flex-shrink-0 sticky top-0 z-10 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1.5 text-center text-sm font-medium">
+            {noticeConfig.text}
+          </div>
+        )}
 
-              {/* KPI Summary */}
-              <div className={`${kpiGroupBg} ${kpiGroupRadius} ${kpiGroupPadding} ${kpiGroupShadow} ${kpiGroupBorder}`}>
-                <UserKpiSummary totalDue={totalDue} totalWork={totalWork} totalCost={totalCost} />
+        {/* Scrollable Content - reduced gaps */}
+        <div className="flex-1 overflow-y-auto bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+          <div className="p-3 space-y-2">
+            {/* Clock Card - reduced spacing */}
+            <ClockCard />
+
+            {/* KPI Summary - reduced spacing */}
+            <div className={`${kpiGroupBorder} ${kpiGroupPadding} ${kpiGroupRadius} ${kpiGroupShadow} ${kpiGroupBg}`}>
+              <UserKpiSummary totalDue={totalDue} totalWork={totalWork} totalCost={totalCost} />
+            </div>
+
+            {/* Action Tiles - 2x2 grid */}
+            <div className={`space-y-2 ${lowerSectionBorder} ${lowerSectionPadding} ${lowerSectionRadius} ${lowerSectionShadow} ${lowerSectionBg}`}>
+              {/* Row 1: Production + Work */}
+              <div className="grid grid-cols-2 gap-2">
+                <ActionTile
+                  label={getLabel('userProductionLabel', 'প্রোডাকশন')}
+                  icon="/assets/generated/icon-production.dim_256x256.png"
+                  onClick={() => setViewMode('production')}
+                  bgGradient="from-emerald-500 to-teal-600"
+                  size="user"
+                />
+                <ActionTile
+                  label={getLabel('userWorkLabel', 'কাজ')}
+                  icon="/assets/generated/icon-work.dim_256x256.png"
+                  onClick={() => setViewMode('work')}
+                  bgGradient="from-cyan-500 to-blue-600"
+                  size="user"
+                />
               </div>
 
-              {/* Action Tiles */}
-              <div className={`${lowerSectionBg} ${lowerSectionRadius} ${lowerSectionPadding} ${lowerSectionShadow} ${lowerSectionBorder}`}>
-                <div className="grid grid-cols-2 gap-2">
-                  <ActionTile
-                    icon="/assets/generated/icon-production.dim_256x256.png"
-                    label="Production"
-                    onClick={() => setViewMode('production')}
-                    bgGradient="from-emerald-500 to-teal-600"
-                    size="small"
-                  />
-                  <ActionTile
-                    icon="/assets/generated/icon-nasta.dim_256x256.png"
-                    label="Snacks"
-                    onClick={() => setViewMode('nasta')}
-                    bgGradient="from-amber-500 to-orange-600"
-                    size="small"
-                  />
-                  <ActionTile
-                    icon="/assets/generated/icon-payment-loan.dim_256x256.png"
-                    label="Payment/Loan"
-                    onClick={() => setViewMode('payment')}
-                    bgGradient="from-rose-500 to-pink-600"
-                    size="small"
-                  />
-                  <ActionTile
-                    icon="/assets/generated/icon-work.dim_256x256.png"
-                    label="Work"
-                    onClick={() => setViewMode('work')}
-                    bgGradient="from-cyan-500 to-blue-600"
-                    size="small"
-                  />
-                </div>
+              {/* Row 2: Payment + Nasta */}
+              <div className="grid grid-cols-2 gap-2">
+                <ActionTile
+                  label={getLabel('userPaymentLabel', 'পেমেন্ট/লোন')}
+                  icon="/assets/generated/icon-payment-loan.dim_256x256.png"
+                  onClick={() => setViewMode('payment')}
+                  bgGradient="from-rose-500 to-pink-600"
+                  size="user"
+                />
+                <ActionTile
+                  label={getLabel('userNastaLabel', 'নাস্তা')}
+                  icon="/assets/generated/icon-nasta.dim_256x256.png"
+                  onClick={() => setViewMode('nasta')}
+                  bgGradient="from-amber-500 to-orange-600"
+                  size="user"
+                />
               </div>
             </div>
           </div>
-
-          {/* Fixed Footer */}
-          <div className="flex-shrink-0">
-            <DashboardFooter
-              onSupportClick={() => setViewMode('support')}
-              onSettingsClick={() => setViewMode('profile')}
-            />
-          </div>
         </div>
-      </DashboardFrame>
 
-      <ConfirmDialog
-        open={showLogoutDialog}
-        onOpenChange={setShowLogoutDialog}
-        title="Logout"
-        description="Are you sure you want to logout?"
-        onConfirm={handleLogout}
-        confirmText="Yes, logout"
-        cancelText="Cancel"
-      />
-    </>
+        {/* Footer */}
+        <DashboardFooter
+          onSupportClick={() => setViewMode('support')}
+          onSettingsClick={() => setViewMode('profile')}
+        />
+
+        {/* Logout Confirmation Dialog */}
+        <ConfirmDialog
+          open={showLogoutDialog}
+          onOpenChange={setShowLogoutDialog}
+          onConfirm={handleLogout}
+          title="লগআউট নিশ্চিত করুন"
+          description="আপনি কি নিশ্চিত যে আপনি লগআউট করতে চান?"
+          confirmText="হ্যাঁ, লগআউট করুন"
+          cancelText="বাতিল"
+        />
+      </div>
+    </DashboardFrame>
   );
 }

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSession } from '../../../state/session/useSession';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Button } from '../../../components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import { safeGetItem } from '../../../lib/storage/safeStorage';
 
 interface NastaEntry {
@@ -13,7 +15,11 @@ interface NastaEntry {
   note: string;
 }
 
-export default function NastaHistoryView() {
+interface NastaHistoryViewProps {
+  onBack: () => void;
+}
+
+export default function NastaHistoryView({ onBack }: NastaHistoryViewProps) {
   const { session } = useSession();
   const [history, setHistory] = useState<NastaEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,7 +78,17 @@ export default function NastaHistoryView() {
     <div className="min-h-full bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 p-3">
       <Card className="shadow-xl border-2 border-orange-200">
         <CardHeader className="bg-gradient-to-r from-orange-100 to-amber-100 py-3">
-          <CardTitle className="text-xl font-bold text-orange-900">নাস্তার বিবরণ</CardTitle>
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={onBack}
+              variant="ghost"
+              size="sm"
+              className="hover:bg-orange-200 text-orange-900"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <CardTitle className="text-xl font-bold text-orange-900">নাস্তার বিবরণ</CardTitle>
+          </div>
         </CardHeader>
         <CardContent className="pt-4 px-2">
           {isLoading ? (

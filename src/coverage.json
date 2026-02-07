@@ -1,18 +1,18 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-07T00:55:39.922Z",
+  "generatedAt": "2026-02-07T08:16:40.094Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 5,
+    "total": 9,
+    "implemented": 9,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the Admin Panel \u001eProduction\u001f section form to capture separate work quantities for Double and Single, and separate rates for Double and Single (4 inputs total: quantityDouble, quantitySingle, rateDouble, rateSingle), matching the user-requested layout: quantities first, then rates below.",
+        "summary": "Update the Admin Production section so it is report-only (no accounting/transactions): keep the existing input form and history storage, but do not change any user/account balances when a production entry is added or deleted.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/features/admin/sections/ProductionSection.tsx"
@@ -23,10 +23,13 @@
       },
       {
         "id": "REQ-2",
-        "summary": "Update Admin Panel \u001eProduction\u001f calculations and persisted history so totals are computed from the new fields: total = (quantityDouble * rateDouble) + (quantitySingle * rateSingle), and the stored history record includes these four fields plus computed totals.",
+        "summary": "Make the User Production report show the exact same report format/data as the Admin Production report (same fields/aggregation and same source history), so both panels display production reports consistently.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/sections/ProductionSection.tsx"
+          "frontend/src/features/production/ProductionReportTable.tsx",
+          "frontend/src/features/admin/sections/ProductionSection.tsx",
+          "frontend/src/features/user/production/ProductionHistoryView.tsx",
+          "frontend/src/features/user/production/productionAggregates.ts"
         ],
         "matchedFiles": [
           "frontend/src/features/admin/sections/ProductionSection.tsx"
@@ -34,40 +37,92 @@
       },
       {
         "id": "REQ-3",
-        "summary": "Update the User Panel \u001eProduction History\u001f view to show a list of all employees (workers) and display each worker\u0019s Double and Single information derived from the Admin Production history data, instead of only filtering to the logged-in user.",
+        "summary": "Fix Work Management to behave as the main accounting section: when Admin submits a work entry, compute per-worker amounts using each selected worker’s saved rates (no rate input in Work section), compute and display a grand total for Admin, and credit each selected worker’s account balance as earnings (not as cost).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/user/production/productionAggregates.ts",
-          "frontend/src/features/user/production/ProductionHistoryView.tsx"
+          "frontend/src/features/admin/sections/WorkSection.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/user/production/productionAggregates.ts",
-          "frontend/src/features/user/production/ProductionHistoryView.tsx"
+          "frontend/src/features/admin/sections/WorkSection.tsx"
         ]
       },
       {
         "id": "REQ-4",
-        "summary": "Increase the font size of the four User Dashboard section tiles (Production, Snacks, Payment/Loan, Work) so the section titles are visibly larger and easier to read on mobile.",
+        "summary": "Ensure deductions are reflected in each user’s balance: Nasta and Payment/Loan submissions must continue to reduce the user’s net balance by increasing the user’s cost, so the final balance/remaining amount equals earnings (bill) minus deductions (cost).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/dashboard/ActionTile.tsx"
+          "frontend/src/features/admin/sections/NastaSection.tsx",
+          "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
+          "frontend/src/features/admin/sections/FinalBalanceSection.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/dashboard/ActionTile.tsx"
+          "frontend/src/features/admin/sections/NastaSection.tsx",
+          "frontend/src/features/admin/sections/PaymentLoanSection.tsx"
         ]
       },
       {
         "id": "REQ-5",
-        "summary": "Fix User Panel typography and mobile layout so content fits within the phone viewport without being cut off at the bottom: reduce excessive spacing/padding in the User Dashboard layout while keeping readability, and ensure scroll + fixed footer behavior does not hide content.",
+        "summary": "Add a confirmation popup before saving (submit) in Admin Nasta Management and Admin Payment & Loan Management, matching the confirm flow already used in Production/Work (single-confirm, prevents duplicate submits).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/layout/DashboardFrame.tsx",
-          "frontend/src/features/user/UserDashboard.tsx",
+          "frontend/src/features/admin/sections/NastaSection.tsx",
+          "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
+          "frontend/src/hooks/useSingleConfirmSubmit.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/features/admin/sections/NastaSection.tsx",
+          "frontend/src/features/admin/sections/PaymentLoanSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "In System Settings, apply distinct button colors to the four tabs: Label, Total, Layout, Branding (each tab visually different even when not active).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
           "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/components/layout/DashboardFrame.tsx",
-          "frontend/src/features/user/UserDashboard.tsx",
+          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "frontend/src/index.css"
+        ]
+      },
+      {
+        "id": "REQ-7",
+        "summary": "Add two new Admin header quick-action buttons around Support/Chat: (1) a new button labeled “MT-LOAN” placed to the left of Support/Chat; (2) a Calculator button placed to the right of Support/Chat. Wire them to placeholder actions (e.g., open a modal or toast) so they are clickable and ready for future section expansion.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/layout/AppShell.tsx",
+          "frontend/src/components/feedback/notify.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/layout/AppShell.tsx"
+        ]
+      },
+      {
+        "id": "REQ-8",
+        "summary": "Improve Admin header styling to look cleaner: add a subtle border and/or backdrop blur and keep a consistent shadow so the header is visually separated from content.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/layout/AppShell.tsx",
+          "frontend/src/components/dashboard/dashboardBorders.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/layout/AppShell.tsx"
+        ]
+      },
+      {
+        "id": "REQ-9",
+        "summary": "Adjust the bottom navigation/footer area so the app’s own bottom buttons do not visually clash with the phone’s system navigation (home/back/recent): add a styled bottom container with clear separation and safe-area padding.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/features/admin/components/AdminBottomNav.tsx",
+          "frontend/src/components/layout/DashboardFooter.tsx",
+          "frontend/src/index.css"
+        ],
+        "matchedFiles": [
+          "frontend/src/features/admin/components/AdminBottomNav.tsx",
+          "frontend/src/components/layout/DashboardFooter.tsx",
           "frontend/src/index.css"
         ]
       }
@@ -78,12 +133,14 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/dashboard/ActionTile.tsx",
-    "frontend/src/components/layout/DashboardFrame.tsx",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/components/layout/DashboardFooter.tsx",
+    "frontend/src/features/admin/components/AdminBottomNav.tsx",
+    "frontend/src/features/admin/sections/NastaSection.tsx",
+    "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
     "frontend/src/features/admin/sections/ProductionSection.tsx",
-    "frontend/src/features/user/UserDashboard.tsx",
-    "frontend/src/features/user/production/ProductionHistoryView.tsx",
-    "frontend/src/features/user/production/productionAggregates.ts",
+    "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+    "frontend/src/features/admin/sections/WorkSection.tsx",
     "frontend/src/index.css",
     "project_state.json",
     "scratch/component-selection.json",

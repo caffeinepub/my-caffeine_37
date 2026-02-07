@@ -1,113 +1,197 @@
 {
   "kind": "build_request",
-  "title": "Update Admin Production form (double/single quantity & rate) and fix User Dashboard typography/mobile fit",
+  "title": "Admin panel accounting & UX updates (Production report parity, Work accounting, confirmations, header/nav tweaks)",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the Admin Panel \u001eProduction\u001f section form to capture separate work quantities for Double and Single, and separate rates for Double and Single (4 inputs total: quantityDouble, quantitySingle, rateDouble, rateSingle), matching the user-requested layout: quantities first, then rates below.",
+      "text": "Update the Admin Production section so it is report-only (no accounting/transactions): keep the existing input form and history storage, but do not change any user/account balances when a production entry is added or deleted.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-5",
+          "msg-12"
         ],
         "quotes": [
-          "এডমিন প্যানেলে কাজের পরিমাণ অংশে দুটি ইনপুট ডাবল সিঙ্গেল তার নিচে ডাবল এর রেট সিঙ্গেলের রেট আরো দুইটিন ফুটবল বক্স"
+          "\"প্রোডাকশন\" এই সেকশনে ... এটার সাথে কোন টাকার লেনদেন হবে না",
+          "প্রোডাকশন সেকশন: ... এটার সাথে কোন অন্য কিছুর হিসাব হবে না"
         ]
       },
       "acceptanceCriteria": [
-        "Admin > Production form shows two numeric inputs for quantities (Double, Single).",
-        "Directly under the quantity inputs, the form shows two numeric inputs for rates (Double rate, Single rate).",
-        "Form validation prevents submit when any required field is missing or invalid (non-numeric/negative)."
+        "When submitting a new production entry in Admin, the entry is saved to production history as before.",
+        "Submitting/deleting a production entry does NOT modify the stored accounts (no bill/cost changes).",
+        "Existing production history list/table in Admin still shows all entries correctly."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Update Admin Panel \u001eProduction\u001f calculations and persisted history so totals are computed from the new fields: total = (quantityDouble * rateDouble) + (quantitySingle * rateSingle), and the stored history record includes these four fields plus computed totals.",
+      "text": "Make the User Production report show the exact same report format/data as the Admin Production report (same fields/aggregation and same source history), so both panels display production reports consistently.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-5",
+          "msg-12"
         ],
         "quotes": [
-          "শুধু ‘কাজের পরিমাণ’ অংশে দুটি নতুন ইনপুট (ডাবল ও সিঙ্গেল) যোগ করব"
+          "ইউজার ফ্যানেলেও ঠিক সেম রিপোর্টটাই সু হবে"
         ]
       },
       "acceptanceCriteria": [
-        "Submitting a production entry stores a history object that includes quantityDouble, quantitySingle, rateDouble, rateSingle, and computed total.",
-        "The worker account bill updates by the computed total for each selected worker, consistent with existing accounting behavior.",
-        "The Admin Production history table is updated to display the new Double/Single quantities and rates, and shows the computed total.",
-        "Deleting a production entry reverses the correct computed total from worker accounts and removes the history entry."
+        "Admin and User Production pages render the same report structure (columns/rows and totals) for the same underlying production history.",
+        "No user/account balance changes are introduced on the User Production report page (report display only)."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Update the User Panel \u001eProduction History\u001f view to show a list of all employees (workers) and display each worker\u0019s Double and Single information derived from the Admin Production history data, instead of only filtering to the logged-in user.",
+      "text": "Fix Work Management to behave as the main accounting section: when Admin submits a work entry, compute per-worker amounts using each selected worker’s saved rates (no rate input in Work section), compute and display a grand total for Admin, and credit each selected worker’s account balance as earnings (not as cost).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-5",
+          "msg-12"
         ],
         "quotes": [
-          "ইউজার প্যানেলে প্রোডাকশন হিস্ট্রি অপশন এর ভিতর ঢুকলে সব কর্মীদের নাম দেখাবে ডাবল সিঙ্গেল শো করবে"
+          "কাজের ম্যানেজমেন্ট... রেট বসানোর কোন অপশন নেই ... ওই কজনের রেট অনুযায়ী মোট টাকা শো করবে",
+          "ইউজার প্যানেলে পার্সোনাল রেট অনুযায়ী তার একাউন্টে জমা হবে"
         ]
       },
       "acceptanceCriteria": [
-        "User > Production History displays all worker names (not only the logged-in user).",
-        "For each worker, the view shows Double and Single quantities (and corresponding totals or earnings) computed from stored production history entries.",
-        "If there is no production history for a worker, the UI clearly indicates 0 / no records for that worker without errors.",
-        "The view renders without relying on the legacy `histories.boardWork` shape for production data."
+        "Admin Work entry form has no rate inputs and continues to use saved worker rates (e.g., from worker rate settings).",
+        "On submit, the saved WorkHistory entry includes perWorkerAmounts and grandTotal derived from the selected workers’ rates.",
+        "Admin Work history table continues to show the grand total for each entry.",
+        "Accounts are updated so that each selected worker’s earnings increase (bill increases by that worker’s computed amount) when a work entry is added.",
+        "Deleting a Work entry reverses the same earnings effect (bill decreases by that worker’s amount)."
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Increase the font size of the four User Dashboard section tiles (Production, Snacks, Payment/Loan, Work) so the section titles are visibly larger and easier to read on mobile.",
+      "text": "Ensure deductions are reflected in each user’s balance: Nasta and Payment/Loan submissions must continue to reduce the user’s net balance by increasing the user’s cost, so the final balance/remaining amount equals earnings (bill) minus deductions (cost).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-5"
         ],
         "quotes": [
-          "প্রোডাকশন নাস্তা পেমেন্ট লোন এই চারটি সেকশনের টাইটেলের ফ্রন্টগুলা বড় করে দাও"
+          "নাস্তা বাবদ... পেমেন্ট... এগুলো কাটছাঁট করে কত পাবে"
         ]
       },
       "acceptanceCriteria": [
-        "The labels on the four main user dashboard tiles are rendered with a larger font size than the current \u0018small\u0019 variant.",
-        "No label text is clipped or overlaps icons on common mobile widths (e.g., 360px)."
+        "After adding Work earnings and then adding Nasta/Payment entries for the same worker(s), the worker’s final/remaining balance reflects bill - cost.",
+        "No section other than Work increases bill; Nasta/Payment/Loan only affect cost."
       ]
     },
     {
       "id": "REQ-5",
-      "text": "Fix User Panel typography and mobile layout so content fits within the phone viewport without being cut off at the bottom: reduce excessive spacing/padding in the User Dashboard layout while keeping readability, and ensure scroll + fixed footer behavior does not hide content.",
+      "text": "Add a confirmation popup before saving (submit) in Admin Nasta Management and Admin Payment & Loan Management, matching the confirm flow already used in Production/Work (single-confirm, prevents duplicate submits).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-5"
         ],
         "quotes": [
-          "ইউজার প্যানেলের সব জায়গায় ফ্রন্টগুলো ছোট হয়ে গেছে",
-          "ফাঁকা জায়গা গুলা একটু কমিয়ে স্ক্রিনটা একটু ছোট করো কেন স্ক্রিনের ভিতরেই থাকে যেন স্ক্রিনের বাইরে না যায়"
+          "এই দুইটা সেকশনে কোন কিছু ইনপুট দিয়ে সাবমিট করলে কনফার্ম popup আসে না"
         ]
       },
       "acceptanceCriteria": [
-        "User dashboard text (header meta labels, KPI section, and main content) is increased to a readable size relative to current rendering.",
-        "On mobile-sized viewports, the bottom content is not hidden behind the fixed footer; users can scroll to see all content.",
-        "No main content overflows outside the DashboardFrame container; the UI remains fully usable without elements being cut off."
+        "Clicking Submit in Admin Nasta shows a confirmation dialog; confirming performs the save; cancelling does not save.",
+        "Clicking Submit in Admin Payment/Loan shows a confirmation dialog; confirming performs the save; cancelling does not save.",
+        "While saving, the submit action is disabled to prevent double-submits (same pattern as useSingleConfirmSubmit)."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "In System Settings, apply distinct button colors to the four tabs: Label, Total, Layout, Branding (each tab visually different even when not active).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "লেবেল মোট লেআউট ব্র্যান্ডিং এই চারটা বাটনে চারটা কালার দিয়ে দিও"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The four System Settings tabs are visually color-distinct from each other.",
+        "Active tab state remains clear/accessible (contrast, readable text)."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Add two new Admin header quick-action buttons around Support/Chat: (1) a new button labeled “MT-LOAN” placed to the left of Support/Chat; (2) a Calculator button placed to the right of Support/Chat. Wire them to placeholder actions (e.g., open a modal or toast) so they are clickable and ready for future section expansion.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "সাপোর্ট / চ্যাট বাটনের বাম পাশে ... বাটনের নাম দিবে MT-LOAN",
+          "সাপোর্ট chat এর ডান পাশে একটি বাটন দিবে যেটাতে থাকবে ক্যালকুলেটর"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin UI shows an “MT-LOAN” button to the left of Support/Chat and a Calculator button to the right.",
+        "Both buttons are clickable and trigger a visible placeholder response (modal/sheet/toast) without breaking navigation.",
+        "Buttons render correctly on mobile widths (no overlap/clipping)."
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Improve Admin header styling to look cleaner: add a subtle border and/or backdrop blur and keep a consistent shadow so the header is visually separated from content.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "হেডারের চারপাশে বর্ডার দিলে যেন আরও সুন্দর ও পরিষ্কার দেখা যায়। আপনি চাইলে বর্ডার, শ্যাডো, অথবা হালকা ব্যাকগ্রাউন্ড‑ব্লার"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin header has a visible border separation from the page body.",
+        "Header maintains a consistent shadow and does not visually clash with gradient backgrounds.",
+        "No layout shift occurs when scrolling (sticky header remains stable)."
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Adjust the bottom navigation/footer area so the app’s own bottom buttons do not visually clash with the phone’s system navigation (home/back/recent): add a styled bottom container with clear separation and safe-area padding.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "মোবাইলের নিচের সিস্টেম ন্যাভিগেশন বাটনগুলো ... নিচের দিকে ফুল‑স্ক্রিনে একটা বর্ডার বা স্টাইল করা বক্স থাকবে, যার ভেতরে আপনার নিজের বাটনগুলো থাকবে"
+        ]
+      },
+      "acceptanceCriteria": [
+        "On mobile, the bottom navigation/footer is contained within a clearly styled bar/container with border/separation from the page background.",
+        "There is adequate bottom spacing (safe-area aware) so the phone system navigation area does not visually merge with app controls.",
+        "No bottom nav items become unreachable or overlapped by the OS navigation area."
       ]
     }
   ],
   "constraints": [
-    "Use English for any user-facing text in this build request (code/UI language can remain unchanged).",
-    "Do not edit files under frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui (compose instead).",
-    "Keep the backend as a single Motoko actor; do not add additional backend services."
+    "Frontend immutable paths must not be edited: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui/*.",
+    "Keep backend as single-actor; no new backend services or external databases."
   ],
   "nonGoals": [
-    "Investigating or resolving the prior production deployment error (not requested in the latest build instruction).",
-    "Adding new authentication providers (only Internet Identity is supported).",
-    "Introducing external databases or backend persistence for these UI changes."
+    "Implementing real-time chat or external messaging integrations.",
+    "Implementing a full calculator engine (only a UI entry point/placeholder interaction is required).",
+    "Adding new backend persistence for these changes (continue using existing storage approach)."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

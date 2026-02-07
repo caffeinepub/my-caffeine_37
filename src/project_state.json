@@ -1,51 +1,86 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "App UI/UX and admin/user panel enhancements: increase section title and user panel font sizes, improve mobile screen fit, extend Admin Production form with double/single quantity and rate inputs, and update User Production History to display all employees with double/single info.",
-  "architectural_notes": [],
+  "summary": "Admin panel update work: align Production report between Admin/User panels; enhance Work Management as main accounting section; add confirmation popups; UI/UX tweaks; add MT-LOAN and Calculator buttons; header/bottom navigation styling.",
+  "architectural_notes": [
+    "Work Management is the primary accounting module; user balances are derived from work earnings minus breakfast and payment/loan deductions.",
+    "Worker rates are managed per-user (no rate input in Work Management); admin totals are computed from selected workers' existing rates.",
+    "Production module is report-only with no financial impact."
+  ],
   "known_issues": [
-    "Deployment error occurred during production deployment (needs investigation/resolution).",
-    "Mobile UI overflow: user panel content extends beyond screen (bottom gets cut off)."
+    "No confirm popup appears after submitting forms in Breakfast Management and Payment/Loan Management."
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-update-the-admin-panel-production-section-form-to-capture-separate-work-quantities-for-double-and-single-and-separate-rates-for-double-and-single-4-inputs-total-quantitydouble-quantitysingle-ratedouble-ratesingle-matching-the-user-requested-layout-quantities-first-then-rates-below",
-      "title": "Update the Admin Panel \u001eProduction\u001f section form to capture separate work quantities for Double and Single, and separate rates for Double and Single (4 inputs total: quantityDouble, quantitySingle, rateDouble, rateSingle), matching the user-requested layout: quantities first, then rates below.",
+      "id": "feature-update-the-admin-production-section-so-it-is-report-only-no-accounting-transactions-keep-the-existing-input-form-and-history-storage-but-do-not-change-any-user-account-balances-when-a-production-entry-is-added-or-deleted",
+      "title": "Update the Admin Production section so it is report-only (no accounting/transactions): keep the existing input form and history storage, but do not change any user/account balances when a production entry is added or deleted.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-update-admin-panel-production-calculations-and-persisted-history-so-totals-are-computed-from-the-new-fields-total-quantitydouble-ratedouble-quantitysingle-ratesingle-and-the-stored-history-record-includes-these-four-fields-plus-computed-totals",
-      "title": "Update Admin Panel \u001eProduction\u001f calculations and persisted history so totals are computed from the new fields: total = (quantityDouble * rateDouble) + (quantitySingle * rateSingle), and the stored history record includes these four fields plus computed totals.",
+      "id": "feature-make-the-user-production-report-show-the-exact-same-report-format-data-as-the-admin-production-report-same-fields-aggregation-and-same-source-history-so-both-panels-display-production-reports-consistently",
+      "title": "Make the User Production report show the exact same report format/data as the Admin Production report (same fields/aggregation and same source history), so both panels display production reports consistently.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-update-the-user-panel-production-history-view-to-show-a-list-of-all-employees-workers-and-display-each-worker-s-double-and-single-information-derived-from-the-admin-production-history-data-instead-of-only-filtering-to-the-logged-in-user",
-      "title": "Update the User Panel \u001eProduction History\u001f view to show a list of all employees (workers) and display each worker\u0019s Double and Single information derived from the Admin Production history data, instead of only filtering to the logged-in user.",
+      "id": "feature-fix-work-management-to-behave-as-the-main-accounting-section-when-admin-submits-a-work-entry-compute-per-worker-amounts-using-each-selected-worker-s-saved-rates-no-rate-input-in-work-section-compute-and-display-a-grand-total-for-admin-and-credit-each-selected-worker-s-account-balance-as-earnings-not-as-cost",
+      "title": "Fix Work Management to behave as the main accounting section: when Admin submits a work entry, compute per-worker amounts using each selected worker’s saved rates (no rate input in Work section), compute and display a grand total for Admin, and credit each selected worker’s account balance as earnings (not as cost).",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-increase-the-font-size-of-the-four-user-dashboard-section-tiles-production-snacks-payment-loan-work-so-the-section-titles-are-visibly-larger-and-easier-to-read-on-mobile",
-      "title": "Increase the font size of the four User Dashboard section tiles (Production, Snacks, Payment/Loan, Work) so the section titles are visibly larger and easier to read on mobile.",
+      "id": "feature-ensure-deductions-are-reflected-in-each-user-s-balance-nasta-and-payment-loan-submissions-must-continue-to-reduce-the-user-s-net-balance-by-increasing-the-user-s-cost-so-the-final-balance-remaining-amount-equals-earnings-bill-minus-deductions-cost",
+      "title": "Ensure deductions are reflected in each user’s balance: Nasta and Payment/Loan submissions must continue to reduce the user’s net balance by increasing the user’s cost, so the final balance/remaining amount equals earnings (bill) minus deductions (cost).",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-fix-user-panel-typography-and-mobile-layout-so-content-fits-within-the-phone-viewport-without-being-cut-off-at-the-bottom-reduce-excessive-spacing-padding-in-the-user-dashboard-layout-while-keeping-readability-and-ensure-scroll-fixed-footer-behavior-does-not-hide-content",
-      "title": "Fix User Panel typography and mobile layout so content fits within the phone viewport without being cut off at the bottom: reduce excessive spacing/padding in the User Dashboard layout while keeping readability, and ensure scroll + fixed footer behavior does not hide content.",
+      "id": "feature-add-a-confirmation-popup-before-saving-submit-in-admin-nasta-management-and-admin-payment-loan-management-matching-the-confirm-flow-already-used-in-production-work-single-confirm-prevents-duplicate-submits",
+      "title": "Add a confirmation popup before saving (submit) in Admin Nasta Management and Admin Payment & Loan Management, matching the confirm flow already used in Production/Work (single-confirm, prevents duplicate submits).",
       "reqIds": [
         "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-system-settings-apply-distinct-button-colors-to-the-four-tabs-label-total-layout-branding-each-tab-visually-different-even-when-not-active",
+      "title": "In System Settings, apply distinct button colors to the four tabs: Label, Total, Layout, Branding (each tab visually different even when not active).",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-two-new-admin-header-quick-action-buttons-around-support-chat-1-a-new-button-labeled-mt-loan-placed-to-the-left-of-support-chat-2-a-calculator-button-placed-to-the-right-of-support-chat-wire-them-to-placeholder-actions-e-g-open-a-modal-or-toast-so-they-are-clickable-and-ready-for-future-section-expansion",
+      "title": "Add two new Admin header quick-action buttons around Support/Chat: (1) a new button labeled “MT-LOAN” placed to the left of Support/Chat; (2) a Calculator button placed to the right of Support/Chat. Wire them to placeholder actions (e.g., open a modal or toast) so they are clickable and ready for future section expansion.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-improve-admin-header-styling-to-look-cleaner-add-a-subtle-border-and-or-backdrop-blur-and-keep-a-consistent-shadow-so-the-header-is-visually-separated-from-content",
+      "title": "Improve Admin header styling to look cleaner: add a subtle border and/or backdrop blur and keep a consistent shadow so the header is visually separated from content.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-adjust-the-bottom-navigation-footer-area-so-the-app-s-own-bottom-buttons-do-not-visually-clash-with-the-phone-s-system-navigation-home-back-recent-add-a-styled-bottom-container-with-clear-separation-and-safe-area-padding",
+      "title": "Adjust the bottom navigation/footer area so the app’s own bottom buttons do not visually clash with the phone’s system navigation (home/back/recent): add a styled bottom container with clear separation and safe-area padding.",
+      "reqIds": [
+        "REQ-9"
       ],
       "version": 1
     }
@@ -53,42 +88,55 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Increase title font size for four section cards (Production, Snacks, Payment, Loan)",
+      "summary": "Production section: no accounting/transactions; show the exact same report in both Admin and User Production pages (report-only).",
       "reqIds": [],
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "id": "AR-2",
-      "summary": "Fix User Panel typography: fonts became too small across user panel; increase to appropriate sizes",
+      "summary": "Work Management section as main accounting: keep admin report, calculate grand total based on selected workers' existing user rates; user panel credits personal earnings; track balance after breakfast + payment/loan deductions; support two report types (admin vs user).",
       "reqIds": [],
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "id": "AR-3",
-      "summary": "Improve User Panel mobile layout to fit within screen (reduce excess spacing/padding so content doesn’t overflow/cut off at bottom)",
+      "summary": "Add confirm popup on submit in Breakfast Management and Payment & Loan Management sections.",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Admin Panel > Production: add inputs for Work Quantity: Double and Single",
+      "summary": "System Settings UI: give distinct colors to the four buttons (Label, Total, Layout, Branding).",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-5",
-      "summary": "Admin Panel > Production: add inputs for Work Rate: Double rate and Single rate (two additional boxes under quantity)",
+      "summary": "Admin header: add new button 'MT-LOAN' to the left of Support/Chat for adding sections later.",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-6",
-      "summary": "User Panel > Production History: show list of all employees and display Double/Single info similar to provided screenshot behavior",
+      "summary": "Add a Calculator button to the right of Support/Chat in Admin panel.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Improve header styling with border/shadow/light background blur for cleaner look.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Mobile UI: add a styled bottom container/border so the app’s bottom buttons don’t visually clash with the phone system navigation buttons (home/back/recent).",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "Update Admin Production form (double/single quantity & rate) and fix User Dashboard typography/mobile fit",
+  "gameProjectType": "none",
+  "projectName": "Admin panel accounting & UX updates (Production report parity, Work accounting, confirmations, header/nav tweaks)",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

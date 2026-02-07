@@ -26,6 +26,19 @@ export interface DashboardOverrides {
   userProductionLabel?: string;
   userWorkLabel?: string;
   userPaymentLabel?: string;
+  userNastaLabel?: string;
+  
+  // User logout and dialog labels
+  logoutButtonLabel?: string;
+  logoutDialogTitle?: string;
+  logoutDialogDescription?: string;
+  logoutConfirmText?: string;
+  logoutCancelText?: string;
+  
+  // Footer button labels
+  supportButtonLabel?: string;
+  settingsButtonLabel?: string;
+  chatButtonLabel?: string;
 }
 
 export function loadDashboardOverrides(): DashboardOverrides {

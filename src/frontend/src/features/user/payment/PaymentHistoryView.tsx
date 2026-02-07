@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useSession } from '../../../state/session/useSession';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Badge } from '../../../components/ui/badge';
+import { Button } from '../../../components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import { safeGetItem } from '../../../lib/storage/safeStorage';
 
 interface PaymentEntry {
@@ -78,7 +80,17 @@ export default function PaymentHistoryView({ onBack }: PaymentHistoryViewProps) 
     <div className="min-h-full bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-3">
       <Card className="shadow-xl border-2 border-blue-200">
         <CardHeader className="bg-gradient-to-r from-blue-100 to-indigo-100 py-3">
-          <CardTitle className="text-xl font-bold text-blue-900">পেমেন্ট ও লোন</CardTitle>
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={onBack}
+              variant="ghost"
+              size="sm"
+              className="hover:bg-blue-200 text-blue-900"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <CardTitle className="text-xl font-bold text-blue-900">পেমেন্ট ও লোন</CardTitle>
+          </div>
         </CardHeader>
         <CardContent className="pt-4 px-2">
           {isLoading ? (

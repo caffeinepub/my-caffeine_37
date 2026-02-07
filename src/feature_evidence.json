@@ -2,8 +2,8 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-admin-panel-production-section-form-to-capture-separate-work-quantities-for-double-and-single-and-separate-rates-for-double-and-single-4-inputs-total-quantitydouble-quantitysingle-ratedouble-ratesingle-matching-the-user-requested-layout-quantities-first-then-rates-below",
-      "featureTitle": "Update the Admin Panel \u001eProduction\u001f section form to capture separate work quantities for Double and Single, and separate rates for Double and Single (4 inputs total: quantityDouble, quantitySingle, rateDouble, rateSingle), matching the user-requested layout: quantities first, then rates below.",
+      "featureId": "feature-update-the-admin-production-section-so-it-is-report-only-no-accounting-transactions-keep-the-existing-input-form-and-history-storage-but-do-not-change-any-user-account-balances-when-a-production-entry-is-added-or-deleted",
+      "featureTitle": "Update the Admin Production section so it is report-only (no accounting/transactions): keep the existing input form and history storage, but do not change any user/account balances when a production entry is added or deleted.",
       "files": [
         "frontend/src/features/admin/sections/ProductionSection.tsx"
       ],
@@ -23,8 +23,8 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-admin-panel-production-calculations-and-persisted-history-so-totals-are-computed-from-the-new-fields-total-quantitydouble-ratedouble-quantitysingle-ratesingle-and-the-stored-history-record-includes-these-four-fields-plus-computed-totals",
-      "featureTitle": "Update Admin Panel \u001eProduction\u001f calculations and persisted history so totals are computed from the new fields: total = (quantityDouble * rateDouble) + (quantitySingle * rateSingle), and the stored history record includes these four fields plus computed totals.",
+      "featureId": "feature-make-the-user-production-report-show-the-exact-same-report-format-data-as-the-admin-production-report-same-fields-aggregation-and-same-source-history-so-both-panels-display-production-reports-consistently",
+      "featureTitle": "Make the User Production report show the exact same report format/data as the Admin Production report (same fields/aggregation and same source history), so both panels display production reports consistently.",
       "files": [
         "frontend/src/features/admin/sections/ProductionSection.tsx"
       ],
@@ -44,11 +44,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-user-panel-production-history-view-to-show-a-list-of-all-employees-workers-and-display-each-worker-s-double-and-single-information-derived-from-the-admin-production-history-data-instead-of-only-filtering-to-the-logged-in-user",
-      "featureTitle": "Update the User Panel \u001eProduction History\u001f view to show a list of all employees (workers) and display each worker\u0019s Double and Single information derived from the Admin Production history data, instead of only filtering to the logged-in user.",
+      "featureId": "feature-fix-work-management-to-behave-as-the-main-accounting-section-when-admin-submits-a-work-entry-compute-per-worker-amounts-using-each-selected-worker-s-saved-rates-no-rate-input-in-work-section-compute-and-display-a-grand-total-for-admin-and-credit-each-selected-worker-s-account-balance-as-earnings-not-as-cost",
+      "featureTitle": "Fix Work Management to behave as the main accounting section: when Admin submits a work entry, compute per-worker amounts using each selected worker’s saved rates (no rate input in Work section), compute and display a grand total for Admin, and credit each selected worker’s account balance as earnings (not as cost).",
       "files": [
-        "frontend/src/features/user/production/ProductionHistoryView.tsx",
-        "frontend/src/features/user/production/productionAggregates.ts"
+        "frontend/src/features/admin/sections/WorkSection.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -66,10 +65,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-increase-the-font-size-of-the-four-user-dashboard-section-tiles-production-snacks-payment-loan-work-so-the-section-titles-are-visibly-larger-and-easier-to-read-on-mobile",
-      "featureTitle": "Increase the font size of the four User Dashboard section tiles (Production, Snacks, Payment/Loan, Work) so the section titles are visibly larger and easier to read on mobile.",
+      "featureId": "feature-ensure-deductions-are-reflected-in-each-user-s-balance-nasta-and-payment-loan-submissions-must-continue-to-reduce-the-user-s-net-balance-by-increasing-the-user-s-cost-so-the-final-balance-remaining-amount-equals-earnings-bill-minus-deductions-cost",
+      "featureTitle": "Ensure deductions are reflected in each user’s balance: Nasta and Payment/Loan submissions must continue to reduce the user’s net balance by increasing the user’s cost, so the final balance/remaining amount equals earnings (bill) minus deductions (cost).",
       "files": [
-        "frontend/src/components/dashboard/ActionTile.tsx"
+        "frontend/src/features/admin/sections/NastaSection.tsx",
+        "frontend/src/features/admin/sections/PaymentLoanSection.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -87,12 +87,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-fix-user-panel-typography-and-mobile-layout-so-content-fits-within-the-phone-viewport-without-being-cut-off-at-the-bottom-reduce-excessive-spacing-padding-in-the-user-dashboard-layout-while-keeping-readability-and-ensure-scroll-fixed-footer-behavior-does-not-hide-content",
-      "featureTitle": "Fix User Panel typography and mobile layout so content fits within the phone viewport without being cut off at the bottom: reduce excessive spacing/padding in the User Dashboard layout while keeping readability, and ensure scroll + fixed footer behavior does not hide content.",
+      "featureId": "feature-add-a-confirmation-popup-before-saving-submit-in-admin-nasta-management-and-admin-payment-loan-management-matching-the-confirm-flow-already-used-in-production-work-single-confirm-prevents-duplicate-submits",
+      "featureTitle": "Add a confirmation popup before saving (submit) in Admin Nasta Management and Admin Payment & Loan Management, matching the confirm flow already used in Production/Work (single-confirm, prevents duplicate submits).",
       "files": [
-        "frontend/src/components/layout/DashboardFrame.tsx",
-        "frontend/src/features/user/UserDashboard.tsx",
-        "frontend/src/index.css"
+        "frontend/src/features/admin/sections/NastaSection.tsx",
+        "frontend/src/features/admin/sections/PaymentLoanSection.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -106,6 +105,93 @@
       ],
       "testIds": [
         "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-in-system-settings-apply-distinct-button-colors-to-the-four-tabs-label-total-layout-branding-each-tab-visually-different-even-when-not-active",
+      "featureTitle": "In System Settings, apply distinct button colors to the four tabs: Label, Total, Layout, Branding (each tab visually different even when not active).",
+      "files": [
+        "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+        "frontend/src/index.css"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "user-approval@3.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-two-new-admin-header-quick-action-buttons-around-support-chat-1-a-new-button-labeled-mt-loan-placed-to-the-left-of-support-chat-2-a-calculator-button-placed-to-the-right-of-support-chat-wire-them-to-placeholder-actions-e-g-open-a-modal-or-toast-so-they-are-clickable-and-ready-for-future-section-expansion",
+      "featureTitle": "Add two new Admin header quick-action buttons around Support/Chat: (1) a new button labeled “MT-LOAN” placed to the left of Support/Chat; (2) a Calculator button placed to the right of Support/Chat. Wire them to placeholder actions (e.g., open a modal or toast) so they are clickable and ready for future section expansion.",
+      "files": [
+        "frontend/src/components/layout/AppShell.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "user-approval@3.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-improve-admin-header-styling-to-look-cleaner-add-a-subtle-border-and-or-backdrop-blur-and-keep-a-consistent-shadow-so-the-header-is-visually-separated-from-content",
+      "featureTitle": "Improve Admin header styling to look cleaner: add a subtle border and/or backdrop blur and keep a consistent shadow so the header is visually separated from content.",
+      "files": [
+        "frontend/src/components/layout/AppShell.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "user-approval@3.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-adjust-the-bottom-navigation-footer-area-so-the-app-s-own-bottom-buttons-do-not-visually-clash-with-the-phone-s-system-navigation-home-back-recent-add-a-styled-bottom-container-with-clear-separation-and-safe-area-padding",
+      "featureTitle": "Adjust the bottom navigation/footer area so the app’s own bottom buttons do not visually clash with the phone’s system navigation (home/back/recent): add a styled bottom container with clear separation and safe-area padding.",
+      "files": [
+        "frontend/src/components/layout/DashboardFooter.tsx",
+        "frontend/src/features/admin/components/AdminBottomNav.tsx",
+        "frontend/src/index.css"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "user-approval@3.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
       ],
       "confidence": "high"
     }

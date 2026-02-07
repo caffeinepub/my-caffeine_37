@@ -5,9 +5,10 @@ import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
-import { safeGetItem, safeSetItem, safeGetArray } from '../../../lib/storage/safeStorage';
+import { safeGetArray, safeSetItem, safeGetItem } from '../../../lib/storage/safeStorage';
 import { notify } from '../../../components/feedback/notify';
 import { ConfirmDialog } from '../../../components/feedback/ConfirmDialog';
+import { useSingleConfirmSubmit } from '../../../hooks/useSingleConfirmSubmit';
 import { Trash2 } from 'lucide-react';
 
 interface NastaEntry {
@@ -15,7 +16,6 @@ interface NastaEntry {
   date: string;
   names: string[];
   amount: number;
-  perHead: number;
   note: string;
   timestamp: number;
 }
@@ -28,6 +28,12 @@ export default function NastaSection() {
   const [workers, setWorkers] = useState<string[]>([]);
   const [history, setHistory] = useState<NastaEntry[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const { isSaving, showConfirm, setShowConfirm, handleSubmit: handleConfirmSubmit } = useSingleConfirmSubmit(
+    async () => {
+      await saveNasta();
+    }
+  );
 
   useEffect(() => {
     loadWorkers();
@@ -63,13 +69,22 @@ export default function NastaSection() {
       return;
     }
 
-    const perHead = Number(amount) / selectedWorkers.length;
+    const amt = Number(amount);
+    if (amt <= 0) {
+      notify.error('পরিমাণ শূন্যের চেয়ে বেশি হতে হবে');
+      return;
+    }
+
+    setShowConfirm(true);
+  };
+
+  const saveNasta = async () => {
+    const amt = Number(amount);
     const entry: NastaEntry = {
       id: Date.now().toString(),
       date,
       names: selectedWorkers,
-      amount: Number(amount),
-      perHead,
+      amount: amt,
       note,
       timestamp: Date.now(),
     };
@@ -78,12 +93,13 @@ export default function NastaSection() {
     entries.push(entry);
     safeSetItem('nastaHistory', entries);
 
+    // Update accounts: Nasta increases cost (deduction)
     const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
     selectedWorkers.forEach((worker) => {
       if (!accounts[worker]) {
         accounts[worker] = { bill: 0, cost: 0 };
       }
-      accounts[worker].cost += perHead;
+      accounts[worker].cost += amt;
     });
     safeSetItem('accounts', accounts);
 
@@ -101,10 +117,11 @@ export default function NastaSection() {
     const entry = entries.find((e) => e.id === deleteId);
     if (!entry) return;
 
+    // Reverse account updates: decrease cost
     const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
     entry.names.forEach((worker) => {
       if (accounts[worker]) {
-        accounts[worker].cost -= entry.perHead;
+        accounts[worker].cost -= entry.amount;
       }
     });
     safeSetItem('accounts', accounts);
@@ -158,14 +175,16 @@ export default function NastaSection() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="amount">মোট পরিমাণ (৳)</Label>
+                <Label htmlFor="amount">পরিমাণ (টাকা)</Label>
                 <Input
                   id="amount"
                   type="number"
+                  min="0"
+                  step="0.01"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  placeholder="মোট পরিমাণ"
                   className="border-2"
+                  required
                 />
               </div>
 
@@ -175,14 +194,17 @@ export default function NastaSection() {
                   id="note"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  placeholder="নোট লিখুন..."
-                  rows={2}
                   className="border-2"
+                  rows={2}
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-3">
-                সাবমিট করুন
+              <Button 
+                type="submit" 
+                disabled={isSaving}
+                className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-3"
+              >
+                {isSaving ? 'সংরক্ষণ করা হচ্ছে...' : 'জমা দিন'}
               </Button>
             </form>
           </CardContent>
@@ -190,7 +212,7 @@ export default function NastaSection() {
 
         <Card className="border-amber-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500">
-            <CardTitle className="text-lg text-white">নাস্তার হিস্ট্রি</CardTitle>
+            <CardTitle className="text-lg text-white">নাস্তা ইতিহাস</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="overflow-x-auto">
@@ -199,8 +221,7 @@ export default function NastaSection() {
                   <TableRow>
                     <TableHead>তারিখ</TableHead>
                     <TableHead>নাম</TableHead>
-                    <TableHead>মোট</TableHead>
-                    <TableHead>প্রতি জন</TableHead>
+                    <TableHead className="text-right">পরিমাণ</TableHead>
                     <TableHead>নোট</TableHead>
                     <TableHead className="text-center">অ্যাকশন</TableHead>
                   </TableRow>
@@ -208,7 +229,7 @@ export default function NastaSection() {
                 <TableBody>
                   {history.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                         কোনো এন্ট্রি নেই
                       </TableCell>
                     </TableRow>
@@ -217,9 +238,12 @@ export default function NastaSection() {
                       <TableRow key={entry.id}>
                         <TableCell className="font-medium">{entry.date}</TableCell>
                         <TableCell>{entry.names.join(', ')}</TableCell>
-                        <TableCell className="font-bold text-amber-700">৳{entry.amount.toFixed(0)}</TableCell>
-                        <TableCell>৳{entry.perHead.toFixed(2)}</TableCell>
-                        <TableCell className="max-w-xs truncate">{entry.note || '-'}</TableCell>
+                        <TableCell className="text-right font-bold text-amber-700">
+                          ৳{entry.amount.toFixed(0)}
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {entry.note || '-'}
+                        </TableCell>
                         <TableCell className="text-center">
                           <Button
                             variant="ghost"
@@ -241,12 +265,22 @@ export default function NastaSection() {
       </div>
 
       <ConfirmDialog
+        open={showConfirm}
+        onOpenChange={setShowConfirm}
+        title="নিশ্চিত করুন"
+        description="আপনি কি এই নাস্তা এন্ট্রি সংরক্ষণ করতে চান?"
+        onConfirm={handleConfirmSubmit}
+        confirmText="হ্যাঁ, সংরক্ষণ করুন"
+        cancelText="না"
+      />
+
+      <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
-        title="এন্ট্রি মুছে ফেলুন"
+        title="এন্ট্রি মুছুন"
         description="আপনি কি নিশ্চিত যে আপনি এই এন্ট্রি মুছে ফেলতে চান?"
         onConfirm={handleDelete}
-        confirmText="হ্যাঁ, মুছে ফেলুন"
+        confirmText="হ্যাঁ, মুছুন"
         cancelText="না"
         variant="destructive"
       />

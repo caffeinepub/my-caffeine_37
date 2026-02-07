@@ -1,16 +1,4 @@
-import { safeGetArray } from '../../../lib/storage/safeStorage';
-
-interface ProductionEntry {
-  id: string;
-  date: string;
-  names: string[];
-  quantityDouble: number;
-  quantitySingle: number;
-  rateDouble: number;
-  rateSingle: number;
-  total: number;
-  timestamp: number;
-}
+import { loadNormalizedProductionHistory, NormalizedProductionEntry } from '../../../lib/storage/productionHistoryStorage';
 
 export interface WorkerProductionSummary {
   workerName: string;
@@ -20,22 +8,9 @@ export interface WorkerProductionSummary {
 }
 
 export function aggregateProductionByWorker(): WorkerProductionSummary[] {
-  const entries = safeGetArray<ProductionEntry>('productionHistory');
-  const workers = safeGetArray<string>('workers');
-
+  const entries = loadNormalizedProductionHistory();
   const workerMap = new Map<string, WorkerProductionSummary>();
 
-  // Initialize all workers with zero values
-  workers.forEach((worker) => {
-    workerMap.set(worker, {
-      workerName: worker,
-      totalDouble: 0,
-      totalSingle: 0,
-      totalEarnings: 0,
-    });
-  });
-
-  // Aggregate production data
   entries.forEach((entry) => {
     entry.names.forEach((workerName) => {
       const existing = workerMap.get(workerName);
@@ -44,7 +19,6 @@ export function aggregateProductionByWorker(): WorkerProductionSummary[] {
         existing.totalSingle += entry.quantitySingle || 0;
         existing.totalEarnings += entry.total || 0;
       } else {
-        // Worker not in list but has production data
         workerMap.set(workerName, {
           workerName,
           totalDouble: entry.quantityDouble || 0,

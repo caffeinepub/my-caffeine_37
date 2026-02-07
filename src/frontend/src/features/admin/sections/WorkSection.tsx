@@ -4,31 +4,44 @@ import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
-import { safeGetItem, safeSetItem, safeGetArray } from '../../../lib/storage/safeStorage';
+import { safeGetArray, safeSetItem, safeGetItem } from '../../../lib/storage/safeStorage';
 import { notify } from '../../../components/feedback/notify';
 import { ConfirmDialog } from '../../../components/feedback/ConfirmDialog';
+import { useSingleConfirmSubmit } from '../../../hooks/useSingleConfirmSubmit';
 import { Trash2 } from 'lucide-react';
 
 interface WorkEntry {
   id: string;
   date: string;
   names: string[];
-  singleRate: number;
-  doubleRate: number;
-  singleCount: number;
-  doubleCount: number;
-  amounts: Record<string, number>;
+  quantityDouble: number;
+  quantitySingle: number;
+  perWorkerAmounts: Record<string, number>;
+  grandTotal: number;
   timestamp: number;
+}
+
+interface WorkerRate {
+  name: string;
+  rateDouble: number;
+  rateSingle: number;
 }
 
 export default function WorkSection() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedWorkers, setSelectedWorkers] = useState<string[]>([]);
-  const [singleCount, setSingleCount] = useState('');
-  const [doubleCount, setDoubleCount] = useState('');
+  const [quantityDouble, setQuantityDouble] = useState('');
+  const [quantitySingle, setQuantitySingle] = useState('');
   const [workers, setWorkers] = useState<string[]>([]);
+  const [workerRates, setWorkerRates] = useState<Record<string, WorkerRate>>({});
   const [history, setHistory] = useState<WorkEntry[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const { isSaving, showConfirm, setShowConfirm, handleSubmit: handleConfirmSubmit } = useSingleConfirmSubmit(
+    async () => {
+      await saveWork();
+    }
+  );
 
   useEffect(() => {
     loadWorkers();
@@ -38,6 +51,13 @@ export default function WorkSection() {
   const loadWorkers = () => {
     const workerList = safeGetArray<string>('workers');
     setWorkers(workerList);
+
+    const rates = safeGetArray<WorkerRate>('workerRates');
+    const rateMap: Record<string, WorkerRate> = {};
+    rates.forEach((r) => {
+      rateMap[r.name] = r;
+    });
+    setWorkerRates(rateMap);
   };
 
   const loadHistory = () => {
@@ -59,23 +79,53 @@ export default function WorkSection() {
       return;
     }
 
-    const rates = safeGetItem<Record<string, { single: number; double: number }>>('workerRates', {}) || {};
-    const amounts: Record<string, number> = {};
+    if (!quantityDouble || !quantitySingle) {
+      notify.error('সব ঘর পূরণ করুন');
+      return;
+    }
+
+    const qtyDouble = Number(quantityDouble);
+    const qtySingle = Number(quantitySingle);
+
+    if (qtyDouble < 0 || qtySingle < 0) {
+      notify.error('মান ঋণাত্মক হতে পারে না');
+      return;
+    }
+
+    // Validate that all selected workers have rates
+    const missingRates = selectedWorkers.filter((w) => !workerRates[w]);
+    if (missingRates.length > 0) {
+      notify.error(`রেট নেই: ${missingRates.join(', ')}`);
+      return;
+    }
+
+    setShowConfirm(true);
+  };
+
+  const saveWork = async () => {
+    const qtyDouble = Number(quantityDouble);
+    const qtySingle = Number(quantitySingle);
+
+    const perWorkerAmounts: Record<string, number> = {};
+    let grandTotal = 0;
 
     selectedWorkers.forEach((worker) => {
-      const rate = rates[worker] || { single: 0, double: 0 };
-      amounts[worker] = Number(singleCount) * rate.single + Number(doubleCount) * rate.double;
+      const rate = workerRates[worker];
+      if (rate) {
+        const amount = qtyDouble * rate.rateDouble + qtySingle * rate.rateSingle;
+        perWorkerAmounts[worker] = amount;
+        grandTotal += amount;
+      }
     });
 
     const entry: WorkEntry = {
       id: Date.now().toString(),
       date,
       names: selectedWorkers,
-      singleRate: 0,
-      doubleRate: 0,
-      singleCount: Number(singleCount),
-      doubleCount: Number(doubleCount),
-      amounts,
+      quantityDouble: qtyDouble,
+      quantitySingle: qtySingle,
+      perWorkerAmounts,
+      grandTotal,
       timestamp: Date.now(),
     };
 
@@ -83,18 +133,19 @@ export default function WorkSection() {
     entries.push(entry);
     safeSetItem('workHistory', entries);
 
+    // Update accounts: Work increases bill (earnings)
     const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
     selectedWorkers.forEach((worker) => {
       if (!accounts[worker]) {
         accounts[worker] = { bill: 0, cost: 0 };
       }
-      accounts[worker].bill += amounts[worker];
+      accounts[worker].bill += perWorkerAmounts[worker] || 0;
     });
     safeSetItem('accounts', accounts);
 
     setSelectedWorkers([]);
-    setSingleCount('');
-    setDoubleCount('');
+    setQuantityDouble('');
+    setQuantitySingle('');
     loadHistory();
     notify.success('কাজ সফলভাবে যোগ করা হয়েছে');
   };
@@ -106,10 +157,11 @@ export default function WorkSection() {
     const entry = entries.find((e) => e.id === deleteId);
     if (!entry) return;
 
+    // Reverse account updates: decrease bill (earnings)
     const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
     entry.names.forEach((worker) => {
-      if (accounts[worker] && entry.amounts[worker]) {
-        accounts[worker].bill -= entry.amounts[worker];
+      if (accounts[worker]) {
+        accounts[worker].bill -= entry.perWorkerAmounts[worker] || 0;
       }
     });
     safeSetItem('accounts', accounts);
@@ -162,33 +214,43 @@ export default function WorkSection() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="singleCount">সিঙ্গেল সংখ্যা</Label>
-                  <Input
-                    id="singleCount"
-                    type="number"
-                    value={singleCount}
-                    onChange={(e) => setSingleCount(e.target.value)}
-                    placeholder="সিঙ্গেল"
-                    className="border-2"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="doubleCount">ডাবল সংখ্যা</Label>
-                  <Input
-                    id="doubleCount"
-                    type="number"
-                    value={doubleCount}
-                    onChange={(e) => setDoubleCount(e.target.value)}
-                    placeholder="ডাবল"
-                    className="border-2"
-                  />
+              <div className="space-y-2">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="quantityDouble" className="text-sm">ডাবল</Label>
+                    <Input
+                      id="quantityDouble"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={quantityDouble}
+                      onChange={(e) => setQuantityDouble(e.target.value)}
+                      className="border-2"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="quantitySingle" className="text-sm">সিঙ্গেল</Label>
+                    <Input
+                      id="quantitySingle"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={quantitySingle}
+                      onChange={(e) => setQuantitySingle(e.target.value)}
+                      className="border-2"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-bold py-3">
-                সাবমিট করুন
+              <Button 
+                type="submit" 
+                disabled={isSaving}
+                className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-bold py-3"
+              >
+                {isSaving ? 'সংরক্ষণ করা হচ্ছে...' : 'জমা দিন'}
               </Button>
             </form>
           </CardContent>
@@ -196,7 +258,7 @@ export default function WorkSection() {
 
         <Card className="border-cyan-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-cyan-500 to-blue-500">
-            <CardTitle className="text-lg text-white">কাজের হিস্ট্রি</CardTitle>
+            <CardTitle className="text-lg text-white">কাজের ইতিহাস</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="overflow-x-auto">
@@ -205,8 +267,8 @@ export default function WorkSection() {
                   <TableRow>
                     <TableHead>তারিখ</TableHead>
                     <TableHead>নাম</TableHead>
-                    <TableHead>সিঙ্গেল</TableHead>
                     <TableHead>ডাবল</TableHead>
+                    <TableHead>সিঙ্গেল</TableHead>
                     <TableHead className="text-right">মোট</TableHead>
                     <TableHead className="text-center">অ্যাকশন</TableHead>
                   </TableRow>
@@ -219,30 +281,27 @@ export default function WorkSection() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    history.map((entry) => {
-                      const total = Object.values(entry.amounts).reduce((sum, amt) => sum + amt, 0);
-                      return (
-                        <TableRow key={entry.id}>
-                          <TableCell className="font-medium">{entry.date}</TableCell>
-                          <TableCell>{entry.names.join(', ')}</TableCell>
-                          <TableCell>{entry.singleCount}</TableCell>
-                          <TableCell>{entry.doubleCount}</TableCell>
-                          <TableCell className="text-right font-bold text-cyan-700">
-                            ৳{total.toFixed(0)}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setDeleteId(entry.id)}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
+                    history.map((entry) => (
+                      <TableRow key={entry.id}>
+                        <TableCell className="font-medium">{entry.date}</TableCell>
+                        <TableCell>{entry.names.join(', ')}</TableCell>
+                        <TableCell>{entry.quantityDouble}</TableCell>
+                        <TableCell>{entry.quantitySingle}</TableCell>
+                        <TableCell className="text-right font-bold text-cyan-700">
+                          ৳{entry.grandTotal.toFixed(0)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setDeleteId(entry.id)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
                   )}
                 </TableBody>
               </Table>
@@ -252,12 +311,22 @@ export default function WorkSection() {
       </div>
 
       <ConfirmDialog
+        open={showConfirm}
+        onOpenChange={setShowConfirm}
+        title="নিশ্চিত করুন"
+        description="আপনি কি এই কাজ এন্ট্রি সংরক্ষণ করতে চান?"
+        onConfirm={handleConfirmSubmit}
+        confirmText="হ্যাঁ, সংরক্ষণ করুন"
+        cancelText="না"
+      />
+
+      <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
-        title="এন্ট্রি মুছে ফেলুন"
+        title="এন্ট্রি মুছুন"
         description="আপনি কি নিশ্চিত যে আপনি এই এন্ট্রি মুছে ফেলতে চান?"
         onConfirm={handleDelete}
-        confirmText="হ্যাঁ, মুছে ফেলুন"
+        confirmText="হ্যাঁ, মুছুন"
         cancelText="না"
         variant="destructive"
       />

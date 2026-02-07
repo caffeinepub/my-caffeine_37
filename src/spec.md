@@ -1,13 +1,17 @@
 # Specification
 
 ## Summary
-**Goal:** Update Admin Production data entry to support separate Double/Single quantities and rates with correct totals, and improve User Dashboard readability and mobile fit.
+**Goal:** Align accounting behavior and reporting between Admin/User panels while improving Admin UX (confirmations, header actions/styling, and mobile-safe bottom navigation).
 
 **Planned changes:**
-- Update Admin > Production form UI to include 4 numeric inputs (quantityDouble, quantitySingle, rateDouble, rateSingle) laid out as quantities first, then rates, with required/valid (non-negative numeric) validation.
-- Update Admin > Production calculations and stored history to compute total = (quantityDouble * rateDouble) + (quantitySingle * rateSingle), persist the four fields plus computed totals, update the history table display, and ensure delete reverses the correct computed total.
-- Update User > Production History to list all workers and show each worker’s Double/Single quantities (and derived totals/earnings) from the new production history data, including clear 0/no-record states.
-- Increase font size for the four User Dashboard tiles (Production, Snacks, Payment/Loan, Work) without clipping/overlap on common mobile widths.
-- Adjust User Panel typography and mobile layout to reduce excessive spacing, keep text readable, and ensure content is scrollable and not hidden behind any fixed footer.
+- Make Admin Production report-only: keep saving/deleting production history entries but stop any balance/account updates from Production actions.
+- Make User Production report match Admin Production exactly (same report format, fields, aggregation, and underlying history source), remaining report-only.
+- Fix Work Management accounting: remove any rate input, use each selected worker’s saved rate to compute per-worker amounts and a grand total, store these in WorkHistory, and credit each selected worker’s earnings (bill); reverse on delete.
+- Ensure deductions (Nasta, Payment/Loan) continue to reduce net balance by increasing cost so remaining equals bill minus cost.
+- Add confirmation popups on submit for Admin Nasta Management and Admin Payment & Loan Management (single-confirm flow and prevent double-submits).
+- In System Settings, give the four tabs (Label, Total, Layout, Branding) distinct button colors while keeping active state clear.
+- Add Admin header quick actions: “MT-LOAN” button (left of Support/Chat) and a Calculator button (right of Support/Chat), both wired to placeholder click actions.
+- Improve Admin header styling with clearer separation (subtle border and/or backdrop blur) and consistent shadow without sticky scroll layout shift.
+- Adjust bottom navigation/footer to be safe-area aware on mobile with a styled container/bar so app controls don’t clash with the phone’s system navigation.
 
-**User-visible outcome:** Admins can enter and manage production using separate Double/Single quantities and rates with accurate totals and history, while users see an all-workers production history with Double/Single breakdowns and a more readable, mobile-friendly dashboard that fits within the viewport.
+**User-visible outcome:** Production becomes a pure report in both Admin and User panels, Work entries correctly credit worker earnings while Nasta/Payment/Loan remain deductions, Admin submissions for Nasta and Payment/Loan require confirmation, and the Admin UI has cleaner header actions/styling plus a bottom nav that remains clear and usable on mobile devices.

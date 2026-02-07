@@ -1,8 +1,9 @@
 import { ReactNode, useState } from 'react';
 import { useSession } from '../../state/session/useSession';
 import { Button } from '../ui/button';
-import { LogOut } from 'lucide-react';
+import { LogOut, Calculator, DollarSign } from 'lucide-react';
 import { ConfirmDialog } from '../feedback/ConfirmDialog';
+import { notify } from '../feedback/notify';
 
 interface AppShellProps {
   children: ReactNode;
@@ -23,10 +24,18 @@ export default function AppShell({ children }: AppShellProps) {
     setShowLogoutDialog(false);
   };
 
+  const handleMTLoanClick = () => {
+    notify.info('MT-LOAN ফিচার শীঘ্রই আসছে');
+  };
+
+  const handleCalculatorClick = () => {
+    notify.info('ক্যালকুলেটর শীঘ্রই আসছে');
+  };
+
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-teal-50">
-        <header className="gradient-primary text-white shadow-lg sticky top-0 z-40">
+        <header className="gradient-primary text-white shadow-lg sticky top-0 z-40 border-b-2 border-white/20 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img
@@ -39,15 +48,34 @@ export default function AppShell({ children }: AppShellProps) {
                 <p className="text-[10px] text-white/80">Admin Panel</p>
               </div>
             </div>
-            <Button
-              onClick={handleLogoutClick}
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/10 touch-manipulation"
-            >
-              <LogOut className="w-4 h-4 mr-1" />
-              <span className="text-xs">Logout</span>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleMTLoanClick}
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/10 touch-manipulation"
+              >
+                <DollarSign className="w-4 h-4 mr-1" />
+                <span className="text-xs hidden sm:inline">MT-LOAN</span>
+              </Button>
+              <Button
+                onClick={handleCalculatorClick}
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/10 touch-manipulation"
+              >
+                <Calculator className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={handleLogoutClick}
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/10 touch-manipulation"
+              >
+                <LogOut className="w-4 h-4 mr-1" />
+                <span className="text-xs">Logout</span>
+              </Button>
+            </div>
           </div>
         </header>
         <main>{children}</main>

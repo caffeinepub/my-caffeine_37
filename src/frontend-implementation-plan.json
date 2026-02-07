@@ -1,101 +1,208 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Admin Production double/single inputs & User Dashboard mobile typography fixes",
+  "title": "Admin panel accounting parity + UX polish (production report-only, work earnings, confirmations, header/nav tweaks)",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Revise Admin > Production form to capture separate Double/Single quantities and rates with quantities row above rates row, including numeric/non-negative validation.",
+      "summary": "Make Admin Production report-only: keep saving/deleting production history but stop updating accounts/balances from Production entries.",
       "acceptanceCriteria": [
-        "Admin > Production form shows two numeric inputs for quantities (Double, Single).",
-        "Directly under the quantity inputs, the form shows two numeric inputs for rates (Double rate, Single rate).",
-        "Form validation prevents submit when any required field is missing or invalid (non-numeric/negative)."
+        "When submitting a new production entry in Admin, the entry is saved to production history as before.",
+        "Submitting/deleting a production entry does NOT modify the stored accounts (no bill/cost changes).",
+        "Existing production history list/table in Admin still shows all entries correctly."
       ],
       "file_operations": [
         {
           "path": "frontend/src/features/admin/sections/ProductionSection.tsx",
           "operation": "modify",
-          "description": "Update the Production form UI to use 4 numeric inputs (quantityDouble, quantitySingle, rateDouble, rateSingle) arranged as requested (quantities first row, rates second row). Add client-side validation for required, numeric, and non-negative values; update any modified user-facing strings to English. Verify the component's usage instructions before implementing."
+          "description": "Remove all account/balance mutations from Production save/delete flows (stop changing accounts.bill). Keep the existing form validation and productionHistory storage behavior intact."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Update Admin > Production totals, local persisted history shape, history table display, and delete reversal to use Double/Single quantities and rates.",
+      "summary": "Unify User Production report UI/data with Admin Production report (same structure, same production history source).",
       "acceptanceCriteria": [
-        "Submitting a production entry stores a history object that includes quantityDouble, quantitySingle, rateDouble, rateSingle, and computed total.",
-        "The worker account bill updates by the computed total for each selected worker, consistent with existing accounting behavior.",
-        "The Admin Production history table is updated to display the new Double/Single quantities and rates, and shows the computed total.",
-        "Deleting a production entry reverses the correct computed total from worker accounts and removes the history entry."
+        "Admin and User Production pages render the same report structure (columns/rows and totals) for the same underlying production history.",
+        "No user/account balance changes are introduced on the User Production report page (report display only)."
       ],
       "file_operations": [
         {
+          "path": "frontend/src/features/production/ProductionReportTable.tsx",
+          "operation": "create",
+          "description": "Create a shared, read-only Production report component that renders the same table structure used by Admin Production (date, names, double, single, total) from production history. Verify the component's usage instructions before implementing."
+        },
+        {
           "path": "frontend/src/features/admin/sections/ProductionSection.tsx",
           "operation": "modify",
-          "description": "Adjust the ProductionEntry type and persistence in localStorage (productionHistory) to include the 4 new fields plus computed total, and compute total = (quantityDouble*rateDouble)+(quantitySingle*rateSingle). Update history table columns to show Double/Single qty + rates + total, and ensure delete reverses the computed total. Include a safe read/normalization path for any legacy entries so the UI does not crash. Verify the component's usage instructions before implementing."
+          "description": "Refactor Admin Production history rendering to use the shared ProductionReportTable for consistent structure with User Production. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/user/production/ProductionHistoryView.tsx",
+          "operation": "modify",
+          "description": "Update User Production view to render the shared ProductionReportTable using the same productionHistory source (no account mutations; display-only). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/user/production/productionAggregates.ts",
+          "operation": "modify",
+          "description": "Adjust or deprecate production aggregation exports that are no longer used by the User Production report after switching to the shared Admin-format table (keep file compiling; avoid unused exports if linting/build enforces it)."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Revise User > Production History to show all workers and their Double/Single totals derived from Admin Production history (not legacy histories.boardWork and not only the logged-in user).",
+      "summary": "Fix Work Management accounting: derive amounts from saved worker rates, show grand total, and credit workers as earnings (bill), with reversible deletes.",
       "acceptanceCriteria": [
-        "User > Production History displays all worker names (not only the logged-in user).",
-        "For each worker, the view shows Double and Single quantities (and corresponding totals or earnings) computed from stored production history entries.",
-        "If there is no production history for a worker, the UI clearly indicates 0 / no records for that worker without errors.",
-        "The view renders without relying on the legacy `histories.boardWork` shape for production data."
+        "Admin Work entry form has no rate inputs and continues to use saved worker rates (e.g., from worker rate settings).",
+        "On submit, the saved WorkHistory entry includes perWorkerAmounts and grandTotal derived from the selected workers’ rates.",
+        "Admin Work history table continues to show the grand total for each entry.",
+        "Accounts are updated so that each selected worker’s earnings increase (bill increases by that worker’s computed amount) when a work entry is added.",
+        "Deleting a Work entry reverses the same earnings effect (bill decreases by that worker’s amount)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/user/production/productionAggregates.ts",
-          "operation": "create",
-          "description": "Add a small aggregation helper that reads normalized productionHistory entries and computes per-worker totals for Double/Single quantities and earnings (and overall total) for display. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/user/production/ProductionHistoryView.tsx",
+          "path": "frontend/src/features/admin/sections/WorkSection.tsx",
           "operation": "modify",
-          "description": "Replace legacy histories.boardWork usage with productionHistory + workers list data, render a list of all workers, and display per-worker Double/Single quantities and earnings computed via the new aggregation helper. Ensure workers with no records display 0 / no records clearly, and update any modified user-facing strings to English. Verify the component's usage instructions before implementing."
+          "description": "Change Work accounting updates to credit earnings to accounts.bill (not accounts.cost) on save, and reverse by decreasing accounts.bill on delete. Keep perWorkerAmounts + grandTotal derived from saved workerRates; add validation/guard for missing rates for selected workers."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Increase User Dashboard tile title font sizes for Production, Snacks, Payment/Loan, and Work while preventing clipping/overlap on mobile widths.",
+      "summary": "Ensure deductions (Nasta, Payment/Loan) reduce net balance by increasing cost, while only Work increases bill (earnings).",
       "acceptanceCriteria": [
-        "The labels on the four main user dashboard tiles are rendered with a larger font size than the current ‘small’ variant.",
-        "No label text is clipped or overlaps icons on common mobile widths (e.g., 360px)."
+        "After adding Work earnings and then adding Nasta/Payment entries for the same worker(s), the worker’s final/remaining balance reflects bill - cost.",
+        "No section other than Work increases bill; Nasta/Payment/Loan only affect cost."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/dashboard/ActionTile.tsx",
+          "path": "frontend/src/features/admin/sections/NastaSection.tsx",
           "operation": "modify",
-          "description": "Adjust the 'small' size variant to render a larger label font size (and, if needed, icon size/aspect ratio/gaps) so the four dashboard tiles remain readable without clipping/overlap on ~360px widths. Verify the component's usage instructions before implementing."
+          "description": "Confirm Nasta continues to update accounts.cost only; add any necessary guardrails to prevent accidental bill updates during refactors (no behavior change besides ensuring cost-only)."
+        },
+        {
+          "path": "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
+          "operation": "modify",
+          "description": "Confirm Payment/Loan continues to update accounts.cost only; add any necessary guardrails to prevent accidental bill updates during refactors (no behavior change besides ensuring cost-only)."
+        },
+        {
+          "path": "frontend/src/features/admin/sections/FinalBalanceSection.tsx",
+          "operation": "modify",
+          "description": "Verify final/remaining balance presentation remains based on bill - cost and still renders correctly after Work/Production accounting changes (no new persistence)."
         }
       ]
     },
     {
       "id": "REQ-5",
-      "summary": "Improve User Panel typography and mobile layout to prevent bottom cut-off behind fixed footer and reduce excess spacing while keeping readability.",
+      "summary": "Add single-confirm submit dialogs to Admin Nasta and Admin Payment/Loan, preventing duplicate submits (match Production/Work pattern).",
       "acceptanceCriteria": [
-        "User dashboard text (header meta labels, KPI section, and main content) is increased to a readable size relative to current rendering.",
-        "On mobile-sized viewports, the bottom content is not hidden behind the fixed footer; users can scroll to see all content.",
-        "No main content overflows outside the DashboardFrame container; the UI remains fully usable without elements being cut off."
+        "Clicking Submit in Admin Nasta shows a confirmation dialog; confirming performs the save; cancelling does not save.",
+        "Clicking Submit in Admin Payment/Loan shows a confirmation dialog; confirming performs the save; cancelling does not save.",
+        "While saving, the submit action is disabled to prevent double-submits (same pattern as useSingleConfirmSubmit)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/layout/DashboardFrame.tsx",
+          "path": "frontend/src/features/admin/sections/NastaSection.tsx",
           "operation": "modify",
-          "description": "Update the frame sizing to better match mobile viewport behavior (e.g., use a dynamic viewport-height approach) and prevent content being cut off when combined with fixed footer + scrollable content. Verify the component's usage instructions before implementing."
+          "description": "Integrate useSingleConfirmSubmit + ConfirmDialog for the submit flow (like Production/Work). Disable the submit button while saving and ensure cancel does not persist."
         },
         {
-          "path": "frontend/src/features/user/UserDashboard.tsx",
+          "path": "frontend/src/features/admin/sections/PaymentLoanSection.tsx",
           "operation": "modify",
-          "description": "Tune user dashboard typography (increase overly-small header meta label sizes and other key text), reduce excessive vertical spacing/padding, and adjust the scroll container bottom padding so content is not hidden behind the fixed DashboardFooter (including safe-area considerations). Keep any modified user-facing strings in English. Verify the component's usage instructions before implementing."
+          "description": "Integrate useSingleConfirmSubmit + ConfirmDialog for the submit flow (like Production/Work). Disable the submit button while saving and ensure cancel does not persist."
+        },
+        {
+          "path": "frontend/src/hooks/useSingleConfirmSubmit.ts",
+          "operation": "modify",
+          "description": "If needed for parity, extend/adjust the hook API to support Nasta/Payment/Loan flows cleanly (e.g., consistent disabled state + confirm open/close handling) without changing immutable auth-related hooks."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Give System Settings tabs distinct, always-visible colors (Label, Total, Layout, Branding) with clear active state.",
+      "acceptanceCriteria": [
+        "The four System Settings tabs are visually color-distinct from each other.",
+        "Active tab state remains clear/accessible (contrast, readable text)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "operation": "modify",
+          "description": "Style the four TabsTrigger buttons with distinct color themes even when inactive, and add accessible active-state styling (e.g., using data-[state=active] classes) so selected tab remains clearly indicated."
         },
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Add/adjust a small global utility (or extend existing dashboard utilities) to support safe-area bottom padding for fixed-footer layouts so scrolling content isn't obscured on mobile devices. Verify the component's usage instructions before implementing."
+          "description": "If required for consistency, add/adjust small utility classes for tab color variants and active states while preserving existing Tailwind theme variables (no changes to frontend/src/components/ui/*)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Add Admin header quick actions: MT-LOAN (left of Support/Chat) and Calculator (right), wired to placeholder interactions.",
+      "acceptanceCriteria": [
+        "Admin UI shows an “MT-LOAN” button to the left of Support/Chat and a Calculator button to the right.",
+        "Both buttons are clickable and trigger a visible placeholder response (modal/sheet/toast) without breaking navigation.",
+        "Buttons render correctly on mobile widths (no overlap/clipping)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "modify",
+          "description": "Update the Admin header action area to insert an “MT-LOAN” button immediately left of Support/Chat and a Calculator button immediately right. Wire both to placeholder UI feedback (e.g., notify.info toast or existing modal/sheet). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/feedback/notify.ts",
+          "operation": "modify",
+          "description": "If needed, add a small helper for consistent placeholder messaging (e.g., info toast text) used by MT-LOAN/Calculator without changing navigation behavior."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Polish Admin header visuals with border/backdrop blur and consistent shadow; keep sticky header stable.",
+      "acceptanceCriteria": [
+        "Admin header has a visible border separation from the page body.",
+        "Header maintains a consistent shadow and does not visually clash with gradient backgrounds.",
+        "No layout shift occurs when scrolling (sticky header remains stable)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "modify",
+          "description": "Adjust Admin header container styling to add subtle border and/or backdrop blur with a consistent shadow. Ensure sticky positioning remains stable and does not introduce scroll layout shifts."
+        },
+        {
+          "path": "frontend/src/components/dashboard/dashboardBorders.ts",
+          "operation": "modify",
+          "description": "If shared border/shadow tokens are used across dashboards, extend/update exported Tailwind class constants so header separation matches the app’s existing visual system."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Add a styled bottom container with safe-area padding so bottom nav/buttons don’t clash with phone system navigation.",
+      "acceptanceCriteria": [
+        "On mobile, the bottom navigation/footer is contained within a clearly styled bar/container with border/separation from the page background.",
+        "There is adequate bottom spacing (safe-area aware) so the phone system navigation area does not visually merge with app controls.",
+        "No bottom nav items become unreachable or overlapped by the OS navigation area."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/admin/components/AdminBottomNav.tsx",
+          "operation": "modify",
+          "description": "Wrap fixed bottom navigation in a styled container (border/background/shadow) and add safe-area-aware padding (env(safe-area-inset-bottom)) so controls remain reachable and visually separated from OS navigation."
+        },
+        {
+          "path": "frontend/src/components/layout/DashboardFooter.tsx",
+          "operation": "modify",
+          "description": "Apply the same safe-area padding + styled bottom container treatment to the footer buttons (Support/Settings) so user-facing bottom controls also avoid OS navigation overlap."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "If Tailwind arbitrary env() padding is insufficient in the current setup, add a minimal global utility (e.g., a class that applies padding-bottom using safe-area inset) and reuse it in bottom bars."
         }
       ]
     }

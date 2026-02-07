@@ -9,7 +9,7 @@ interface ActionTileProps {
 }
 
 export default function ActionTile({ icon, label, onClick, bgGradient, size = 'admin' }: ActionTileProps) {
-  // Compact size variants optimized for mobile viewport with thin black borders
+  // Size variants optimized for mobile viewport with thin black borders
   const sizeClasses = {
     admin: {
       container: 'rounded-2xl p-4 border-2 border-black w-full min-w-0',
@@ -18,16 +18,16 @@ export default function ActionTile({ icon, label, onClick, bgGradient, size = 'a
       gap: 'gap-2',
     },
     user: {
-      container: 'rounded-2xl p-3 border-2 border-black w-full min-w-0',
-      icon: 'w-10 h-10',
-      text: 'text-xs',
-      gap: 'gap-1.5',
+      container: 'rounded-2xl p-4 border-2 border-black w-full min-w-0',
+      icon: 'w-12 h-12',
+      text: 'text-sm',
+      gap: 'gap-2',
     },
     small: {
-      container: 'rounded-xl p-1.5 border-2 border-black w-full min-w-0',
-      icon: 'w-6 h-6',
+      container: 'rounded-xl p-2 border-2 border-black w-full min-w-0',
+      icon: 'w-8 h-8',
       text: 'text-xs',
-      gap: 'gap-1',
+      gap: 'gap-1.5',
     },
   };
 

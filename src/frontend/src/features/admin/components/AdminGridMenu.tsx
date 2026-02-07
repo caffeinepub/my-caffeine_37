@@ -29,7 +29,7 @@ export default function AdminGridMenu({ onNavigate }: AdminGridMenuProps) {
   ];
 
   return (
-    <div className={`space-y-2 ${lowerSectionBorder} ${lowerSectionPadding} ${lowerSectionRadius} ${lowerSectionShadow} ${lowerSectionBg}`}>
+    <div className={`space-y-3 ${lowerSectionBorder} ${lowerSectionPadding} ${lowerSectionRadius} ${lowerSectionShadow} ${lowerSectionBg}`}>
       {/* Row 1 */}
       <div className="grid grid-cols-3 gap-2">
         {row1Items.map((item) => (
@@ -43,6 +43,9 @@ export default function AdminGridMenu({ onNavigate }: AdminGridMenuProps) {
           />
         ))}
       </div>
+      
+      {/* Divider after Row 1 */}
+      <div className="border-b border-black/20"></div>
 
       {/* Row 2 */}
       <div className="grid grid-cols-3 gap-2">
@@ -57,6 +60,9 @@ export default function AdminGridMenu({ onNavigate }: AdminGridMenuProps) {
           />
         ))}
       </div>
+      
+      {/* Divider after Row 2 */}
+      <div className="border-b border-black/20"></div>
 
       {/* Row 3 */}
       <div className="grid grid-cols-3 gap-2">

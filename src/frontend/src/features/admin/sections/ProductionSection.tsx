@@ -4,9 +4,10 @@ import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
-import { safeGetArray, safeSetItem, safeGetItem } from '../../../lib/storage/safeStorage';
+import { safeGetArray, safeSetItem } from '../../../lib/storage/safeStorage';
 import { notify } from '../../../components/feedback/notify';
 import { ConfirmDialog } from '../../../components/feedback/ConfirmDialog';
+import { useSingleConfirmSubmit } from '../../../hooks/useSingleConfirmSubmit';
 import { Trash2 } from 'lucide-react';
 
 interface ProductionEntry {
@@ -31,6 +32,12 @@ export default function ProductionSection() {
   const [workers, setWorkers] = useState<string[]>([]);
   const [history, setHistory] = useState<ProductionEntry[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const { isSaving, showConfirm, setShowConfirm, handleSubmit: handleConfirmSubmit } = useSingleConfirmSubmit(
+    async () => {
+      await saveProduction();
+    }
+  );
 
   useEffect(() => {
     loadWorkers();
@@ -57,12 +64,12 @@ export default function ProductionSection() {
     e.preventDefault();
 
     if (selectedWorkers.length === 0) {
-      notify.error('Select at least one worker');
+      notify.error('অন্তত একজন কর্মী নির্বাচন করুন');
       return;
     }
 
     if (!quantityDouble || !quantitySingle || !rateDouble || !rateSingle) {
-      notify.error('Fill in all fields');
+      notify.error('সব ঘর পূরণ করুন');
       return;
     }
 
@@ -72,9 +79,18 @@ export default function ProductionSection() {
     const rtSingle = Number(rateSingle);
 
     if (qtyDouble < 0 || qtySingle < 0 || rtDouble < 0 || rtSingle < 0) {
-      notify.error('Values cannot be negative');
+      notify.error('মান ঋণাত্মক হতে পারে না');
       return;
     }
+
+    setShowConfirm(true);
+  };
+
+  const saveProduction = async () => {
+    const qtyDouble = Number(quantityDouble);
+    const qtySingle = Number(quantitySingle);
+    const rtDouble = Number(rateDouble);
+    const rtSingle = Number(rateSingle);
 
     const total = qtyDouble * rtDouble + qtySingle * rtSingle;
     const entry: ProductionEntry = {
@@ -93,14 +109,7 @@ export default function ProductionSection() {
     entries.push(entry);
     safeSetItem('productionHistory', entries);
 
-    const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
-    selectedWorkers.forEach((worker) => {
-      if (!accounts[worker]) {
-        accounts[worker] = { bill: 0, cost: 0 };
-      }
-      accounts[worker].bill += total;
-    });
-    safeSetItem('accounts', accounts);
+    // Production section no longer updates accounts (report-only)
 
     setSelectedWorkers([]);
     setQuantityDouble('');
@@ -108,30 +117,22 @@ export default function ProductionSection() {
     setRateDouble('');
     setRateSingle('');
     loadHistory();
-    notify.success('Production added successfully');
+    notify.success('প্রোডাকশন সফলভাবে যোগ করা হয়েছে');
   };
 
   const handleDelete = () => {
     if (!deleteId) return;
 
     const entries = safeGetArray<ProductionEntry>('productionHistory');
-    const entry = entries.find((e) => e.id === deleteId);
-    if (!entry) return;
-
-    const accounts = safeGetItem<Record<string, { bill: number; cost: number }>>('accounts', {}) || {};
-    entry.names.forEach((worker) => {
-      if (accounts[worker]) {
-        accounts[worker].bill -= entry.total;
-      }
-    });
-    safeSetItem('accounts', accounts);
+    
+    // Production section no longer updates accounts (report-only)
 
     const updated = entries.filter((e) => e.id !== deleteId);
     safeSetItem('productionHistory', updated);
 
     loadHistory();
     setDeleteId(null);
-    notify.success('Entry deleted');
+    notify.success('এন্ট্রি মুছে ফেলা হয়েছে');
   };
 
   return (
@@ -139,12 +140,12 @@ export default function ProductionSection() {
       <div className="space-y-6">
         <Card className="border-emerald-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-500">
-            <CardTitle className="text-lg text-white">Add New Production</CardTitle>
+            <CardTitle className="text-lg text-white">নতুন প্রোডাকশন যোগ করুন</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 pt-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="date">Date</Label>
+                <Label htmlFor="date">তারিখ</Label>
                 <Input
                   id="date"
                   type="date"
@@ -155,7 +156,7 @@ export default function ProductionSection() {
               </div>
 
               <div className="space-y-2">
-                <Label>Select Workers</Label>
+                <Label>কর্মী নির্বাচন করুন</Label>
                 <div className="grid grid-cols-2 gap-2">
                   {workers.map((worker) => (
                     <Button
@@ -175,10 +176,9 @@ export default function ProductionSection() {
               </div>
 
               <div className="space-y-2">
-                <Label>Work Quantity</Label>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="quantityDouble" className="text-sm">Double</Label>
+                    <Label htmlFor="quantityDouble" className="text-sm">ডাবল</Label>
                     <Input
                       id="quantityDouble"
                       type="number"
@@ -186,13 +186,12 @@ export default function ProductionSection() {
                       step="1"
                       value={quantityDouble}
                       onChange={(e) => setQuantityDouble(e.target.value)}
-                      placeholder="Double quantity"
                       className="border-2"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="quantitySingle" className="text-sm">Single</Label>
+                    <Label htmlFor="quantitySingle" className="text-sm">সিঙ্গেল</Label>
                     <Input
                       id="quantitySingle"
                       type="number"
@@ -200,7 +199,6 @@ export default function ProductionSection() {
                       step="1"
                       value={quantitySingle}
                       onChange={(e) => setQuantitySingle(e.target.value)}
-                      placeholder="Single quantity"
                       className="border-2"
                       required
                     />
@@ -209,10 +207,9 @@ export default function ProductionSection() {
               </div>
 
               <div className="space-y-2">
-                <Label>Work Rate</Label>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="rateDouble" className="text-sm">Double Rate (৳)</Label>
+                    <Label htmlFor="rateDouble" className="text-sm">রেট</Label>
                     <Input
                       id="rateDouble"
                       type="number"
@@ -220,13 +217,12 @@ export default function ProductionSection() {
                       step="0.01"
                       value={rateDouble}
                       onChange={(e) => setRateDouble(e.target.value)}
-                      placeholder="Double rate"
                       className="border-2"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="rateSingle" className="text-sm">Single Rate (৳)</Label>
+                    <Label htmlFor="rateSingle" className="text-sm">রেট</Label>
                     <Input
                       id="rateSingle"
                       type="number"
@@ -234,7 +230,6 @@ export default function ProductionSection() {
                       step="0.01"
                       value={rateSingle}
                       onChange={(e) => setRateSingle(e.target.value)}
-                      placeholder="Single rate"
                       className="border-2"
                       required
                     />
@@ -242,8 +237,12 @@ export default function ProductionSection() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3">
-                Submit
+              <Button 
+                type="submit" 
+                disabled={isSaving}
+                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3"
+              >
+                {isSaving ? 'সংরক্ষণ করা হচ্ছে...' : 'জমা দিন'}
               </Button>
             </form>
           </CardContent>
@@ -251,28 +250,26 @@ export default function ProductionSection() {
 
         <Card className="border-emerald-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-500">
-            <CardTitle className="text-lg text-white">Production History</CardTitle>
+            <CardTitle className="text-lg text-white">প্রোডাকশন ইতিহাস</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Double</TableHead>
-                    <TableHead>Single</TableHead>
-                    <TableHead>D-Rate</TableHead>
-                    <TableHead>S-Rate</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
-                    <TableHead className="text-center">Action</TableHead>
+                    <TableHead>তারিখ</TableHead>
+                    <TableHead>নাম</TableHead>
+                    <TableHead>ডাবল</TableHead>
+                    <TableHead>সিঙ্গেল</TableHead>
+                    <TableHead className="text-right">মোট</TableHead>
+                    <TableHead className="text-center">অ্যাকশন</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {history.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                        No entries
+                      <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                        কোনো এন্ট্রি নেই
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -282,8 +279,6 @@ export default function ProductionSection() {
                         <TableCell>{entry.names.join(', ')}</TableCell>
                         <TableCell>{entry.quantityDouble}</TableCell>
                         <TableCell>{entry.quantitySingle}</TableCell>
-                        <TableCell>৳{entry.rateDouble}</TableCell>
-                        <TableCell>৳{entry.rateSingle}</TableCell>
                         <TableCell className="text-right font-bold text-emerald-700">
                           ৳{entry.total.toFixed(0)}
                         </TableCell>
@@ -308,13 +303,23 @@ export default function ProductionSection() {
       </div>
 
       <ConfirmDialog
+        open={showConfirm}
+        onOpenChange={setShowConfirm}
+        title="নিশ্চিত করুন"
+        description="আপনি কি এই প্রোডাকশন এন্ট্রি সংরক্ষণ করতে চান?"
+        onConfirm={handleConfirmSubmit}
+        confirmText="হ্যাঁ, সংরক্ষণ করুন"
+        cancelText="না"
+      />
+
+      <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
-        title="Delete Entry"
-        description="Are you sure you want to delete this entry?"
+        title="এন্ট্রি মুছুন"
+        description="আপনি কি নিশ্চিত যে আপনি এই এন্ট্রি মুছে ফেলতে চান?"
         onConfirm={handleDelete}
-        confirmText="Yes, delete"
-        cancelText="No"
+        confirmText="হ্যাঁ, মুছুন"
+        cancelText="না"
         variant="destructive"
       />
     </>

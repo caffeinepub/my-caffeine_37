@@ -17,7 +17,7 @@ export default function AdminBottomNav({ activeView, onNavigate }: AdminBottomNa
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg z-50 safe-area-inset-bottom">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-slate-300 shadow-2xl z-50 pb-safe-bottom">
       <div className="container mx-auto max-w-7xl">
         <div className="grid grid-cols-6 gap-0">
           {navItems.map((item) => {

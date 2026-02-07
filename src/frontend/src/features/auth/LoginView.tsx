@@ -42,7 +42,7 @@ export default function LoginView() {
   };
 
   if (showRegister) {
-    return <RegisterView onSwitchToLogin={() => setShowRegister(false)} />;
+    return <RegisterView onBack={() => setShowRegister(false)} />;
   }
 
   const circleImage = getLoginCircleImage();
