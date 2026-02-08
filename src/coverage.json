@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-07T22:23:08.319Z",
+  "generatedAt": "2026-02-07T23:30:57.604Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -12,60 +12,51 @@
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Add a new Settings card/section in the currently empty top area of the Settings screen that contains: (1) a Name input, (2) a Password input, and (3) a Save button. Persist the saved Name+Password locally so they remain available after refresh.",
+        "summary": "Remove the “Settings” item from the newly added admin navigation bar (the fixed bottom navigation) while keeping the Settings view/section accessible elsewhere (e.g., from the admin dashboard grid menu).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/lib/storage/mtLoanSettingsStorage.ts",
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx"
+          "frontend/src/features/admin/components/AdminBottomNav.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/lib/storage/mtLoanSettingsStorage.ts",
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx"
+          "frontend/src/features/admin/components/AdminBottomNav.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Implement MT Loan password gating: when the MT-LOAN button is clicked (existing header quick action), show a password prompt modal. If the entered password does not match the admin-saved MT Loan password, block access and show an error message. If it matches, mark the session as authorized for MT Loan and auto-create a user identity using the admin-saved Name (store locally); do not expose the User Panel UI yet (integration/navigation will be done later).",
+        "summary": "Increase the size of the remaining buttons in the newly added admin bottom navigation bar and add a visible border around each button; also increase the overall navigation bar height to better match the larger buttons.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/lib/storage/mtLoanAuthStorage.ts",
-          "frontend/src/lib/storage/mtLoanIdentityStorage.ts",
-          "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx",
-          "frontend/src/features/admin/AdminPanel.tsx",
-          "frontend/src/components/layout/AppShell.tsx"
+          "frontend/src/features/admin/components/AdminBottomNav.tsx",
+          "frontend/src/features/admin/components/AdminLayoutShell.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/lib/storage/mtLoanAuthStorage.ts",
-          "frontend/src/lib/storage/mtLoanIdentityStorage.ts",
-          "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx",
-          "frontend/src/features/admin/AdminPanel.tsx",
-          "frontend/src/components/layout/AppShell.tsx"
+          "frontend/src/features/admin/components/AdminBottomNav.tsx",
+          "frontend/src/features/admin/components/AdminLayoutShell.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Create/keep a User Panel layout skeleton in the codebase, but ensure the entire User Panel is fully hidden/blocked from users for now. Include a logout button placeholder/structure in the hidden User Panel layout so it is ready for later activation.",
+        "summary": "Add a visible Logout option in both the Admin panel and the User panel. In the Admin panel header, restore the previous Logout button behavior and remove the newly added header button that replaced it.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx"
+          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "frontend/src/features/user/UserDashboard.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx"
+          "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "frontend/src/features/user/UserDashboard.tsx"
         ]
       },
       {
         "id": "REQ-4",
-        "summary": "Do not change any existing UI design or styling while implementing REQ-1 to REQ-3. Only add the new Settings card and the password prompt modal using existing UI primitives and existing styling conventions so the rest of the app remains visually unchanged.",
+        "summary": "Fix the incorrect text that appears near the time display (e.g., “MT Loan” / “HMT”) so that the time area only shows the clock time/date and does not show unrelated labels.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-          "frontend/src/features/admin/AdminPanel.tsx",
-          "frontend/src/components/layout/AppShell.tsx"
+          "frontend/src/features/user/components/ClockCard.tsx",
+          "frontend/src/features/user/UserDashboard.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-          "frontend/src/features/admin/AdminPanel.tsx",
-          "frontend/src/components/layout/AppShell.tsx"
+          "frontend/src/features/user/UserDashboard.tsx"
         ]
       }
     ]
@@ -75,15 +66,9 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/layout/AppShell.tsx",
-    "frontend/src/features/admin/AdminPanel.tsx",
+    "frontend/src/features/admin/components/AdminBottomNav.tsx",
     "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-    "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-    "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx",
-    "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx",
-    "frontend/src/lib/storage/mtLoanAuthStorage.ts",
-    "frontend/src/lib/storage/mtLoanIdentityStorage.ts",
-    "frontend/src/lib/storage/mtLoanSettingsStorage.ts",
+    "frontend/src/features/user/UserDashboard.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

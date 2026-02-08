@@ -1,41 +1,41 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Add an MT Loan access control setup in Settings (name + password + save) and prepare a hidden/blocked User Panel layout skeleton without changing existing design.",
-  "architectural_notes": [
-    "Implement new Settings section without altering existing UI styling/layout beyond inserting the new card in the designated empty space.",
-    "User Panel should be present structurally but gated behind a global hide/block flag so users cannot view/use it until enabled."
+  "summary": "New project",
+  "architectural_notes": [],
+  "known_issues": [
+    "No logout option currently available in Admin and User panels",
+    "Incorrect labels ('MT Loan'/'HMT') appearing where 11:00 time display should be"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-add-a-new-settings-card-section-in-the-currently-empty-top-area-of-the-settings-screen-that-contains-1-a-name-input-2-a-password-input-and-3-a-save-button-persist-the-saved-name-password-locally-so-they-remain-available-after-refresh",
-      "title": "Add a new Settings card/section in the currently empty top area of the Settings screen that contains: (1) a Name input, (2) a Password input, and (3) a Save button. Persist the saved Name+Password locally so they remain available after refresh.",
+      "id": "feature-remove-the-settings-item-from-the-newly-added-admin-navigation-bar-the-fixed-bottom-navigation-while-keeping-the-settings-view-section-accessible-elsewhere-e-g-from-the-admin-dashboard-grid-menu",
+      "title": "Remove the “Settings” item from the newly added admin navigation bar (the fixed bottom navigation) while keeping the Settings view/section accessible elsewhere (e.g., from the admin dashboard grid menu).",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-mt-loan-password-gating-when-the-mt-loan-button-is-clicked-existing-header-quick-action-show-a-password-prompt-modal-if-the-entered-password-does-not-match-the-admin-saved-mt-loan-password-block-access-and-show-an-error-message-if-it-matches-mark-the-session-as-authorized-for-mt-loan-and-auto-create-a-user-identity-using-the-admin-saved-name-store-locally-do-not-expose-the-user-panel-ui-yet-integration-navigation-will-be-done-later",
-      "title": "Implement MT Loan password gating: when the MT-LOAN button is clicked (existing header quick action), show a password prompt modal. If the entered password does not match the admin-saved MT Loan password, block access and show an error message. If it matches, mark the session as authorized for MT Loan and auto-create a user identity using the admin-saved Name (store locally); do not expose the User Panel UI yet (integration/navigation will be done later).",
+      "id": "feature-increase-the-size-of-the-remaining-buttons-in-the-newly-added-admin-bottom-navigation-bar-and-add-a-visible-border-around-each-button-also-increase-the-overall-navigation-bar-height-to-better-match-the-larger-buttons",
+      "title": "Increase the size of the remaining buttons in the newly added admin bottom navigation bar and add a visible border around each button; also increase the overall navigation bar height to better match the larger buttons.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-create-keep-a-user-panel-layout-skeleton-in-the-codebase-but-ensure-the-entire-user-panel-is-fully-hidden-blocked-from-users-for-now-include-a-logout-button-placeholder-structure-in-the-hidden-user-panel-layout-so-it-is-ready-for-later-activation",
-      "title": "Create/keep a User Panel layout skeleton in the codebase, but ensure the entire User Panel is fully hidden/blocked from users for now. Include a logout button placeholder/structure in the hidden User Panel layout so it is ready for later activation.",
+      "id": "feature-add-a-visible-logout-option-in-both-the-admin-panel-and-the-user-panel-in-the-admin-panel-header-restore-the-previous-logout-button-behavior-and-remove-the-newly-added-header-button-that-replaced-it",
+      "title": "Add a visible Logout option in both the Admin panel and the User panel. In the Admin panel header, restore the previous Logout button behavior and remove the newly added header button that replaced it.",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-do-not-change-any-existing-ui-design-or-styling-while-implementing-req-1-to-req-3-only-add-the-new-settings-card-and-the-password-prompt-modal-using-existing-ui-primitives-and-existing-styling-conventions-so-the-rest-of-the-app-remains-visually-unchanged",
-      "title": "Do not change any existing UI design or styling while implementing REQ-1 to REQ-3. Only add the new Settings card and the password prompt modal using existing UI primitives and existing styling conventions so the rest of the app remains visually unchanged.",
+      "id": "feature-fix-the-incorrect-text-that-appears-near-the-time-display-e-g-mt-loan-hmt-so-that-the-time-area-only-shows-the-clock-time-date-and-does-not-show-unrelated-labels",
+      "title": "Fix the incorrect text that appears near the time display (e.g., “MT Loan” / “HMT”) so that the time area only shows the clock time/date and does not show unrelated labels.",
       "reqIds": [
         "REQ-4"
       ],
@@ -45,31 +45,30 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Add new Settings card/section in empty top area with inputs for Name and Password plus a Save button (admin-configured)",
+      "summary": "Remove 'Settings' section from the newly added navigation bar (section list nav)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Add MT Loan button in Settings; on click show password prompt and allow access only if password matches; auto-create user identity by configured name on successful entry (full user-panel integration later)",
+      "summary": "Increase size of remaining navigation buttons in the new navigation bar and add a border around them",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Create User Panel layout/structure skeleton but keep the entire panel hidden/blocked from users for now; include logout button placeholder/structure",
+      "summary": "Add/restore Logout option in both Admin panel and User panel; restore previous Logout button in Admin header and remove the newly added header button",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Do not change any existing UI design while implementing pending items",
+      "summary": "Fix incorrect text near the 11:00 time display (remove 'MT Loan'/'HMT' or other wrong labels so they no longer appear there)",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
-  "projectName": "Add MT Loan settings + password-gated entry and keep User Panel fully hidden (no design changes)",
+  "projectName": "Update admin navigation bar (remove Settings, enlarge buttons with borders), restore logout buttons, and remove incorrect time-area labels",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

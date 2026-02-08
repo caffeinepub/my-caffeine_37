@@ -1,101 +1,95 @@
 {
   "kind": "build_request",
-  "title": "Add MT Loan settings + password-gated entry and keep User Panel fully hidden (no design changes)",
+  "title": "Update admin navigation bar (remove Settings, enlarge buttons with borders), restore logout buttons, and remove incorrect time-area labels",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add a new Settings card/section in the currently empty top area of the Settings screen that contains: (1) a Name input, (2) a Password input, and (3) a Save button. Persist the saved Name+Password locally so they remain available after refresh.",
+      "text": "Remove the “Settings” item from the newly added admin navigation bar (the fixed bottom navigation) while keeping the Settings view/section accessible elsewhere (e.g., from the admin dashboard grid menu).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4",
-          "msg-8",
-          "msg-11"
+          "msg-7",
+          "msg-9"
         ],
         "quotes": [
-          "Settings Card / Section থাকবে যার ভেতরে থাকবে:\nনাম সেট করার ইনপুট\nপাসওয়ার্ড সেট করার ইনপুট\nSave বাটন",
-          "হ্যাঁ বিট কর আগের যেগুলা বাকি আছে সবগুলা একসাথে কর ডিজাইন পরিবর্তন করো না কোন কিছু ডিজাইন পরিবর্তন করো না"
+          "নতুন জেনেভিশন পার্টি এড হয়েছে সেটি থেকে বাদ দিয়ে",
+          "এই নেভিগেশন বার থেকে সেটিং সেকশনটা বাদ দিয়ে দাও"
         ]
       },
       "acceptanceCriteria": [
-        "Settings screen shows an additional card/section at the top empty area with Name, Password, and Save controls.",
-        "Clicking Save persists the configured Name and Password (survives page refresh).",
-        "No other Settings sections/tabs are removed or visually restyled beyond inserting this new card into the existing empty area."
+        "In the admin panel bottom navigation (frontend/src/features/admin/components/AdminBottomNav.tsx), there is no button/tab labeled “সেটিংস” and no nav item with id 'settings'.",
+        "Admin Settings (SystemSettingsSection) remains reachable via an existing entry point (e.g., AdminGridMenu tile continues to navigate to 'settings').",
+        "No runtime TypeScript errors occur due to removing the 'settings' nav item (e.g., grid column counts and active state logic remain valid)."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Implement MT Loan password gating: when the MT-LOAN button is clicked (existing header quick action), show a password prompt modal. If the entered password does not match the admin-saved MT Loan password, block access and show an error message. If it matches, mark the session as authorized for MT Loan and auto-create a user identity using the admin-saved Name (store locally); do not expose the User Panel UI yet (integration/navigation will be done later).",
+      "text": "Increase the size of the remaining buttons in the newly added admin bottom navigation bar and add a visible border around each button; also increase the overall navigation bar height to better match the larger buttons.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2",
-          "msg-8",
-          "msg-11"
+          "msg-7"
         ],
         "quotes": [
-          "Mt loan বাটনে যদি ক্লিক করে তাহলে পাসওয়ার্ড বক্স ওপেন হবে",
-          "পাসওয়ার্ড দিয়ে ঢুকতে পারবে অটোমেটিক তার নামে আইডি ক্রিয়েট হয়ে যাবে",
-          "এখন আপাতত তুমি সেটিংসে এটা অ্যাড করে পাসওয়ার্ড এর সিস্টেম টা করে রাখ বাদবাকি কাজ পরে করব"
+          "বাটন গুলার একটু বড় করো চারপাশে বর্ডার দিয়ে দিবে"
         ]
       },
       "acceptanceCriteria": [
-        "Clicking the existing MT-LOAN UI control opens a password prompt modal (not a new page).",
-        "Wrong password: no authorization is granted and the UI shows an error feedback.",
-        "Correct password: an 'authorized' flag for MT Loan is persisted locally for the current session (or until logout), and a user identity record is created locally using the configured Name.",
-        "No User Panel screens/features become visible as a result of successful password entry (only the authorization + identity creation is prepared)."
+        "Admin bottom navigation buttons have noticeably larger tap targets (increased padding/min-height) compared to the current implementation.",
+        "Each admin bottom navigation button has a clear border in both active and inactive states.",
+        "The admin bottom navigation container provides enough vertical space so labels/icons do not look cramped or clipped on common mobile widths."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Create/keep a User Panel layout skeleton in the codebase, but ensure the entire User Panel is fully hidden/blocked from users for now. Include a logout button placeholder/structure in the hidden User Panel layout so it is ready for later activation.",
+      "text": "Add a visible Logout option in both the Admin panel and the User panel. In the Admin panel header, restore the previous Logout button behavior and remove the newly added header button that replaced it.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-9",
-          "msg-11"
+          "msg-8",
+          "msg-10"
         ],
         "quotes": [
-          "ইউজার প্যানেলে এখন পুরো প্যানেলটি হাইড/ব্লক রাখা হবে, শুধু লেআউট স্ট্রাকচার তৈরি রাখলেই হবে?",
-          "লগ আউট বাটন নেই গঠনটা দিয়ে দিও ব্লক করে ফেল"
+          "এডমিন প্যানেল ইউজার প্যানেল কোন জায়গায় লগ আউট অপশন নেই",
+          "এডমিন প্যানেলের হেডারে যে লবণ বাটনটা ছিল ওই লগ আউট বাটনটা ব্যাক আসবে নতুন বাটনটা সরে যাবে"
         ]
       },
       "acceptanceCriteria": [
-        "User Panel route/view remains inaccessible or fully blocked (no interactive user panel content visible to end users).",
-        "A User Panel layout structure exists in the code (components/layout) including a logout button placeholder in the structure.",
-        "The block/hide behavior is enforced consistently (refreshing the page does not reveal the User Panel)."
+        "Admin panel header (frontend/src/features/admin/components/AdminLayoutShell.tsx) includes a Logout control that logs the admin out (clears session) and returns the app to the logged-out state.",
+        "User dashboard header (frontend/src/features/user/UserDashboard.tsx) includes a Logout control that logs the user out (clears session) and returns the app to the logged-out state.",
+        "The admin header’s newly added replacement button is removed from the header area as requested, and the restored Logout control is present instead.",
+        "Logging out clears cached UI state where applicable (e.g., session removed from localStorage and React Query cache cleared via existing SessionProvider logic)."
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Do not change any existing UI design or styling while implementing REQ-1 to REQ-3. Only add the new Settings card and the password prompt modal using existing UI primitives and existing styling conventions so the rest of the app remains visually unchanged.",
+      "text": "Fix the incorrect text that appears near the time display (e.g., “MT Loan” / “HMT”) so that the time area only shows the clock time/date and does not show unrelated labels.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-11"
+          "msg-8"
         ],
         "quotes": [
-          "ডিজাইন পরিবর্তন করো না কোন কিছু ডিজাইন পরিবর্তন করো না অনেক কিছু পরিবর্তন হয়ে যায় তুমি"
+          "১১:০০ টার জায়গায় এম টি লোন এইচএমটি এলো না এখানে থাকবে না"
         ]
       },
       "acceptanceCriteria": [
-        "Existing screens (Admin dashboard, Settings tabs, headers/footers, existing buttons) retain their current layout and styling.",
-        "Any new UI (Settings card and password prompt) uses existing UI components and does not introduce global theme/color/token changes.",
-        "No unrelated copy/text is changed as part of this work."
+        "No UI region intended to show the current time (e.g., the ClockCard in frontend/src/features/user/components/ClockCard.tsx and its surrounding layout) displays strings like “MT-LOAN”, “MT Loan”, or “HMT”.",
+        "The clock component continues to show a live-updating time and date without extra, unrelated labels.",
+        "The fix does not remove MT Loan functionality elsewhere (only removes the incorrect/stray label from the time area)."
       ]
     }
   ],
   "constraints": [
-    "Frontend immutable paths must not be edited: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui/*.",
-    "Backend must remain single-actor (all Motoko logic in backend/main.mo); only add migration.mo if state upgrades are required.",
-    "Do not change existing design/styling outside of inserting the requested new Settings card and adding the password prompt modal UI."
+    "Do not modify any files under frontend/src/components/ui (read-only).",
+    "Do not modify files listed as immutable paths in SYSTEM_CONTEXT (e.g., frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx).",
+    "Keep backend as a single Motoko actor; no new backend services."
   ],
   "nonGoals": [
-    "Implementing the full MT Loan feature area (screens, calculations, or workflows).",
-    "Making the User Panel visible or fully functional now (only skeleton + blocked state).",
-    "Adding third-party authentication beyond Internet Identity.",
-    "Introducing any external database or non-local persistence mechanism beyond existing app patterns."
+    "Do not redesign unrelated screens or change overall branding/theme beyond the requested navigation/button adjustments.",
+    "Do not remove the Settings feature itself—only remove its entry from the specified new navigation bar.",
+    "Do not add new authentication providers; use the existing session/logout mechanisms already present in the app."
   ],
   "imageRequirements": {
     "required": [],

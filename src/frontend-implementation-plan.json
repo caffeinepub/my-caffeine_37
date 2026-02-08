@@ -1,105 +1,85 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "MT Loan settings + password-gated entry with hidden User Panel skeleton (no design changes)",
+  "title": "Admin bottom nav cleanup, logout restoration, and clock label fix",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Add MT Loan Name/Password settings card to Settings and persist locally across refresh.",
+      "summary": "Remove Settings from the fixed admin bottom navigation while keeping the Settings section reachable via the admin grid menu.",
       "acceptanceCriteria": [
-        "Settings screen shows an additional card/section at the top empty area with Name, Password, and Save controls.",
-        "Clicking Save persists the configured Name and Password (survives page refresh).",
-        "No other Settings sections/tabs are removed or visually restyled beyond inserting this new card into the existing empty area."
+        "In the admin panel bottom navigation (frontend/src/features/admin/components/AdminBottomNav.tsx), there is no button/tab labeled “সেটিংস” and no nav item with id 'settings'.",
+        "Admin Settings (SystemSettingsSection) remains reachable via an existing entry point (e.g., AdminGridMenu tile continues to navigate to 'settings').",
+        "No runtime TypeScript errors occur due to removing the 'settings' nav item (e.g., grid column counts and active state logic remain valid)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/lib/storage/mtLoanSettingsStorage.ts",
-          "operation": "create",
-          "description": "Create local persistence helpers for MT Loan admin-saved Name+Password using existing safe storage patterns (load/save/validate basics)."
-        },
-        {
-          "path": "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "path": "frontend/src/features/admin/components/AdminBottomNav.tsx",
           "operation": "modify",
-          "description": "Insert a new top Settings card/section in the currently empty top area that uses existing shadcn-ui primitives (Card/Input/Label/Button) to edit MT Loan Name+Password and Save; wire it to mtLoanSettingsStorage for load-on-mount and save-on-click; show save success/error feedback via existing notify. Use the existing styling conventions in this file; do not restyle existing tabs/sections. Use the shadcn-ui component library already in the project; verify the component's usage instructions before implementing."
+          "description": "Remove the Settings nav item (id 'settings') from the bottom nav items array; update icon imports accordingly and adjust the grid column count to match the remaining number of buttons to prevent layout/active-state issues."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Password-gate MT Loan button with a modal prompt; on success persist session authorization and create a local identity record from saved Name without exposing User Panel.",
+      "summary": "Enlarge admin bottom navigation buttons, add visible borders, and increase the overall bar height so the larger buttons fit comfortably.",
       "acceptanceCriteria": [
-        "Clicking the existing MT-LOAN UI control opens a password prompt modal (not a new page).",
-        "Wrong password: no authorization is granted and the UI shows an error feedback.",
-        "Correct password: an 'authorized' flag for MT Loan is persisted locally for the current session (or until logout), and a user identity record is created locally using the configured Name.",
-        "No User Panel screens/features become visible as a result of successful password entry (only the authorization + identity creation is prepared)."
+        "Admin bottom navigation buttons have noticeably larger tap targets (increased padding/min-height) compared to the current implementation.",
+        "Each admin bottom navigation button has a clear border in both active and inactive states.",
+        "The admin bottom navigation container provides enough vertical space so labels/icons do not look cramped or clipped on common mobile widths."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/lib/storage/mtLoanAuthStorage.ts",
-          "operation": "create",
-          "description": "Create helpers to persist MT Loan authorization for the current session (sessionStorage-based set/get/clear with defensive try/catch), ensuring it does not grant access when absent."
-        },
-        {
-          "path": "frontend/src/lib/storage/mtLoanIdentityStorage.ts",
-          "operation": "create",
-          "description": "Create helpers to create/read/clear a local MT Loan user identity record (localStorage), populated from the admin-saved MT Loan Name upon successful password entry."
-        },
-        {
-          "path": "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx",
-          "operation": "create",
-          "description": "Create a reusable password prompt modal component that uses existing UI primitives (e.g., shadcn-ui AlertDialog/Dialog + Input/Button) to collect a password, validate it against mtLoanSettingsStorage, show inline error feedback on mismatch, and on success set mtLoanAuthStorage + mtLoanIdentityStorage then close without navigating. Use the shadcn-ui component library already in the project; verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/admin/AdminPanel.tsx",
+          "path": "frontend/src/features/admin/components/AdminBottomNav.tsx",
           "operation": "modify",
-          "description": "Replace the current MT-LOAN click behavior (notify-only) so it opens MtLoanPasswordPrompt modal; ensure all existing MT-LOAN triggers in this file (dashboard footer and AdminLayoutShell left button) route through the same gating behavior. Do not navigate to any User Panel/UI after success. Use the shadcn-ui component library already in the project; verify the component's usage instructions before implementing."
+          "description": "Adjust Tailwind classes for the bottom nav container and buttons: increase container vertical padding/height, increase per-button min-height/padding, and add explicit border styling for both active and inactive button states (ensuring borders remain visible on gradients)."
         },
         {
-          "path": "frontend/src/components/layout/AppShell.tsx",
+          "path": "frontend/src/features/admin/components/AdminLayoutShell.tsx",
           "operation": "modify",
-          "description": "Replace the current MT-LOAN click behavior (notify-only) so it opens the same MtLoanPasswordPrompt modal when AppShell is used, matching the existing header quick action requirement; do not introduce new pages/routes. Use the shadcn-ui component library already in the project; verify the component's usage instructions before implementing."
+          "description": "Update the admin layout bottom padding (currently pb-20) to ensure content is not obscured by the taller bottom nav after the button size/height increase."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Create a User Panel layout skeleton but keep it fully blocked/hidden; include a logout button placeholder in the layout.",
+      "summary": "Restore visible Logout controls in both Admin and User panels, using existing session/logout mechanisms and clearing cached state on logout.",
       "acceptanceCriteria": [
-        "User Panel route/view remains inaccessible or fully blocked (no interactive user panel content visible to end users).",
-        "A User Panel layout structure exists in the code (components/layout) including a logout button placeholder in the structure.",
-        "The block/hide behavior is enforced consistently (refreshing the page does not reveal the User Panel)."
+        "Admin panel header (frontend/src/features/admin/components/AdminLayoutShell.tsx) includes a Logout control that logs the admin out (clears session) and returns the app to the logged-out state.",
+        "User dashboard header (frontend/src/features/user/UserDashboard.tsx) includes a Logout control that logs the user out (clears session) and returns the app to the logged-out state.",
+        "The admin header’s newly added replacement button is removed from the header area as requested, and the restored Logout control is present instead.",
+        "Logging out clears cached UI state where applicable (e.g., session removed from localStorage and React Query cache cleared via existing SessionProvider logic)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx",
-          "operation": "create",
-          "description": "Add a User Panel layout skeleton component containing the future structure and a logout button placeholder/slot, but ensure it renders a blocked/hidden state by default (e.g., returns null or a non-interactive placeholder) and is not wired into navigation yet so users cannot access it (including after refresh). Use existing UI primitives only; do not introduce new global styling. Use the shadcn-ui component library already in the project; verify the component's usage instructions before implementing."
+          "path": "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+          "operation": "modify",
+          "description": "Add a Logout control to the admin header actions using the existing SessionProvider logout logic (via useSession) so it clears the saved session and React Query cache; remove any header action that was previously introduced as a replacement for logout (if present in this file) so only the restored logout behavior remains."
+        },
+        {
+          "path": "frontend/src/features/user/UserDashboard.tsx",
+          "operation": "modify",
+          "description": "Add a Logout control in the user dashboard header (e.g., right-side header action) wired to SessionProvider logout (via useSession) so it clears localStorage session and React Query cache, returning the app to the logged-out flow."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Preserve existing UI design/styling while adding only the new Settings card and password prompt modal using existing primitives.",
+      "summary": "Remove incorrect stray labels near the clock/time display so only time/date are shown, without affecting MT Loan functionality elsewhere.",
       "acceptanceCriteria": [
-        "Existing screens (Admin dashboard, Settings tabs, headers/footers, existing buttons) retain their current layout and styling.",
-        "Any new UI (Settings card and password prompt) uses existing UI components and does not introduce global theme/color/token changes.",
-        "No unrelated copy/text is changed as part of this work."
+        "No UI region intended to show the current time (e.g., the ClockCard in frontend/src/features/user/components/ClockCard.tsx and its surrounding layout) displays strings like “MT-LOAN”, “MT Loan”, or “HMT”.",
+        "The clock component continues to show a live-updating time and date without extra, unrelated labels.",
+        "The fix does not remove MT Loan functionality elsewhere (only removes the incorrect/stray label from the time area)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
+          "path": "frontend/src/features/user/components/ClockCard.tsx",
           "operation": "modify",
-          "description": "Limit changes strictly to inserting the new MT Loan settings card in the top empty area and wiring to storage; avoid modifying existing tab markup, classNames, or copy outside the new card."
+          "description": "Ensure the ClockCard renders only the formatted time and formatted date (no extra label text); remove/avoid any hardcoded or derived strings that could introduce “MT-LOAN”, “MT Loan”, or “HMT” into the time area while keeping the live update interval intact."
         },
         {
-          "path": "frontend/src/features/admin/AdminPanel.tsx",
+          "path": "frontend/src/features/user/UserDashboard.tsx",
           "operation": "modify",
-          "description": "Limit changes strictly to swapping MT-LOAN click behavior to open the password prompt modal and adding the modal render; do not alter existing layout/styling or text."
-        },
-        {
-          "path": "frontend/src/components/layout/AppShell.tsx",
-          "operation": "modify",
-          "description": "Limit changes strictly to swapping MT-LOAN click behavior to open the password prompt modal and adding the modal render; do not alter existing header/footer styling or text."
+          "description": "Audit and adjust the immediate ClockCard surrounding layout so no additional header/label text is injected adjacent to the clock display (ensuring MT Loan-related text remains confined to its own dedicated controls elsewhere)."
         }
       ]
     }

@@ -23,7 +23,7 @@ export default function UserKpiSummary({ totalDue, totalWork, totalCost }: UserK
       <div className={`bg-gradient-to-br from-red-500 to-red-600 ${kpiCardRadius} ${kpiCardPadding} ${kpiCardShadow} ${kpiCardBorder}`}>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <p className="text-white text-sm font-bold">{getLabel('kpiDueTitle', 'আমার মোট পাওনা')}</p>
+            <p className="text-white text-sm font-bold">{getLabel('kpiDueTitle', 'মোট পাওনা')}</p>
           </div>
         </div>
         <div className={`bg-white/90 ${kpiInnerRadius} ${kpiInnerPadding}`}>

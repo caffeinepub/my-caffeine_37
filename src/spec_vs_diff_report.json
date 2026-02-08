@@ -1,95 +1,50 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-07T22:23:08.316Z",
-  "summary": "MT Loan password prompt modal + local storage utilities and a hidden User Panel skeleton were added, and MT-LOAN buttons now open the prompt. However, the diff also includes broad, unrelated UI/styling and auth/session/storage changes that violate the “no design changes” constraint, and the new Settings card UI itself is not clearly evidenced in the truncated diff.",
+  "generatedAt": "2026-02-07T23:30:57.600Z",
+  "summary": "Diff implements the admin bottom nav changes (removes Settings item; enlarges buttons and adds borders). Logout functionality appears to be wired via useSession in AdminLayoutShell and UserDashboard, but the diff is truncated so UI/behavior cannot be fully verified. The incorrect time-area labels fix is not evidenced (ClockCard not modified), and an \"MT-LOAN\" label still appears in the admin header in the shown snippet.",
   "missing_requirements": [
     {
       "id": "REQ-1",
-      "requirement": "Add a new Settings card/section in the currently empty top area of the Settings screen with Name input, Password input, and Save button; persist after refresh.",
-      "reason": "The diff shows MT Loan settings state and a save handler wired to local storage, but the actual Settings UI card/section placement (top empty area) with the required controls is not present in the provided (truncated) file content, so implementation cannot be confirmed from evidence.",
+      "requirement": "Keep the Admin Settings (SystemSettingsSection) reachable via an existing entry point (e.g., AdminGridMenu tile continues to navigate to 'settings').",
+      "reason": "AdminBottomNav removes the settings nav item, but the diff does not show any confirmation that an alternative entry point (e.g., admin dashboard grid/tile) still links to 'settings'.",
       "evidence": [
-        "frontend/src/features/admin/sections/SystemSettingsSection.tsx (truncated)"
+        "frontend/src/features/admin/components/AdminBottomNav.tsx"
       ]
     },
     {
       "id": "REQ-3",
-      "requirement": "Create/keep a User Panel layout skeleton in the codebase (components/layout) and keep the User Panel route/view fully hidden/blocked; include a logout button placeholder in the structure.",
-      "reason": "A skeleton component exists but it is not located under components/layout as requested, and the diff provides no evidence that any User Panel route/view is consistently blocked at the routing/navigation level (only that this component returns null).",
+      "requirement": "User dashboard header (frontend/src/features/user/UserDashboard.tsx) includes a Logout control that logs the user out (clears session) and returns the app to the logged-out state.",
+      "reason": "UserDashboard adds handleLogout() calling logout(), but the file is truncated before showing whether a visible Logout control is actually rendered in the header.",
       "evidence": [
-        "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx"
+        "frontend/src/features/user/UserDashboard.tsx"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "In the Admin panel header, restore the previous Logout button behavior and remove the newly added header button that replaced it.",
+      "reason": "AdminLayoutShell includes logout wiring, but the diff is truncated before confirming the final header controls. Additionally, the shown snippet still renders a dashboard-only \"MT-LOAN\" header button, so it is unclear whether the requested replacement button was removed.",
+      "evidence": [
+        "frontend/src/features/admin/components/AdminLayoutShell.tsx"
       ]
     },
     {
       "id": "REQ-4",
-      "requirement": "Do not change any existing UI design/styling outside inserting the new Settings card and adding the password prompt modal UI; no unrelated copy/text changes.",
-      "reason": "Multiple files appear to include unrelated styling/UI changes (login/register themes, gradients, other UI changes), which violates the constraint that only the Settings card and password prompt UI should be added without altering existing design elsewhere.",
+      "requirement": "Fix the incorrect text near the time display so the time area only shows the clock time/date and does not show unrelated labels (e.g., MT Loan/HMT).",
+      "reason": "No changes are shown to the clock/time UI component (ClockCard). The diff summary does not include modifications to frontend/src/features/user/components/ClockCard.tsx or surrounding time display layout, so the issue is not evidenced as fixed.",
       "evidence": [
-        "frontend-file-summaries.txt (LoginView.tsx styling changes)",
-        "frontend-file-summaries.txt (RegisterView.tsx styling changes)",
-        "frontend/src/components/layout/AppShell.tsx (truncated)",
-        "frontend-file-summaries.txt (various other feature styling/behavior changes listed)"
+        "frontend/src/features/admin/components/AdminLayoutShell.tsx (shows \"MT-LOAN\" label still present)",
+        "frontend/src/features/user/UserDashboard.tsx (references ClockCard but no ClockCard changes shown)"
       ]
     }
   ],
-  "hallucinated_features": [
-    {
-      "description": "Added/changed login and registration screen styling and flows beyond MT Loan gating (e.g., bright gradients, larger inputs/buttons, confirmation dialog changes).",
-      "reason": "Not requested; explicitly disallowed by REQ-4 (no unrelated design/styling/copy changes).",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/features/auth/LoginView.tsx)",
-        "frontend-file-summaries.txt (frontend/src/features/auth/RegisterView.tsx)"
-      ]
-    },
-    {
-      "description": "Session/auth architecture changes (SessionProvider hydration, admin credential validation, ensureUserIds integration, blocked user flow compatibility).",
-      "reason": "Not requested; BuildRequest focuses only on MT Loan settings, password modal gating, and hidden User Panel skeleton.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/state/session/SessionProvider.tsx)",
-        "frontend-file-summaries.txt (frontend/src/App.tsx)"
-      ]
-    },
-    {
-      "description": "Enhanced safeStorage utilities with event emission and subscription system for real-time UI synchronization.",
-      "reason": "Not requested for MT Loan settings/password gating; constitutes additional unrequested infrastructure work.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/lib/storage/safeStorage.ts)"
-      ]
-    },
-    {
-      "description": "Added “Calculator feature coming soon!” and support alert placeholder behaviors in the main AppShell header actions.",
-      "reason": "Not requested; BuildRequest only mentions MT-LOAN password prompt modal behavior.",
-      "evidence": [
-        "frontend/src/components/layout/AppShell.tsx (truncated)"
-      ]
-    },
-    {
-      "description": "Multiple unrelated admin section behavior/styling changes (Production/Work/Nasta/PaymentLoan sections, approvals UI updates, etc.).",
-      "reason": "Not requested and conflicts with REQ-4’s constraint against unrelated UI/design changes.",
-      "evidence": [
-        "frontend-file-summaries.txt (ProductionSection.tsx, WorkSection.tsx, NastaSection.tsx, PaymentLoanSection.tsx, ApprovalsSection.tsx, UserDashboard.tsx)"
-      ]
-    },
-    {
-      "description": "MT-LOAN prompt UI introduces new gradient-heavy styling and custom classes (rounded-3xl, bg gradients, etc.).",
-      "reason": "REQ-4 requires using existing UI primitives/conventions without design changes beyond adding the modal; this appears to introduce new styling rather than matching existing unchanged design (based on the modal’s explicit classnames).",
-      "evidence": [
-        "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx (truncated)"
-      ]
-    }
-  ],
-  "confidence": 0.68,
+  "hallucinated_features": [],
+  "confidence": 0.62,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/layout/AppShell.tsx",
-    "frontend/src/features/admin/AdminPanel.tsx",
+    "frontend/src/features/admin/components/AdminBottomNav.tsx",
     "frontend/src/features/admin/components/AdminLayoutShell.tsx",
-    "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-    "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx",
-    "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx",
-    "frontend/src/lib/storage/mtLoanAuthStorage.ts",
-    "frontend/src/lib/storage/mtLoanIdentityStorage.ts",
-    "frontend/src/lib/storage/mtLoanSettingsStorage.ts",
+    "frontend/src/features/user/UserDashboard.tsx",
     "project_state.json"
   ]
 }

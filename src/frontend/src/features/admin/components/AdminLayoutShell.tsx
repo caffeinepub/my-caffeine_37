@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import AdminBottomNav from './AdminBottomNav';
 import { AdminView } from './adminNavTypes';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, LogOut } from 'lucide-react';
 import AdminHeaderAvatar from './AdminHeaderAvatar';
+import { useSession } from '../../../state/session/useSession';
 
 interface AdminLayoutShellProps {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ export default function AdminLayoutShell({
   onMtLoanClick,
 }: AdminLayoutShellProps) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const { logout } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,8 +58,12 @@ export default function AdminLayoutShell({
     }
   };
 
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 pb-20 touch-manipulation">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 pb-24 touch-manipulation">
       {/* Header */}
       <header
         className={`sticky top-0 z-40 transition-all duration-300 ${
@@ -108,6 +114,21 @@ export default function AdminLayoutShell({
                 MT-LOAN
               </button>
             )}
+            <button
+              onClick={handleLogout}
+              className={`p-2 rounded-lg transition-all touch-manipulation ${
+                isScrolled
+                  ? 'hover:bg-gray-100'
+                  : 'hover:bg-white/20'
+              }`}
+              title="Logout"
+            >
+              <LogOut
+                className={`w-5 h-5 ${
+                  isScrolled ? 'text-gray-700' : 'text-white'
+                }`}
+              />
+            </button>
             <AdminHeaderAvatar />
           </div>
         </div>

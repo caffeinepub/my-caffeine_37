@@ -21,7 +21,8 @@ import {
   Coffee, 
   Settings,
   Home,
-  MessageCircle
+  MessageCircle,
+  LogOut
 } from 'lucide-react';
 
 type ViewMode = 'dashboard' | 'production' | 'work' | 'payment' | 'nasta' | 'settings';
@@ -34,7 +35,7 @@ interface Account {
 }
 
 export default function UserDashboard() {
-  const { session } = useSession();
+  const { session, logout } = useSession();
   const { getLabel } = useDashboardOverrides();
   const noticeConfig = useUserNotice();
   const { branding } = useBranding();
@@ -76,6 +77,10 @@ export default function UserDashboard() {
   const handleHome = () => {
     setViewMode('dashboard');
     loadKpiData();
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   if (viewMode === 'production') {
@@ -122,6 +127,13 @@ export default function UserDashboard() {
                 <p className="text-xs text-white/80">ড্যাশবোর্ড</p>
               </div>
             </div>
+            <button
+              onClick={handleLogout}
+              className="p-2 rounded-lg hover:bg-white/20 transition-all touch-manipulation"
+              title="Logout"
+            >
+              <LogOut className="w-5 h-5 text-white" />
+            </button>
           </div>
         </div>
       </header>

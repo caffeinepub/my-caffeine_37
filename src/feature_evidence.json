@@ -2,11 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-new-settings-card-section-in-the-currently-empty-top-area-of-the-settings-screen-that-contains-1-a-name-input-2-a-password-input-and-3-a-save-button-persist-the-saved-name-password-locally-so-they-remain-available-after-refresh",
-      "featureTitle": "Add a new Settings card/section in the currently empty top area of the Settings screen that contains: (1) a Name input, (2) a Password input, and (3) a Save button. Persist the saved Name+Password locally so they remain available after refresh.",
+      "featureId": "feature-remove-the-settings-item-from-the-newly-added-admin-navigation-bar-the-fixed-bottom-navigation-while-keeping-the-settings-view-section-accessible-elsewhere-e-g-from-the-admin-dashboard-grid-menu",
+      "featureTitle": "Remove the “Settings” item from the newly added admin navigation bar (the fixed bottom navigation) while keeping the Settings view/section accessible elsewhere (e.g., from the admin dashboard grid menu).",
       "files": [
-        "frontend/src/features/admin/sections/SystemSettingsSection.tsx",
-        "frontend/src/lib/storage/mtLoanSettingsStorage.ts"
+        "frontend/src/features/admin/components/AdminBottomNav.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -24,14 +23,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-mt-loan-password-gating-when-the-mt-loan-button-is-clicked-existing-header-quick-action-show-a-password-prompt-modal-if-the-entered-password-does-not-match-the-admin-saved-mt-loan-password-block-access-and-show-an-error-message-if-it-matches-mark-the-session-as-authorized-for-mt-loan-and-auto-create-a-user-identity-using-the-admin-saved-name-store-locally-do-not-expose-the-user-panel-ui-yet-integration-navigation-will-be-done-later",
-      "featureTitle": "Implement MT Loan password gating: when the MT-LOAN button is clicked (existing header quick action), show a password prompt modal. If the entered password does not match the admin-saved MT Loan password, block access and show an error message. If it matches, mark the session as authorized for MT Loan and auto-create a user identity using the admin-saved Name (store locally); do not expose the User Panel UI yet (integration/navigation will be done later).",
+      "featureId": "feature-increase-the-size-of-the-remaining-buttons-in-the-newly-added-admin-bottom-navigation-bar-and-add-a-visible-border-around-each-button-also-increase-the-overall-navigation-bar-height-to-better-match-the-larger-buttons",
+      "featureTitle": "Increase the size of the remaining buttons in the newly added admin bottom navigation bar and add a visible border around each button; also increase the overall navigation bar height to better match the larger buttons.",
       "files": [
-        "frontend/src/components/layout/AppShell.tsx",
-        "frontend/src/features/admin/AdminPanel.tsx",
-        "frontend/src/features/mt-loan/MtLoanPasswordPrompt.tsx",
-        "frontend/src/lib/storage/mtLoanAuthStorage.ts",
-        "frontend/src/lib/storage/mtLoanIdentityStorage.ts"
+        "frontend/src/features/admin/components/AdminBottomNav.tsx",
+        "frontend/src/features/admin/components/AdminLayoutShell.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -49,10 +45,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-create-keep-a-user-panel-layout-skeleton-in-the-codebase-but-ensure-the-entire-user-panel-is-fully-hidden-blocked-from-users-for-now-include-a-logout-button-placeholder-structure-in-the-hidden-user-panel-layout-so-it-is-ready-for-later-activation",
-      "featureTitle": "Create/keep a User Panel layout skeleton in the codebase, but ensure the entire User Panel is fully hidden/blocked from users for now. Include a logout button placeholder/structure in the hidden User Panel layout so it is ready for later activation.",
+      "featureId": "feature-add-a-visible-logout-option-in-both-the-admin-panel-and-the-user-panel-in-the-admin-panel-header-restore-the-previous-logout-button-behavior-and-remove-the-newly-added-header-button-that-replaced-it",
+      "featureTitle": "Add a visible Logout option in both the Admin panel and the User panel. In the Admin panel header, restore the previous Logout button behavior and remove the newly added header button that replaced it.",
       "files": [
-        "frontend/src/features/mt-loan/UserPanelLayoutSkeleton.tsx"
+        "frontend/src/features/admin/components/AdminLayoutShell.tsx",
+        "frontend/src/features/user/UserDashboard.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -70,12 +67,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-do-not-change-any-existing-ui-design-or-styling-while-implementing-req-1-to-req-3-only-add-the-new-settings-card-and-the-password-prompt-modal-using-existing-ui-primitives-and-existing-styling-conventions-so-the-rest-of-the-app-remains-visually-unchanged",
-      "featureTitle": "Do not change any existing UI design or styling while implementing REQ-1 to REQ-3. Only add the new Settings card and the password prompt modal using existing UI primitives and existing styling conventions so the rest of the app remains visually unchanged.",
+      "featureId": "feature-fix-the-incorrect-text-that-appears-near-the-time-display-e-g-mt-loan-hmt-so-that-the-time-area-only-shows-the-clock-time-date-and-does-not-show-unrelated-labels",
+      "featureTitle": "Fix the incorrect text that appears near the time display (e.g., “MT Loan” / “HMT”) so that the time area only shows the clock time/date and does not show unrelated labels.",
       "files": [
-        "frontend/src/components/layout/AppShell.tsx",
-        "frontend/src/features/admin/AdminPanel.tsx",
-        "frontend/src/features/admin/sections/SystemSettingsSection.tsx"
+        "frontend/src/features/user/UserDashboard.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
